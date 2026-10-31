@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Pipe Sizing Dashboard Rev.01</title>
+<title>Pipe Sizing Dashboard</title>
 <style>
 :root{--bg:#f6f7f9;--card:#fff;--tx:#1a1d21;--mut:#6b7280;--bd:#e2e5ea;--ac:#2563eb;--ok:#16a34a;--lo:#0284c7;--hi:#dc2626;--grid:#d9dde3;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -31,12 +31,13 @@ input,select{width:100%;margin-top:3px;padding:8px;border:1px solid var(--bd);bo
 table{border-collapse:collapse;width:100%;min-width:480px}th,td{padding:6px 8px;text-align:right;border-bottom:1px solid var(--bd)}
 th:first-child,td:first-child{text-align:left}tr.sel{background:color-mix(in srgb,var(--ac) 14%,transparent)}
 .note{font-size:12px;color:var(--mut);margin-top:8px}
+.foot{max-width:1100px;margin:14px auto 0;padding-top:10px;border-top:1px solid var(--bd);text-align:center;font-size:12px;color:var(--mut)}
 svg text{fill:var(--mut);font-size:10px}
 </style>
 </head>
 <body>
 <div class="top">
-  <div><h1 data-t="title"></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.00</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div>
 </div>
 <div class="grid">
@@ -77,10 +78,11 @@ svg text{fill:var(--mut);font-size:10px}
     <div class="note" data-t="guide"></div>
   </div>
 </div>
+<footer class="foot" data-t="by"></footer>
 <script>
-const TX={en:{title:'Pipe Sizing Dashboard',sub:'Flow rate - pipe size - velocity - head loss (Hazen-Williams, matches the pipe selection chart)',in:'Input',flow:'Flow rate',unit:'Unit',size:'Pipe size (nominal)',c:'C factor',len:'Pipe length (m)',vmax:'Design velocity max (m/s)',cnote:'C: PVC/PE 140-150, new steel 120, old steel 100. Inner dia = nominal size x 25.4 mm.',res:'Result - selected size',v:'Velocity',ms:'m/s',hl:'Head loss (gradient)',hlu:'m / 100 m',tot:'Total head loss',totu:'m over length',status:'Status',ch:'Chart (log-log): head loss vs flow, with velocity lines',cn:'Grey/blue curves = pipe size. Dashed amber = constant velocity (m/s). Solid amber = current velocity. Red/purple guides = operating point.',all:'All sizes at this flow',guide:'Velocity guide: below 0.5 low (sediment) - 0.5 to 2.0 OK - above 2.0 high (noise, surge).',low:'Low',ok:'OK',high:'High',inch:'"',units:['m³/h','L/min','L/s'],xl:'Flow (m³/h)',yl:'Head loss (m/100 m)',thS:'Size',thI:'ID (mm)',thV:'v (m/s)',thH:'hf (m/100m)',thT:'Status',
+const TX={en:{by:'Created by Sayarm T.',title:'Pipe Sizing Dashboard',sub:'Flow rate - pipe size - velocity - head loss (Hazen-Williams, matches the pipe selection chart)',in:'Input',flow:'Flow rate',unit:'Unit',size:'Pipe size (nominal)',c:'C factor',len:'Pipe length (m)',vmax:'Design velocity max (m/s)',cnote:'C: PVC/PE 140-150, new steel 120, old steel 100. Inner dia = nominal size x 25.4 mm.',res:'Result - selected size',v:'Velocity',ms:'m/s',hl:'Head loss (gradient)',hlu:'m / 100 m',tot:'Total head loss',totu:'m over length',status:'Status',ch:'Chart (log-log): head loss vs flow, with velocity lines',cn:'Grey/blue curves = pipe size. Dashed amber = constant velocity (m/s). Solid amber = current velocity. Red/purple guides = operating point.',all:'All sizes at this flow',guide:'Velocity guide: below 0.5 low (sediment) - 0.5 to 2.0 OK - above 2.0 high (noise, surge).',low:'Low',ok:'OK',high:'High',inch:'"',units:['m³/h','L/min','L/s'],xl:'Flow (m³/h)',yl:'Head loss (m/100 m)',thS:'Size',thI:'ID (mm)',thV:'v (m/s)',thH:'hf (m/100m)',thT:'Status',
  rec:(vm,s,v,h)=>'Smallest size with v ≤ '+vm+' m/s: '+s+'" (v = '+v+' m/s, hf = '+h+' m/100 m)',norec:'No listed size meets the velocity limit.'},
-th:{title:'แดชบอร์ดเลือกขนาดท่อ',sub:'อัตราการไหล - ขนาดท่อ - ความเร็ว - การสูญเสียความดัน (Hazen-Williams ตามแผนภูมิเลือกขนาดท่อ)',in:'ข้อมูลนำเข้า',flow:'อัตราการไหล',unit:'หน่วย',size:'ขนาดท่อ (นิ้ว)',c:'ค่า C',len:'ความยาวท่อ (ม.)',vmax:'ความเร็วสูงสุดที่ออกแบบ (ม./วินาที)',cnote:'ค่า C: PVC/PE 140-150, เหล็กใหม่ 120, เหล็กเก่า 100 เส้นผ่านศูนย์กลางใน = ขนาดนิ้ว x 25.4 มม.',res:'ผลลัพธ์ - ขนาดท่อที่เลือก',v:'ความเร็วน้ำในท่อ',ms:'เมตร/วินาที',hl:'แรงดันตก',hlu:'ม. / 100 ม.',tot:'แรงดันตกรวม',totu:'ม. ตามความยาวท่อ',status:'สถานะ',ch:'แผนภูมิ (log-log): แรงดันตก เทียบกับอัตราการไหล พร้อมเส้นความเร็ว',cn:'เส้นเทา/น้ำเงิน = ขนาดท่อ เส้นประสีเหลืองอำพัน = ความเร็วคงที่ (ม./วินาที) เส้นทึบ = ความเร็วปัจจุบัน เส้นแดง/ม่วง = จุดทำงาน',all:'ทุกขนาดท่อที่อัตราการไหลนี้',guide:'แนวทางความเร็ว: ต่ำกว่า 0.5 ต่ำ (ตะกอนสะสม) - 0.5 ถึง 2.0 เหมาะสม - เกิน 2.0 สูง (เสียงดัง, น้ำกระแทก)',low:'ต่ำ',ok:'เหมาะสม',high:'สูง',inch:' นิ้ว',units:['ลบ.ม./ชม.','ลิตร/นาที','ลิตร/วินาที'],xl:'อัตราการไหล (ลบ.ม./ชม.)',yl:'แรงดันตก (ม./100 ม.)',thS:'ขนาด',thI:'ID (มม.)',thV:'v (ม./วิ)',thH:'hf (ม./100ม.)',thT:'สถานะ',
+th:{by:'จัดทำโดย Sayarm T.',title:'แดชบอร์ดเลือกขนาดท่อ',sub:'อัตราการไหล - ขนาดท่อ - ความเร็ว - การสูญเสียความดัน (Hazen-Williams ตามแผนภูมิเลือกขนาดท่อ)',in:'ข้อมูลนำเข้า',flow:'อัตราการไหล',unit:'หน่วย',size:'ขนาดท่อ (นิ้ว)',c:'ค่า C',len:'ความยาวท่อ (ม.)',vmax:'ความเร็วสูงสุดที่ออกแบบ (ม./วินาที)',cnote:'ค่า C: PVC/PE 140-150, เหล็กใหม่ 120, เหล็กเก่า 100 เส้นผ่านศูนย์กลางใน = ขนาดนิ้ว x 25.4 มม.',res:'ผลลัพธ์ - ขนาดท่อที่เลือก',v:'ความเร็วน้ำในท่อ',ms:'เมตร/วินาที',hl:'แรงดันตก',hlu:'ม. / 100 ม.',tot:'แรงดันตกรวม',totu:'ม. ตามความยาวท่อ',status:'สถานะ',ch:'แผนภูมิ (log-log): แรงดันตก เทียบกับอัตราการไหล พร้อมเส้นความเร็ว',cn:'เส้นเทา/น้ำเงิน = ขนาดท่อ เส้นประสีเหลืองอำพัน = ความเร็วคงที่ (ม./วินาที) เส้นทึบ = ความเร็วปัจจุบัน เส้นแดง/ม่วง = จุดทำงาน',all:'ทุกขนาดท่อที่อัตราการไหลนี้',guide:'แนวทางความเร็ว: ต่ำกว่า 0.5 ต่ำ (ตะกอนสะสม) - 0.5 ถึง 2.0 เหมาะสม - เกิน 2.0 สูง (เสียงดัง, น้ำกระแทก)',low:'ต่ำ',ok:'เหมาะสม',high:'สูง',inch:' นิ้ว',units:['ลบ.ม./ชม.','ลิตร/นาที','ลิตร/วินาที'],xl:'อัตราการไหล (ลบ.ม./ชม.)',yl:'แรงดันตก (ม./100 ม.)',thS:'ขนาด',thI:'ID (มม.)',thV:'v (ม./วิ)',thH:'hf (ม./100ม.)',thT:'สถานะ',
  rec:(vm,s,v,h)=>'ขนาดท่อเล็กที่สุดที่ v ≤ '+vm+' ม./วินาที: '+s+' นิ้ว (v = '+v+' ม./วินาที, hf = '+h+' ม./100 ม.)',norec:'ไม่มีขนาดท่อที่ความเร็วต่ำกว่าเกณฑ์'}};
 let L='en';try{L=localStorage.getItem('lang')||(navigator.language||'').startsWith('th')?'th':'en';const sv=localStorage.getItem('lang');if(sv)L=sv}catch(e){}
 const t=k=>TX[L][k];
