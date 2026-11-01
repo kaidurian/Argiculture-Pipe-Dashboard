@@ -37,7 +37,7 @@ svg text{fill:var(--mut);font-size:10px}
 </head>
 <body>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.01</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.02</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div>
 </div>
 <div class="grid">
@@ -47,9 +47,10 @@ svg text{fill:var(--mut);font-size:10px}
       <label><span data-t="flow"></span><input id="q" type="number" step="any" value="40"></label>
       <label><span data-t="unit"></span><select id="u"></select></label>
     </div>
+    <label><span data-t="ptype"></span><select id="pt"></select></label>
     <div class="row">
       <label><span data-t="size"></span><select id="d"></select></label>
-      <label><span data-t="c"></span><input id="c" type="number" step="any" value="140"></label>
+      <label><span data-t="c"></span><input id="c" type="number" step="any" value="150"></label>
     </div>
     <div class="row">
       <label><span data-t="len"></span><input id="l" type="number" step="any" value="100"></label>
@@ -67,6 +68,11 @@ svg text{fill:var(--mut);font-size:10px}
     </div>
     <div class="note" id="rec"></div>
   </div>
+  <div class="card">
+    <h2 data-t="sech"></h2>
+    <svg id="sec" viewBox="0 0 360 250" width="100%" style="max-height:300px"></svg>
+    <div class="note" id="secn"></div>
+  </div>
   <div class="card wide">
     <h2 data-t="ch"></h2>
     <div class="sc"><svg id="ch" viewBox="0 0 800 460" width="100%" style="min-width:640px"></svg></div>
@@ -77,25 +83,32 @@ svg text{fill:var(--mut);font-size:10px}
     <div id="cb" class="sc"></div>
   </div>
   <div class="card wide">
-    <h2 data-t="all"></h2>
+    <h2><span data-t="all"></span> <span id="tbl" style="text-transform:none;letter-spacing:0;font-weight:700;color:var(--ac);margin-left:8px"></span></h2>
     <div class="sc"><table id="tb"></table></div>
     <div class="note" style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap"><span data-t="guide"></span><span style="white-space:nowrap"><span id="vis" style="display:none"><span data-t="vis"></span>: <b id="vn">-</b></span></span></div>
   </div>
 </div>
 
 <script>
-const TX={en:{calch:'Calculation (live, with your inputs)',vis:'Visitors',by:'Created by ST.',title:'Pipe Sizing Dashboard',sub:'Flow rate - pipe size - velocity - head loss (Hazen-Williams, matches the pipe selection chart)',in:'Input',flow:'Flow rate',unit:'Unit',size:'Pipe size (nominal)',c:'C factor',len:'Pipe length (m)',vmax:'Design velocity max (m/s)',cnote:'C: PVC/PE 140-150, new steel 120, old steel 100. Inner dia = nominal size x 25.4 mm.',res:'Result - selected size',v:'Velocity',ms:'m/s',hl:'Head loss (gradient)',hlu:'m / 100 m',tot:'Total head loss',totu:'m over length',status:'Status',ch:'Hazen-Williams pipe selection chart (head loss - flow rate - velocity)',cn:'Grey/blue curves = pipe size. Dashed amber = constant velocity (m/s). Solid amber = current velocity. Red/purple guides = operating point.',all:'All sizes at this flow',guide:'Velocity guide: below 0.5 low (sediment) - 0.5 to 2.0 OK - above 2.0 high (noise, surge).',low:'Low',ok:'OK',high:'High',inch:'"',units:['m³/h','L/min','L/s'],xl:'Flow (m³/h)',yl:'Head loss (m/100 m)',thS:'Size',thI:'ID (mm)',thV:'v (m/s)',thH:'hf (m/100m)',thT:'Status',
+const TX={en:{sech:'Pipe section - TIS 17-2561',wall:'wall',sname:'Thai size name',ptype:'Pipe type - Thai standard TIS 17-2561',nom:'Nominal (ID = size)',calch:'Calculation (live, with your inputs)',vis:'Visitors',by:'Created by ST.',title:'Pipe Sizing Dashboard',sub:'Flow rate - pipe size - velocity - head loss (Hazen-Williams, matches the pipe selection chart)',in:'Input',flow:'Flow rate',unit:'Unit',size:'Pipe size (nominal)',c:'C factor',len:'Pipe length (m)',vmax:'Design velocity max (m/s)',cnote:'<b>Default C = 150</b> (PVC/PE 140-150, new steel 120, old steel 100). PVC inner dia = OD - 2 x wall (TIS 17-2561).',res:'Result - selected size',v:'Velocity',ms:'m/s',hl:'Head loss (gradient)',hlu:'m / 100 m',tot:'Total head loss',totu:'m over length',status:'Status',ch:'Hazen-Williams pipe selection chart (head loss - flow rate - velocity)',cn:'Grey/blue curves = pipe size. Dashed amber = constant velocity (m/s). Solid amber = current velocity. Red/purple guides = operating point.',all:'All sizes at this flow',guide:'Velocity guide: below 0.5 low (sediment) - 0.5 to 2.0 OK - above 2.0 high (noise, surge).',low:'Low',ok:'OK',high:'High',inch:'"',units:['m³/h','L/min','L/s'],xl:'Flow (m³/h)',yl:'Head loss (m/100 m)',thS:'Size',thI:'ID (mm)',thV:'v (m/s)',thH:'hf (m/100m)',thT:'Status',
  rec:(vm,s,v,h)=>'Smallest size with v ≤ '+vm+' m/s: '+s+'" (v = '+v+' m/s, hf = '+h+' m/100 m)',norec:'No listed size meets the velocity limit.'},
-th:{calch:'วิธีคำนวณ (ตามค่าที่ป้อน)',vis:'ผู้เข้าชม',by:'จัดทำโดย ST.',title:'แดชบอร์ดเลือกขนาดท่อ',sub:'อัตราการไหล - ขนาดท่อ - ความเร็ว - การสูญเสียความดัน (Hazen-Williams ตามแผนภูมิเลือกขนาดท่อ)',in:'ข้อมูลนำเข้า',flow:'อัตราการไหล',unit:'หน่วย',size:'ขนาดท่อ (นิ้ว)',c:'ค่า C',len:'ความยาวท่อ (ม.)',vmax:'ความเร็วสูงสุดที่ออกแบบ (ม./วินาที)',cnote:'ค่า C: PVC/PE 140-150, เหล็กใหม่ 120, เหล็กเก่า 100 เส้นผ่านศูนย์กลางใน = ขนาดนิ้ว x 25.4 มม.',res:'ผลลัพธ์ - ขนาดท่อที่เลือก',v:'ความเร็วน้ำในท่อ',ms:'เมตร/วินาที',hl:'แรงดันตก',hlu:'ม. / 100 ม.',tot:'แรงดันตกรวม',totu:'ม. ตามความยาวท่อ',status:'สถานะ',ch:'แผนภูมิเลือกขนาดท่อ Hazen-Williams (แรงดันตก - อัตราการไหล - ความเร็ว)',cn:'เส้นเทา/น้ำเงิน = ขนาดท่อ เส้นประสีเหลืองอำพัน = ความเร็วคงที่ (ม./วินาที) เส้นทึบ = ความเร็วปัจจุบัน เส้นแดง/ม่วง = จุดทำงาน',all:'ทุกขนาดท่อที่อัตราการไหลนี้',guide:'แนวทางความเร็ว: ต่ำกว่า 0.5 ต่ำ (ตะกอนสะสม) - 0.5 ถึง 2.0 เหมาะสม - เกิน 2.0 สูง (เสียงดัง, น้ำกระแทก)',low:'ต่ำ',ok:'เหมาะสม',high:'สูง',inch:' นิ้ว',units:['ลบ.ม./ชม.','ลิตร/นาที','ลิตร/วินาที'],xl:'อัตราการไหล (ลบ.ม./ชม.)',yl:'แรงดันตก (ม./100 ม.)',thS:'ขนาด',thI:'ID (มม.)',thV:'v (ม./วิ)',thH:'hf (ม./100ม.)',thT:'สถานะ',
+th:{sech:'หน้าตัดท่อ - มอก. 17-2561',wall:'ผนังหนา',sname:'ชื่อขนาด มอก.',ptype:'ชนิดท่อ - มาตรฐาน มอก. 17-2561',nom:'ID = ขนาดนิ้ว (ไม่ระบุชนิด)',calch:'วิธีคำนวณ (ตามค่าที่ป้อน)',vis:'ผู้เข้าชม',by:'จัดทำโดย ST.',title:'แดชบอร์ดเลือกขนาดท่อ',sub:'อัตราการไหล - ขนาดท่อ - ความเร็ว - การสูญเสียความดัน (Hazen-Williams ตามแผนภูมิเลือกขนาดท่อ)',in:'ข้อมูลนำเข้า',flow:'อัตราการไหล',unit:'หน่วย',size:'ขนาดท่อ (นิ้ว)',c:'ค่า C',len:'ความยาวท่อ (ม.)',vmax:'ความเร็วสูงสุดที่ออกแบบ (ม./วินาที)',cnote:'<b>ค่า C เริ่มต้น = 150</b> (PVC/PE 140-150, เหล็กใหม่ 120, เหล็กเก่า 100) เส้นผ่านศูนย์กลางในท่อ PVC = OD - 2 x ความหนาผนัง (มอก. 17-2561)',res:'ผลลัพธ์ - ขนาดท่อที่เลือก',v:'ความเร็วน้ำในท่อ',ms:'เมตร/วินาที',hl:'แรงดันตก',hlu:'ม. / 100 ม.',tot:'แรงดันตกรวม',totu:'ม. ตามความยาวท่อ',status:'สถานะ',ch:'แผนภูมิเลือกขนาดท่อ Hazen-Williams (แรงดันตก - อัตราการไหล - ความเร็ว)',cn:'เส้นเทา/น้ำเงิน = ขนาดท่อ เส้นประสีเหลืองอำพัน = ความเร็วคงที่ (ม./วินาที) เส้นทึบ = ความเร็วปัจจุบัน เส้นแดง/ม่วง = จุดทำงาน',all:'ทุกขนาดท่อที่อัตราการไหลนี้',guide:'แนวทางความเร็ว: ต่ำกว่า 0.5 ต่ำ (ตะกอนสะสม) - 0.5 ถึง 2.0 เหมาะสม - เกิน 2.0 สูง (เสียงดัง, น้ำกระแทก)',low:'ต่ำ',ok:'เหมาะสม',high:'สูง',inch:' นิ้ว',units:['ลบ.ม./ชม.','ลิตร/นาที','ลิตร/วินาที'],xl:'อัตราการไหล (ลบ.ม./ชม.)',yl:'แรงดันตก (ม./100 ม.)',thS:'ขนาด',thI:'ID (มม.)',thV:'v (ม./วิ)',thH:'hf (ม./100ม.)',thT:'สถานะ',
  rec:(vm,s,v,h)=>'ขนาดท่อเล็กที่สุดที่ v ≤ '+vm+' ม./วินาที: '+s+' นิ้ว (v = '+v+' ม./วินาที, hf = '+h+' ม./100 ม.)',norec:'ไม่มีขนาดท่อที่ความเร็วต่ำกว่าเกณฑ์'}};
 let L='en';try{L=localStorage.getItem('lang')||(navigator.language||'').startsWith('th')?'th':'en';const sv=localStorage.getItem('lang');if(sv)L=sv}catch(e){}
 const t=k=>TX[L][k];
 const S=[0.5,0.75,1,1.25,1.5,2,2.5,3,4,5,6,8,10,12,14,16,18,20,24],UV=[1,0.06,3.6];
 const $=id=>document.getElementById(id);
-function build(){const ds=$('d').value||4,us=$('u').selectedIndex<0?0:$('u').selectedIndex;
+function build(){const ds=$('d').value||4,us=$('u').selectedIndex<0?0:$('u').selectedIndex,pv=$('pt').value||'4';
+ $('pt').innerHTML=[['n',t('nom')],['0','PVC 5 (PN 6)'],['1','PVC 7 (PN 8)'],['2','PVC 8.5 (PN 10)'],['3','PVC 10.5 (PN 12.5)'],['4','PVC 13.5 (PN 16)']].map(o=>`<option value='${o[0]}'${o[0]==pv?' selected':''}>${o[1]}</option>`).join('');
  $('d').innerHTML=S.map(s=>'<option value="'+s+'"'+(s==ds?' selected':'')+'>'+s+t('inch')+'</option>').join('');
  $('u').innerHTML=UV.map((u,i)=>'<option value="'+u+'"'+(i==us?' selected':'')+'>'+t('units')[i]+'</option>').join('')}
-function calc(qh,dIn,C){const Q=qh/3600,d=dIn*0.0254;
+const PV={0.5:[22,[0,1.5,2.0,2.3,2.6]],0.75:[26,[0,1.5,2.0,2.3,2.6]],1:[34,[0,1.5,2.0,2.4,3.0]],1.25:[42,[1.5,1.8,2.2,2.6,3.1]],1.5:[48,[1.5,1.9,2.3,2.8,3.5]],2:[60,[1.8,2.4,2.9,3.5,4.3]],2.5:[76,[2.2,2.9,3.5,4.4,5.4]],3:[89,[2.6,3.5,4.1,5.2,6.4]],4:[114,[3.2,4.3,5.2,6.5,8.1]],5:[140,[3.9,5.3,6.4,8.0,9.9]],6:[165,[4.6,6.2,7.5,9.4,11.7]],8:[216,[5.4,7.3,8.8,11.1,13.7]],10:[267,[6.7,8.9,10.9,13.6,16.9]],12:[318,[7.9,10.7,12.9,16.2,20.1]],14:[370,[9.2,12.5,15.0,18.9,23.4]],16:[420,[10.4,14.2,17.0,21.5,26.5]],18:[470,[11.6,15.9,19.0,24.0,29.7]],20:[520,[12.9,17.6,21.0,26.6,32.8]],24:[630,[15.5,21.2,25.4,32.0,39.7]]};
+const PSZ=Object.keys(PV).map(Number).sort((a,b)=>a-b),PM={};
+function idm(s){const v=$('pt').value,k=(v===''||v==='n')?-1:+v;if(k<0)return s*0.0254;
+ if(!PM[k])PM[k]=PSZ.map(x=>{const e=PV[x][1][k];return e?[x,(PV[x][0]-2*e)/(x*25.4)]:null}).filter(Boolean);
+ const p=PM[k];let r;if(s<=p[0][0])r=p[0][1];else if(s>=p[p.length-1][0])r=p[p.length-1][1];else{let i=1;while(p[i][0]<s)i++;const a=p[i-1],b=p[i],f=Math.log(s/a[0])/Math.log(b[0]/a[0]);r=a[1]+(b[1]-a[1])*f}
+ return s*0.0254*r}
+function calc(qh,dIn,C){const Q=qh/3600,d=idm(dIn);
  const v=Q/(Math.PI*d*d/4);
  const hf=10.67*Math.pow(Q,1.852)/(Math.pow(C,1.852)*Math.pow(d,4.87))*100;
  return{v,hf}}
@@ -109,8 +122,8 @@ function run(){
  const rec=S.find(x=>calc(qh,x,C).v<=vm),rc=rec&&calc(qh,rec,C);
  $('rec').textContent=rec?t('rec')(vm,rec,fmt(rc.v),fmt(rc.hf)):t('norec');
  let h='<tr><th>'+t('thS')+'</th><th>'+t('thI')+'</th><th>'+t('thV')+'</th><th>'+t('thH')+'</th><th>'+t('thT')+'</th></tr>';
- S.forEach(x=>{const c=calc(qh,x,C),q=st(c.v);h+='<tr class="'+(x==ds?'sel':'')+'"><td>'+x+t('inch')+(x==rec?' ★':'')+'</td><td>'+(x*25.4).toFixed(1)+'</td><td>'+fmt(c.v)+'</td><td>'+fmt(c.hf)+'</td><td><span class="badge '+q[0]+'">'+q[1]+'</span></td></tr>'});
- $('tb').innerHTML=h;draw2(qh,r.hf,ds,C);calcBox(qh,ds,C,Ln,r);
+ S.forEach(x=>{const c=calc(qh,x,C),q=st(c.v);h+='<tr class="'+(x==ds?'sel':'')+'"><td>'+x+t('inch')+(x==rec?' ★':'')+'</td><td>'+(idm(x)*1000).toFixed(1)+'</td><td>'+fmt(c.v)+'</td><td>'+fmt(c.hf)+'</td><td><span class="badge '+q[0]+'">'+q[1]+'</span></td></tr>'});
+ $('tb').innerHTML=h;draw2(qh,r.hf,ds,C);calcBox(qh,ds,C,Ln,r);drawSec(ds);$('tbl').textContent='HAZEN-WILLIAMS C = '+C+' | '+tlab();
 }
 function draw(qh,hf,ds,C){
  const W=720,H=400,m={l:46,r:34,t:12,b:34},x0=Math.log10(0.1),x1=Math.log10(10000),y0=Math.log10(0.1),y1=Math.log10(100);
@@ -132,11 +145,23 @@ function draw(qh,hf,ds,C){
  if(qh>0&&hf>0){const px=X(Math.min(Math.max(qh,0.1),10000)),py=Y(Math.min(Math.max(hf,0.1),100));
   g+='<line x1="'+px+'" x2="'+px+'" y1="'+py+'" y2="'+(H-m.b)+'" stroke="var(--hi)" stroke-dasharray="4 3"/><line x1="'+m.l+'" x2="'+px+'" y1="'+py+'" y2="'+py+'" stroke="#9333ea" stroke-dasharray="4 3"/><circle cx="'+px+'" cy="'+py+'" r="6" fill="none" stroke="var(--hi)" stroke-width="2"/>'}
  $('ch').innerHTML=g}
-function calcBox(qh,ds,C,Ln,r){const en=L=='en',p=x=>String(+Number(x).toPrecision(4)),Q=qh/3600,d=ds*0.0254,A=Math.PI*d*d/4,hm=r.hf/100,
+const NM={0.5:18,0.75:20,1:25,1.25:35,1.5:40,2:55,2.5:65,3:80,4:100,5:125,6:150,8:200,10:250,12:300,14:350,16:400,18:450,20:500,24:600};
+function tlab(){const o=$('pt').selectedOptions[0];return o?o.textContent:''}
+function drawSec(ds){const v=$('pt').value,pvc=!(v===''||v==='n'),ID=idm(ds)*1000,OD=pvc&&PV[ds]?PV[ds][0]:null,e=OD?(OD-ID)/2:null,en=L=='en',u=en?'mm':'มม.',q2=en?String.fromCharCode(34):' นิ้ว',ni=({0.5:'½',0.75:'¾',1.25:'1¼',1.5:'1½',2.5:'2½'}[ds]||ds)+String.fromCharCode(34);
+ const cx=130,cy=108,R=82,r=OD?R*ID/OD:R,ts='fill:var(--tx);font-size:11px;font-weight:700';
+ let g=`<defs><marker id='ar' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='6' markerHeight='6' orient='auto-start-reverse'><path d='M0,0L10,5L0,10z' fill='var(--tx)'/></marker></defs>`;
+ if(OD)g+=`<circle cx='${cx}' cy='${cy}' r='${R}' fill='var(--ac)' fill-opacity='.35' stroke='var(--ac)' stroke-width='1.5'/>`;
+ g+=`<circle cx='${cx}' cy='${cy}' r='${r}' fill='var(--card)' stroke='var(--ac)' stroke-width='${OD?1.5:2}'/><circle cx='${cx}' cy='${cy}' r='${r}' fill='var(--lo)' fill-opacity='.14'/>`;
+ g+=`<line x1='${cx-r}' x2='${cx+r}' y1='${cy}' y2='${cy}' stroke='var(--tx)' marker-start='url(#ar)' marker-end='url(#ar)'/><text x='${cx}' y='${cy-7}' text-anchor='middle' style='${ts}'>ID ${ID.toFixed(1)} ${u}${OD?'':' ('+ni+')'}</text>`;
+ if(OD){const y=cy+R+24;g+=`<line x1='${cx-R}' x2='${cx-R}' y1='${cy}' y2='${y+4}' stroke='var(--mut)' stroke-dasharray='2 2'/><line x1='${cx+R}' x2='${cx+R}' y1='${cy}' y2='${y+4}' stroke='var(--mut)' stroke-dasharray='2 2'/><line x1='${cx-R}' x2='${cx+R}' y1='${y}' y2='${y}' stroke='var(--tx)' marker-start='url(#ar)' marker-end='url(#ar)'/><text x='${cx}' y='${y+15}' text-anchor='middle' style='${ts}'>OD ${OD} ${u} (${ni})</text>`;
+  const pm=(R+r)/2,px=cx+pm*0.7071,py=cy-pm*0.7071;g+=`<circle cx='${px}' cy='${py}' r='2.5' fill='var(--tx)'/><line x1='${px}' y1='${py}' x2='248' y2='24' stroke='var(--tx)'/><text x='252' y='28' style='${ts}'>${t('wall')} e = ${e.toFixed(1)} ${u}</text>`}
+ $('sec').innerHTML=g;
+ $('secn').textContent=tlab()+' | '+ds+q2+(pvc&&NM[ds]?' ('+t('sname')+' '+NM[ds]+')':'')+' | '+(OD?'OD '+OD+' x ':'')+'ID '+ID.toFixed(1)+(e?' x e '+e.toFixed(1):'')+' '+u}
+function calcBox(qh,ds,C,Ln,r){const en=L=='en',p=x=>String(+Number(x).toPrecision(4)),Q=qh/3600,d=idm(ds),A=Math.PI*d*d/4,hm=r.hf/100,
  row=(a,f,v)=>`<tr><td>${a}</td><td style='text-align:left;font-family:ui-monospace,Consolas,monospace'>${f}</td><td><b>${v}</b></td></tr>`;
  $('cb').innerHTML=`<table style='min-width:560px'><tr><th>${en?'Step':'ขั้นตอน'}</th><th style='text-align:left'>${en?'Formula = substitution':'สูตร = แทนค่า'}</th><th>${en?'Result':'ผลลัพธ์'}</th></tr>`+
  row('1. '+(en?'Flow':'อัตราการไหล'),`Q = Q(m³/h) / 3600 = ${p(qh)} / 3600`,p(Q)+' m³/s')+
- row('2. '+(en?'Diameter':'เส้นผ่าศูนย์กลาง'),`d = size × 0.0254 = ${ds} × 0.0254`,p(d)+' m')+
+ row('2. '+(en?'Diameter':'เส้นผ่าศูนย์กลาง'),`d = ID / 1000 = ${(d*1000).toFixed(1)} / 1000`,p(d)+' m')+
  row('3. '+(en?'Area':'พื้นที่หน้าตัด'),`A = π d² / 4`,p(A)+' m²')+
  row('4. '+(en?'Velocity':'ความเร็ว'),`v = Q / A = ${p(Q)} / ${p(A)}`,p(Q/A)+(en?' m/s':' ม./วิ'))+
  row('5. '+(en?'Head loss':'แรงดันตก'),`hf = 10.67 Q<sup>1.852</sup> / (C<sup>1.852</sup> d<sup>4.87</sup>), C = ${C}`,p(hm)+' m/m')+
@@ -148,7 +173,7 @@ const X=v=>m.l+(Math.log10(v)+1)/5*pw,Y=v=>H-m.b-(Math.log10(v)+1)/3*ph;
 const fr={0.5:'½',0.75:'¾',1.25:'1¼',1.5:'1½',2.5:'2½'},nm=s=>(fr[s]||s)+(L=='en'?String.fromCharCode(34):''),lab=v=>String(+v.toPrecision(2));
 const vc='#d97706',en=L=='en',msu=en?'m/s':'ม./วิ';
 let g=`<defs><clipPath id='cp'><rect x='${m.l}' y='${m.t}' width='${pw}' height='${ph}'/></clipPath></defs>`;
-g+=`<text x='${m.l}' y='16' style='font-size:12px;font-weight:700;fill:var(--tx)'>HAZEN-WILLIAMS  C = ${C}</text>`;
+g+=`<text x='${m.l}' y='16' style='font-size:12px;font-weight:700;fill:var(--tx)'>HAZEN-WILLIAMS  C = ${C}  |  ${tlab()}</text>`;
 for(let e=-1;e<=4;e++)for(let k=1;k<10;k++){const v=k*Math.pow(10,e);if(v<0.1||v>10000)continue;const x=X(v);g+=`<line x1='${x}' x2='${x}' y1='${m.t}' y2='${H-m.b}' stroke='var(--grid)' stroke-width='${k==1?1.2:0.5}'/>`;if([1,2,3,4,5,7].includes(k))g+=`<text x='${x}' y='${H-m.b+14}' text-anchor='middle'>${lab(v)}</text>`}
 for(let e=-1;e<=2;e++)for(let k=1;k<10;k++){const v=k*Math.pow(10,e);if(v<0.1||v>100)continue;const y=Y(v);g+=`<line y1='${y}' y2='${y}' x1='${m.l}' x2='${W-m.r}' stroke='var(--grid)' stroke-width='${k==1?1.2:0.5}'/>`;if([1,2,3,4,5,7].includes(k))g+=`<text x='${m.l-5}' y='${y+3}' text-anchor='end'>${lab(v)}</text>`}
 g+=`<rect x='${m.l}' y='${m.t}' width='${pw}' height='${ph}' fill='none' stroke='var(--tx)' stroke-width='1.2'/>`;
@@ -158,7 +183,7 @@ S.forEach(s=>{let p='',lx=null,lh=0;const sel=s==ds;for(let i=0;i<=400;i++){cons
 g+=`<path d='${p}' fill='none' stroke='${sel?'var(--ac)':'var(--tx)'}' stroke-width='${sel?2.4:0.9}' opacity='${sel?1:0.8}'/>`;
 if(lx!==null){const st2=`fill:${sel?'var(--ac)':'var(--tx)'};font-weight:${sel?700:400}`;lab2+=lh>90?`<text x='${X(lx)}' y='${m.t-4}' text-anchor='middle' style='${st2}'>${nm(s)}</text>`:`<text x='${W-m.r+4}' y='${Y(lh)+3}' style='${st2}'>${nm(s)}</text>`}});
 const VL=[0.3,0.5,0.75,1,1.5,2,3,4,5],vcur=calc(qh,ds,C).v;
-[...VL,vcur].forEach((v,k)=>{const cur=k==VL.length;if(cur&&!(v>0))return;let p='',lx=null,ly=null;for(let i=0;i<=200;i++){const d=0.3*Math.pow(100,i/200),q=v*Math.PI*Math.pow(d*0.0254,2)/4*3600,h=calc(q,d,C).hf;p+=(i?'L':'M')+X(q).toFixed(1)+','+Y(h).toFixed(1);if(q>=0.1&&q<=10000&&h>=0.1&&h<=100){lx=X(q);ly=Y(h)}}
+[...VL,vcur].forEach((v,k)=>{const cur=k==VL.length;if(cur&&!(v>0))return;let p='',lx=null,ly=null;for(let i=0;i<=200;i++){const d=0.3*Math.pow(100,i/200),q=v*Math.PI*Math.pow(idm(d),2)/4*3600,h=calc(q,d,C).hf;p+=(i?'L':'M')+X(q).toFixed(1)+','+Y(h).toFixed(1);if(q>=0.1&&q<=10000&&h>=0.1&&h<=100){lx=X(q);ly=Y(h)}}
 g+=`<path d='${p}' fill='none' stroke='${vc}' stroke-width='${cur?2:0.9}' stroke-dasharray='${cur?'':'5 3'}' opacity='${cur?1:0.8}'/>`;
 if(lx!==null)g+=`<text x='${lx-4}' y='${ly-4}' text-anchor='end' style='fill:${vc};font-weight:${cur?700:400}'>${cur?v.toFixed(2):v} ${msu}</text>`});
 if(qh>0&&hf>0){const px=X(Math.min(Math.max(qh,0.1),10000)),py=Y(Math.min(Math.max(hf,0.1),100));
@@ -169,9 +194,9 @@ g+=`<line x1='${lx0}' x2='${lx0+24}' y1='12' y2='12' stroke='var(--tx)'/><text x
 $('ch').innerHTML=g}
 function setLang(l){L=l;try{localStorage.setItem('lang',l)}catch(e){}
  document.documentElement.lang=l;document.title=t('title');
- document.querySelectorAll('[data-t]').forEach(e=>e.textContent=t(e.dataset.t));
+ document.querySelectorAll('[data-t]').forEach(e=>e.innerHTML=t(e.dataset.t));
  $('bEn').classList.toggle('on',l=='en');$('bTh').classList.toggle('on',l=='th');build();run()}
-['q','u','d','c','l','vm'].forEach(i=>$(i).addEventListener('input',run));
+['q','u','d','c','l','vm','pt'].forEach(i=>$(i).addEventListener('input',run));
 $('bEn').onclick=()=>setLang('en');$('bTh').onclick=()=>setLang('th');
 setLang(L);
 (async()=>{try{
