@@ -27,7 +27,12 @@ input,select{width:100%;margin-top:3px;padding:8px;border:1px solid var(--bd);bo
 .k{border:1px solid var(--bd);border-radius:8px;padding:10px}.k b{display:block;font-size:22px}.k span{font-size:11px;color:var(--mut)}
 .badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:600;color:#fff}
 .k .badge{font-size:12px;color:#fff}
-.top-r{display:flex;gap:8px;flex:none;align-items:flex-start}
+.top-r{display:flex;gap:8px;flex:none;align-items:flex-start;flex-wrap:wrap}
+@media(max-width:560px){
+ .top{flex-direction:column;align-items:stretch;gap:8px}
+ .top-r{justify-content:flex-start}
+ h1{font-size:16px}
+}
 .gear{border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);padding:6px 12px;font:inherit;cursor:pointer}
 .gear:hover{border-color:var(--ac)}
 dialog{background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:12px;padding:16px;width:calc(100% - 32px);max-width:420px;box-shadow:0 10px 40px rgba(0,0,0,.3)}
@@ -80,7 +85,7 @@ svg text{fill:var(--mut);font-size:10px}
   <button class="done" id="adClose" type="button" data-t="close"></button>
 </dialog>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.06</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.08</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="grid">
