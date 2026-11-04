@@ -56,7 +56,7 @@ input:disabled,select:disabled{opacity:.5;cursor:not-allowed}
 #adlg{max-width:640px}
 #adlg textarea{width:100%;min-height:120px;padding:8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--tx);font:12px/1.4 monospace;margin-top:6px}
 #adlg table{font-size:12px}
-.wide{grid-column:1/-1}.sc{overflow-x:auto}
+.wide{grid-column:1/-1}.sc{overflow-x:auto}.sc.mh{max-height:360px;overflow-y:auto}#lsT .lk{padding:3px 10px;white-space:nowrap}#lsT .lk:disabled{opacity:.45;pointer-events:none}#lsT th{position:sticky;top:0;background:var(--card)}
 table{border-collapse:collapse;width:100%;min-width:480px}th,td{padding:6px 8px;text-align:right;border-bottom:1px solid var(--bd)}
 th:first-child,td:first-child{text-align:left}tr.sel{background:color-mix(in srgb,var(--ac) 14%,transparent)}
 .note{font-size:12px;color:var(--mut);margin-top:8px}
@@ -146,7 +146,7 @@ input[readonly]{opacity:.7}
     </div>
     <div class="mapw">
       <div class="lks"><button class="lk on" id="mM" type="button" data-t="mapM"></button><button class="lk" id="mS" type="button" data-t="mapS"></button></div>
-      <iframe class="mapf hide" id="mapF" title="Map" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+      <iframe class="mapf hide" id="mapF" title="Map" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
       <div class="note" id="mapH" data-t="mapH"></div>
     </div>
     <div class="note" data-t="cNote"></div>
@@ -155,6 +155,10 @@ input[readonly]{opacity:.7}
       <label><span data-t="ez1"></span><input id="ez1" type="number" step="any" placeholder="m"></label>
     </div>
     <div class="note" data-t="eNote"></div>
+  </div>
+  <div class="card wide">
+    <h2 data-t="lsum"></h2>
+    <div class="sc mh"><table id="lsT"></table></div>
   </div>
   <div class="card wide">
     <h2 data-t="drh"></h2>
@@ -224,7 +228,7 @@ const TX={en:{sech:'Pipe section - TIS 17-2561',wall:'wall',sname:'Thai size nam
  loginTitle:'Sign in',loginUser:'Username',loginPass:'Password',loginBtn:'Sign in',loginErr:'Incorrect username or password.',loginToCalc:'Log in to calculate.',loginErrServer:'Could not reach the login server.',
  adminBtn:'Admin',logoutBtn:'Log out',adminTitle:'Admin panel',adminAdd:'Add users (one per line: username,password)',adminAddBtn:'Add users',adminAddMsg:(n)=>'Added '+n+' user(s).',adminLog:'Login log',logT:'Time',logU:'Username',logIp:'IP',
  tabD:'Design',tabC:'Calculation',dsh:'Design - input',nr:'Number of rows',ntr:'Number of trees per row',nsp:'Number of sprinklers per tree',fq:'Flow rate per sprinkler',rdist:'Distance between rows (m)',tdist:'Distance between trees (m)',slope:'Maximum slope from pump to last tree (%)',dsum:'Design summary',kTrees:'Total trees',kSpr:'Total sprinklers',kQ:'Total flow',kL:'Pipe length, pump to last tree',kDz:'Max. elevation rise',kArea:'Planted area',useBtn:'Use flow and length in Calculation',dnote:'Pipe length = main line along the first tree column + the longest row (pump to last tree). Elevation rise = slope % x pipe length.',drh:'Design drawing - plan view',prof:'Profile - pump to last tree',pump:'Pump',last:'Last tree',mainL:'Main line',latL:'Lateral',treeL:'Tree',sprL:'Sprinkler',routeL:'Longest route',rowL:'Row',elev:'Rise',tooBig:'Too many trees to draw (max 100 x 100).',
- loc:'Location & slope',cPump:'Pump coordinates (latitude, longitude)',cLast:'Last tree coordinates (latitude, longitude)',lkE:'Open in Google Earth',lkM:'Open in Google Maps',kml:'Download KML (Google Earth Pro)',mapM:'Map',mapS:'Satellite',mapH:'Enter coordinates to show the map.',
+ loc:'Location & slope',cPump:'Pump coordinates (latitude, longitude)',cLast:'Last tree coordinates (latitude, longitude)',lkE:'Open in Google Earth',lkM:'Open in Google Maps',kml:'Download KML (Google Earth Pro)',lsum:'Pipe line summary',lnRoute:'Longest route (main + lateral)',lnMain:'Main line (total)',lnSec:'Main section',lnLat:'Lateral (each)',lnTot:'Total pipe length (main + all laterals)',thLn:'Pipe line',thQty:'Qty',thLpm:'Flow (L/min)',thLen:'Length (m)',send:'Send to Calculation',mapM:'Map',mapS:'Satellite',mapH:'Enter pump (or last tree) coordinates above to show the map.',
  cNote:'Paste coordinates as <b>latitude, longitude</b> (e.g. copied from Google Maps). Read the ground elevation at each point in Google Earth (shown at the bottom of the screen), or open the KML in Google Earth Pro, right-click the path and choose <b>Show Elevation Profile</b>.',
  ez0:'Ground elevation at pump (m)',ez1:'Ground elevation at last tree (m)',eNote:'When both elevations are filled, the maximum slope in Input is calculated automatically (elevation difference / pipe length). Clear one of them to type the slope yourself.',
  dist:'Straight-line distance',badC:'Use the format: latitude, longitude'},
@@ -233,7 +237,7 @@ th:{sech:'หน้าตัดท่อ - มอก. 17-2561',wall:'ผนั�
  loginTitle:'เข้าสู่ระบบ',loginUser:'ชื่อผู้ใช้',loginPass:'รหัสผ่าน',loginBtn:'เข้าสู่ระบบ',loginErr:'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง',loginToCalc:'เข้าสู่ระบบเพื่อคำนวณ',loginErrServer:'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้',
  adminBtn:'ผู้ดูแลระบบ',logoutBtn:'ออกจากระบบ',adminTitle:'แผงควบคุมผู้ดูแลระบบ',adminAdd:'เพิ่มผู้ใช้ (บรรทัดละ 1 คน: ชื่อผู้ใช้,รหัสผ่าน)',adminAddBtn:'เพิ่มผู้ใช้',adminAddMsg:(n)=>'เพิ่มผู้ใช้แล้ว '+n+' คน',adminLog:'บันทึกการเข้าสู่ระบบ',logT:'เวลา',logU:'ชื่อผู้ใช้',logIp:'IP',
  tabD:'ออกแบบ',tabC:'คำนวณ',dsh:'ออกแบบ - ข้อมูลนำเข้า',nr:'จำนวนแถว',ntr:'จำนวนต้นไม้ต่อแถว',nsp:'จำนวนสปริงเกอร์ต่อต้น',fq:'อัตราการไหลต่อสปริงเกอร์',rdist:'ระยะห่างระหว่างแถว (ม.)',tdist:'ระยะห่างระหว่างต้น (ม.)',slope:'ความลาดชันสูงสุดจากปั๊มถึงต้นสุดท้าย (%)',dsum:'สรุปการออกแบบ',kTrees:'จำนวนต้นรวม',kSpr:'จำนวนสปริงเกอร์รวม',kQ:'อัตราการไหลรวม',kL:'ความยาวท่อ ปั๊ม-ต้นสุดท้าย',kDz:'ความสูงที่เพิ่มขึ้นสูงสุด',kArea:'พื้นที่ปลูก',useBtn:'ใช้อัตราการไหลและความยาวท่อในการคำนวณ',dnote:'ความยาวท่อ = ท่อเมนตามแนวต้นไม้แถวแรก + แถวที่ยาวที่สุด (ปั๊มถึงต้นสุดท้าย) ความสูงที่เพิ่มขึ้น = % ความลาดชัน x ความยาวท่อ',drh:'แบบผัง - มุมมองด้านบน',prof:'รูปตัด - ปั๊มถึงต้นสุดท้าย',pump:'ปั๊ม',last:'ต้นสุดท้าย',mainL:'ท่อเมน',latL:'ท่อแขนง',treeL:'ต้นไม้',sprL:'สปริงเกอร์',routeL:'เส้นทางที่ยาวที่สุด',rowL:'แถว',elev:'สูงขึ้น',tooBig:'ต้นไม้มากเกินไปที่จะวาด (สูงสุด 100 x 100)',
- loc:'ตำแหน่งและความลาดชัน',cPump:'พิกัดปั๊ม (ละติจูด, ลองจิจูด)',cLast:'พิกัดต้นสุดท้าย (ละติจูด, ลองจิจูด)',lkE:'เปิดใน Google Earth',lkM:'เปิดใน Google Maps',kml:'ดาวน์โหลด KML (Google Earth Pro)',mapM:'แผนที่',mapS:'ดาวเทียม',mapH:'กรอกพิกัดเพื่อแสดงแผนที่',
+ loc:'ตำแหน่งและความลาดชัน',cPump:'พิกัดปั๊ม (ละติจูด, ลองจิจูด)',cLast:'พิกัดต้นสุดท้าย (ละติจูด, ลองจิจูด)',lkE:'เปิดใน Google Earth',lkM:'เปิดใน Google Maps',kml:'ดาวน์โหลด KML (Google Earth Pro)',lsum:'สรุปท่อแต่ละเส้น',lnRoute:'เส้นทางที่ยาวที่สุด (เมน + แขนง)',lnMain:'ท่อเมน (รวม)',lnSec:'ท่อเมนช่วงที่',lnLat:'ท่อแขนง (ต่อแถว)',lnTot:'ความยาวท่อรวม (เมน + แขนงทั้งหมด)',thLn:'ท่อ',thQty:'จำนวน',thLpm:'อัตราการไหล (ลิตร/นาที)',thLen:'ความยาว (ม.)',send:'ส่งไปคำนวณ',mapM:'แผนที่',mapS:'ดาวเทียม',mapH:'กรอกพิกัดปั๊ม (หรือต้นสุดท้าย) ด้านบนเพื่อแสดงแผนที่',
  cNote:'วางพิกัดในรูปแบบ <b>ละติจูด, ลองจิจูด</b> (เช่น คัดลอกจาก Google Maps) อ่านค่าระดับพื้นดินแต่ละจุดจาก Google Earth (แสดงที่ด้านล่างของจอ) หรือเปิดไฟล์ KML ใน Google Earth Pro คลิกขวาที่เส้นแล้วเลือก <b>Show Elevation Profile</b>',
  ez0:'ระดับพื้นดินที่ปั๊ม (ม.)',ez1:'ระดับพื้นดินที่ต้นสุดท้าย (ม.)',eNote:'เมื่อกรอกระดับทั้งสองค่า ความลาดชันสูงสุดในข้อมูลนำเข้าจะคำนวณให้อัตโนมัติ (ผลต่างระดับ / ความยาวท่อ) ลบค่าใดค่าหนึ่งออกเพื่อกรอกความลาดชันเอง',
  dist:'ระยะทางเส้นตรง',badC:'รูปแบบ: ละติจูด, ลองจิจูด'}};
@@ -328,6 +332,10 @@ function drawDesign(){
  const dz=sl/100*Lh;
  $('dkT').textContent=trees;$('dkS').textContent=spr;$('dkQ').textContent=pn(q);$('dkQ2').textContent=pn(q*1000/60)+' L/min';
  $('dkL').textContent=pn(Lh);$('dkZ').textContent=pn(dz);$('dkA').textContent=pn(area);
+ {const ql=nt*ns*fq*fu,r=[],add=(n,c,qq,ll)=>r.push(`<tr><td style='text-align:left'>${n}</td><td>${c}</td><td>${pn(qq)}</td><td>${pn(qq*1000/60)}</td><td>${pn(ll)}</td><td><button class='lk' type='button' data-q='${qq}' data-l='${ll}'${ll>0&&qq>0?'':' disabled'}>${t('send')}</button></td></tr>`);
+  if(nr<=100&&nt<=100){add(t('lnRoute'),1,q,Lh);add(t('lnMain'),1,q,(nr-1)*rd);for(let i=1;i<nr;i++)add(t('lnSec')+' '+i+' ('+t('rowL')+' '+i+'→'+(i+1)+')',1,(nr-i)*ql,rd);add(t('lnLat'),nr,ql,(nt-1)*td);
+   r.push(`<tr><td style='text-align:left;font-weight:700'>${t('lnTot')}</td><td></td><td></td><td></td><td style='font-weight:700'>${pn((nr-1)*rd+nr*(nt-1)*td)}</td><td></td></tr>`)}
+  $('lsT').innerHTML=(r.length?`<thead><tr><th style='text-align:left'>${t('thLn')}</th><th>${t('thQty')}</th><th>${t('xl')}</th><th>${t('thLpm')}</th><th>${t('thLen')}</th><th></th></tr></thead>`:'')+'<tbody>'+r.join('')+'</tbody>'}
  if(nr>100||nt>100){$('dsg').innerHTML='<text x="20" y="40" style="font-size:13px;fill:var(--hi)">'+t('tooBig')+'</text>';$('dpf').innerHTML='';return}
  const W=800,ml=100,mr=70,mt=40,mb=80,aw=W-ml-mr,ah=380,wm=(nt-1)*td,hm=(nr-1)*rd;
  let sc=Math.min(wm>0?aw/wm:1e9,hm>0?ah/hm:1e9);if(sc>1e8)sc=20;
@@ -379,16 +387,16 @@ function updateLoc(){
  $('cDist').textContent=bad?t('badC'):(a&&b?t('dist')+': '+pn(dist)+' m':'');
  $('cDist').style.color=bad?'var(--hi)':''}
 let mapT='m',mapTm;
-function updateMap(){
+function updateMap(click){
  const a=pc($('cp').value),b=pc($('cl').value),c=a&&b?[(a[0]+b[0])/2,(a[1]+b[1])/2]:(a||b),F=$('mapF'),ll=x=>x[0]+','+x[1];
- if(!c){F.classList.add('hide');$('mapH').style.display='';F.removeAttribute('src');return}
- const dist=a&&b?hav(a,b):0,z=a&&b?Math.max(10,Math.min(20,Math.round(Math.log2(40075016*Math.cos(c[0]*Math.PI/180)/Math.max(dist*2.2,60))-7.5))):18;
+ if(!c){F.classList.add('hide');$('mapH').style.display='';F.removeAttribute('src');$('mapH').style.color=click?'var(--hi)':'';return}
+ const dist=a&&b?hav(a,b):0,z=a&&b?Math.max(3,Math.min(20,Math.floor(Math.log2(156543*Math.cos(c[0]*Math.PI/180)*600/Math.max(dist*1.6,40))))):18;
  const u='https://maps.google.com/maps?'+(a&&b?'saddr='+ll(a)+'&daddr='+ll(b)+'&dirflg=w':'q='+ll(c))+'&t='+(mapT==='s'?'k':'m')+'&z='+z+'&output=embed';
  if(F.getAttribute('src')!==u)F.src=u;
- F.classList.remove('hide');$('mapH').style.display='none'}
+ F.classList.remove('hide');$('mapH').style.display='none';$('mapH').style.color=''}
 function mapSoon(){clearTimeout(mapTm);mapTm=setTimeout(updateMap,700)}
-$('mM').onclick=()=>{mapT='m';$('mM').classList.add('on');$('mS').classList.remove('on');updateMap()};
-$('mS').onclick=()=>{mapT='s';$('mS').classList.add('on');$('mM').classList.remove('on');updateMap()};
+$('mM').onclick=()=>{mapT='m';$('mM').classList.add('on');$('mS').classList.remove('on');updateMap(1)};
+$('mS').onclick=()=>{mapT='s';$('mS').classList.add('on');$('mM').classList.remove('on');updateMap(1)};
 $('cp').addEventListener('input',mapSoon);$('cl').addEventListener('input',mapSoon);
 $('cp').addEventListener('input',updateLoc);$('cl').addEventListener('input',updateLoc);
 $('bKml').onclick=()=>{
@@ -403,6 +411,7 @@ $('bKml').onclick=()=>{
 function showTab(k){const d=k=='d';$('pgDesign').classList.toggle('hide',!d);$('pgCalc').classList.toggle('hide',d);$('tD').classList.toggle('on',d);$('tC').classList.toggle('on',!d);$('bSet').classList.toggle('hide',d)}
 $('tD').onclick=()=>showTab('d');$('tC').onclick=()=>showTab('c');
 ['nr','nt','ns','fq','dfu','rd','td','sl','ez0','ez1'].forEach(i=>$(i).addEventListener('input',drawDesign));
+$('lsT').addEventListener('click',e=>{const b=e.target.closest('button[data-q]');if(!b)return;$('q').value=+(+b.dataset.q).toPrecision(6);$('u').selectedIndex=0;$('l').value=+(+b.dataset.l).toPrecision(6);showTab('c');run()});
 $('bUse').onclick=()=>{const g1=id=>+$(id).value||0,nr=Math.max(1,Math.floor(g1('nr'))),nt=Math.max(1,Math.floor(g1('nt'))),ns=Math.max(1,Math.floor(g1('ns'))),
  q=nr*nt*ns*g1('fq')*(+$('dfu').value||1),Lh=(nr-1)*g1('rd')+(nt-1)*g1('td');
  $('q').value=+q.toPrecision(6);$('u').selectedIndex=0;$('l').value=+Lh.toPrecision(6);showTab('c');run()};
@@ -459,7 +468,7 @@ $('adAddBtn').onclick=async()=>{
  const d=await r.json();$('adAddMsg').textContent=t('adminAddMsg')(d.added);$('adBulk').value='';await loadAdminLog()};
 
 if(TOKEN)unlockUI();else lockUI();
-setLang(L);showTab('d');
+setLang(L);showTab('d');updateMap();
 (async()=>{try{
  const db=await claude.use('db'),user=await claude.use('user');
  if(!db||!user)return;
