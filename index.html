@@ -37,7 +37,7 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
 .x{border:0;background:transparent;color:var(--mut);font-size:22px;line-height:1;cursor:pointer;padding:0 4px}
 .done{width:100%;margin-top:6px;padding:9px;border:0;border-radius:8px;background:var(--ac);color:#fff;font:inherit;font-weight:600;cursor:pointer}
 .ok{background:var(--ok)}.lo{background:var(--lo)}.hi{background:var(--hi)}
-.lov{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:50}
+.lov{width:calc(100% - 32px);max-width:320px;padding:0}
 .lob{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:24px;width:calc(100% - 32px);max-width:320px}
 .lob h2{margin:0 0 14px;font-size:16px}
 .lob label{margin-bottom:10px}
@@ -46,6 +46,8 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
 .hide{display:none!important}
 .admin{background:var(--card);border:1px solid var(--bd);border-radius:8px;color:var(--tx);padding:6px 12px;font:inherit;cursor:pointer}
 .admin:hover{border-color:var(--ac)}
+input:disabled,select:disabled{opacity:.5;cursor:not-allowed}
+.loginbar{font-size:12px;color:var(--mut);margin-top:4px}
 #adlg{max-width:640px}
 #adlg textarea{width:100%;min-height:120px;padding:8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--tx);font:12px/1.4 monospace;margin-top:6px}
 #adlg table{font-size:12px}
@@ -58,15 +60,15 @@ svg text{fill:var(--mut);font-size:10px}
 </style>
 </head>
 <body>
-<div id="lov" class="lov">
+<dialog id="lov" class="lov">
   <div class="lob">
-    <h2 data-t="loginTitle"></h2>
+    <div class="dh"><h2 data-t="loginTitle"></h2><button class="x" id="loX" type="button" aria-label="Close">&times;</button></div>
     <div class="err" id="loErr"></div>
     <label><span data-t="loginUser"></span><input id="loU" type="text" autocomplete="username"></label>
     <label><span data-t="loginPass"></span><input id="loP" type="password" autocomplete="current-password"></label>
     <button id="loBtn" type="button" data-t="loginBtn"></button>
   </div>
-</div>
+</dialog>
 <dialog id="adlg">
   <div class="dh"><h2 data-t="adminTitle"></h2><button class="x" id="adX" type="button" aria-label="Close">&times;</button></div>
   <h3 style="font-size:12px;text-transform:uppercase;color:var(--mut);margin:0 0 6px" data-t="adminAdd"></h3>
@@ -78,8 +80,8 @@ svg text{fill:var(--mut);font-size:10px}
   <button class="done" id="adClose" type="button" data-t="close"></button>
 </dialog>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.05</small></h1><p class="sub" data-t="sub"></p></div>
-  <div class="top-r"><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.06</small></h1><p class="sub" data-t="sub"></p></div>
+  <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="grid">
   <div class="card">
@@ -137,12 +139,12 @@ svg text{fill:var(--mut);font-size:10px}
 <script>
 const TX={en:{sech:'Pipe section - TIS 17-2561',wall:'wall',sname:'Thai size name',ptype:'Pipe type - Thai standard TIS 17-2561',nom:'Nominal (ID = size)',calch:'Calculation (live, with your inputs)',vis:'Visitors',by:'Created by ST.',title:'Pipe Sizing Dashboard',set:'Settings',close:'Close',sub:'Flow rate - pipe size - velocity - head loss (Hazen-Williams, matches the pipe selection chart)',in:'Input',flow:'Flow rate',unit:'Unit',size:'Pipe size (nominal)',c:'C factor',len:'Pipe length (m)',vmin:'Design velocity min (m/s)',vmax:'Design velocity max (m/s)',cnote:'<b>Default C = 150</b> (PVC/PE 140-150, new steel 120, old steel 100). PVC inner dia = OD - 2 x wall (TIS 17-2561). <b>Default design velocity: min = 1 m/s, max = 1.5 m/s.</b>',res:'Result - selected size',v:'Velocity',ms:'m/s',hl:'Head loss (gradient)',hlu:'m / 100 m',tot:'Total head loss',totu:'m over length',status:'Status',ch:'Hazen-Williams pipe selection chart (head loss - flow rate - velocity)',cn:'Grey/blue curves = pipe size. Dashed amber = constant velocity (m/s). Solid amber = current velocity. Red/purple guides = operating point.',all:'All sizes at this flow',guide:(a,b)=>'Velocity guide: below '+a+' low (sediment) - '+a+' to '+b+' OK - above '+b+' high (noise, surge).',low:'Low',ok:'OK',high:'High',inch:'"',units:['m³/h','L/min','L/s','L/h'],xl:'Flow (m³/h)',yl:'Head loss (m/100 m)',thS:'Size',thI:'ID (mm)',thV:'v (m/s)',thH:'hf (m/100m)',thT:'Status',
  rec:(vm,s,v,h)=>'Smallest size with v ≤ '+vm+' m/s: '+s+'" (v = '+v+' m/s, hf = '+h+' m/100 m)',norec:'No listed size meets the velocity limit.',
- loginTitle:'Sign in',loginUser:'Username',loginPass:'Password',loginBtn:'Sign in',loginErr:'Incorrect username or password.',loginErrServer:'Could not reach the login server.',
- adminBtn:'Admin',adminTitle:'Admin panel',adminAdd:'Add users (one per line: username,password)',adminAddBtn:'Add users',adminAddMsg:(n)=>'Added '+n+' user(s).',adminLog:'Login log',logT:'Time',logU:'Username',logIp:'IP'},
+ loginTitle:'Sign in',loginUser:'Username',loginPass:'Password',loginBtn:'Sign in',loginErr:'Incorrect username or password.',loginToCalc:'Log in to calculate.',loginErrServer:'Could not reach the login server.',
+ adminBtn:'Admin',logoutBtn:'Log out',adminTitle:'Admin panel',adminAdd:'Add users (one per line: username,password)',adminAddBtn:'Add users',adminAddMsg:(n)=>'Added '+n+' user(s).',adminLog:'Login log',logT:'Time',logU:'Username',logIp:'IP'},
 th:{sech:'หน้าตัดท่อ - มอก. 17-2561',wall:'ผนังหนา',sname:'ชื่อขนาด มอก.',ptype:'ชนิดท่อ - มาตรฐาน มอก. 17-2561',nom:'ID = ขนาดนิ้ว (ไม่ระบุชนิด)',calch:'วิธีคำนวณ (ตามค่าที่ป้อน)',vis:'ผู้เข้าชม',by:'จัดทำโดย ST.',title:'แดชบอร์ดเลือกขนาดท่อ',set:'ตั้งค่า',close:'ปิด',sub:'อัตราการไหล - ขนาดท่อ - ความเร็ว - การสูญเสียความดัน (Hazen-Williams ตามแผนภูมิเลือกขนาดท่อ)',in:'ข้อมูลนำเข้า',flow:'อัตราการไหล',unit:'หน่วย',size:'ขนาดท่อ (นิ้ว)',c:'ค่า C',len:'ความยาวท่อ (ม.)',vmin:'ความเร็วต่ำสุดที่ออกแบบ (ม./วินาที)',vmax:'ความเร็วสูงสุดที่ออกแบบ (ม./วินาที)',cnote:'<b>ค่า C เริ่มต้น = 150</b> (PVC/PE 140-150, เหล็กใหม่ 120, เหล็กเก่า 100) เส้นผ่านศูนย์กลางในท่อ PVC = OD - 2 x ความหนาผนัง (มอก. 17-2561) <b>ความเร็วออกแบบเริ่มต้น: ต่ำสุด = 1 ม./วินาที, สูงสุด = 1.5 ม./วินาที</b>',res:'ผลลัพธ์ - ขนาดท่อที่เลือก',v:'ความเร็วน้ำในท่อ',ms:'เมตร/วินาที',hl:'แรงดันตก',hlu:'ม. / 100 ม.',tot:'แรงดันตกรวม',totu:'ม. ตามความยาวท่อ',status:'สถานะ',ch:'แผนภูมิเลือกขนาดท่อ Hazen-Williams (แรงดันตก - อัตราการไหล - ความเร็ว)',cn:'เส้นเทา/น้ำเงิน = ขนาดท่อ เส้นประสีเหลืองอำพัน = ความเร็วคงที่ (ม./วินาที) เส้นทึบ = ความเร็วปัจจุบัน เส้นแดง/ม่วง = จุดทำงาน',all:'ทุกขนาดท่อที่อัตราการไหลนี้',guide:(a,b)=>'แนวทางความเร็ว: ต่ำกว่า '+a+' ต่ำ (ตะกอนสะสม) - '+a+' ถึง '+b+' เหมาะสม - เกิน '+b+' สูง (เสียงดัง, น้ำกระแทก)',low:'ต่ำ',ok:'เหมาะสม',high:'สูง',inch:' นิ้ว',units:['ลบ.ม./ชม.','ลิตร/นาที','ลิตร/วินาที','ลิตร/ชม.'],xl:'อัตราการไหล (ลบ.ม./ชม.)',yl:'แรงดันตก (ม./100 ม.)',thS:'ขนาด',thI:'ID (มม.)',thV:'v (ม./วิ)',thH:'hf (ม./100ม.)',thT:'สถานะ',
  rec:(vm,s,v,h)=>'ขนาดท่อเล็กที่สุดที่ v ≤ '+vm+' ม./วินาที: '+s+' นิ้ว (v = '+v+' ม./วินาที, hf = '+h+' ม./100 ม.)',norec:'ไม่มีขนาดท่อที่ความเร็วต่ำกว่าเกณฑ์',
- loginTitle:'เข้าสู่ระบบ',loginUser:'ชื่อผู้ใช้',loginPass:'รหัสผ่าน',loginBtn:'เข้าสู่ระบบ',loginErr:'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง',loginErrServer:'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้',
- adminBtn:'ผู้ดูแลระบบ',adminTitle:'แผงควบคุมผู้ดูแลระบบ',adminAdd:'เพิ่มผู้ใช้ (บรรทัดละ 1 คน: ชื่อผู้ใช้,รหัสผ่าน)',adminAddBtn:'เพิ่มผู้ใช้',adminAddMsg:(n)=>'เพิ่มผู้ใช้แล้ว '+n+' คน',adminLog:'บันทึกการเข้าสู่ระบบ',logT:'เวลา',logU:'ชื่อผู้ใช้',logIp:'IP'}};
+ loginTitle:'เข้าสู่ระบบ',loginUser:'ชื่อผู้ใช้',loginPass:'รหัสผ่าน',loginBtn:'เข้าสู่ระบบ',loginErr:'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง',loginToCalc:'เข้าสู่ระบบเพื่อคำนวณ',loginErrServer:'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้',
+ adminBtn:'ผู้ดูแลระบบ',logoutBtn:'ออกจากระบบ',adminTitle:'แผงควบคุมผู้ดูแลระบบ',adminAdd:'เพิ่มผู้ใช้ (บรรทัดละ 1 คน: ชื่อผู้ใช้,รหัสผ่าน)',adminAddBtn:'เพิ่มผู้ใช้',adminAddMsg:(n)=>'เพิ่มผู้ใช้แล้ว '+n+' คน',adminLog:'บันทึกการเข้าสู่ระบบ',logT:'เวลา',logU:'ชื่อผู้ใช้',logIp:'IP'}};
 let L='en';try{L=localStorage.getItem('lang')||(navigator.language||'').startsWith('th')?'th':'en';const sv=localStorage.getItem('lang');if(sv)L=sv}catch(e){}
 const t=k=>TX[L][k];
 const S=[0.5,0.75,1,1.25,1.5,2,2.5,3,4,5,6,8,10,12,14,16,18,20,24],UV=[1,0.06,3.6,0.001];
@@ -160,10 +162,11 @@ function fmt(x){return x>=100?x.toFixed(0):x>=10?x.toFixed(1):x.toFixed(2)}
 let seq=0,tmr;
 function run(){clearTimeout(tmr);tmr=setTimeout(go,150)}
 async function go(){
+ if(!TOKEN){$('rn').textContent=t('loginToCalc');return}
  const my=++seq,qh=(+$('q').value||0)*(+$('u').value),C=+$('c').value||140,Ln=+$('l').value||0,vm=+$('vm').value||1.5,ds=+$('d').value;
  VMIN=$('vl').value===''?1:Math.max(0,+$('vl').value||0);VMAX=vm;
  $('gd').textContent=t('guide')(+VMIN.toFixed(3),+VMAX.toFixed(3));
- let D;try{const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},body:JSON.stringify({qh,ds,C,pt:$('pt').value})});if(res.status===401){showLogin();return}if(!res.ok)throw 0;D=await res.json()}catch(e){$('rn').textContent='Calculation server unavailable';return}
+ let D;try{const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},body:JSON.stringify({qh,ds,C,pt:$('pt').value})});if(res.status===401){lockUI();$('rn').textContent=t('loginToCalc');return}if(!res.ok)throw 0;D=await res.json()}catch(e){$('rn').textContent='Calculation server unavailable';return}
  if(my!==seq)return;
  const r={v:D.v,hf:D.hf,d:D.d},s=st(r.v);
  $('rv').textContent=fmt(r.v);$('rh').textContent=fmt(r.hf);$('rt').textContent=fmt(r.hf*Ln/100);
@@ -228,9 +231,17 @@ function setLang(l){L=l;try{localStorage.setItem('lang',l)}catch(e){}
 const dlg=$('dlg');$('bSet').onclick=()=>dlg.showModal();$('bX').onclick=$('bOk').onclick=()=>dlg.close();
 dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});
 $('bEn').onclick=()=>setLang('en');$('bTh').onclick=()=>setLang('th');
+$('bLogin').onclick=()=>{$('loErr').textContent='';$('lov').showModal()};
+$('loX').onclick=()=>$('lov').close();
+$('lov').addEventListener('click',e=>{if(e.target===$('lov'))$('lov').close()});
+$('bLogout').onclick=()=>{lockUI();$('rn').textContent=''};
 
-function showLogin(){TOKEN=null;try{localStorage.removeItem('tok');localStorage.removeItem('adm')}catch(e){}$('lov').classList.remove('hide');$('bAdmin').classList.add('hide')}
-function hideLogin(){$('lov').classList.add('hide');if(ADMIN)$('bAdmin').classList.remove('hide')}
+const INP=['q','u','d','c','l','vl','vm','pt'];
+function lockUI(){TOKEN=null;ADMIN=false;try{localStorage.removeItem('tok');localStorage.removeItem('adm')}catch(e){}
+ INP.forEach(i=>$(i).disabled=true);$('bAdmin').classList.add('hide');$('bLogout').classList.add('hide');$('bLogin').classList.remove('hide')}
+function unlockUI(){INP.forEach(i=>$(i).disabled=false);$('bLogin').classList.add('hide');$('bLogout').classList.remove('hide');if(ADMIN)$('bAdmin').classList.remove('hide')}
+function showLogin(){lockUI();$('lov').showModal()}
+function hideLogin(){if($('lov').open)$('lov').close();unlockUI()}
 async function doLogin(){
  $('loErr').textContent='';const u=$('loU').value.trim(),p=$('loP').value;
  if(!u||!p)return;
@@ -264,7 +275,7 @@ $('adAddBtn').onclick=async()=>{
  if(!r.ok){$('adAddMsg').textContent='Error';return}
  const d=await r.json();$('adAddMsg').textContent=t('adminAddMsg')(d.added);$('adBulk').value='';await loadAdminLog()};
 
-if(TOKEN)hideLogin();else showLogin();
+if(TOKEN)unlockUI();else lockUI();
 setLang(L);
 (async()=>{try{
  const db=await claude.use('db'),user=await claude.use('user');
