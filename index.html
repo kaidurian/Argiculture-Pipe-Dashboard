@@ -70,6 +70,7 @@ svg text{fill:var(--mut);font-size:10px}
 .k small{display:block;font-size:11px;color:var(--mut)}
 .lk{display:inline-block;text-decoration:none;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);padding:7px 12px;font:inherit;cursor:pointer}
 .lk:hover{border-color:var(--ac)}.lk.off{pointer-events:none;opacity:.45}
+.mapw{margin-top:10px}.mapw .lks{margin:0 0 8px}.lk.on{border-color:var(--ac);color:var(--ac)}.mapf{width:100%;height:320px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);display:block}.mapf.hide{display:none}
 .lks{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
 input[readonly]{opacity:.7}
 .useb{width:100%;margin-top:12px;padding:9px;border:0;border-radius:8px;background:var(--ac);color:#fff;font:inherit;font-weight:600;cursor:pointer}
@@ -142,6 +143,11 @@ input[readonly]{opacity:.7}
       <a class="lk off" id="lkE" target="_blank" rel="noopener noreferrer">🌍 <span data-t="lkE"></span></a>
       <a class="lk off" id="lkM" target="_blank" rel="noopener noreferrer">📍 <span data-t="lkM"></span></a>
       <button class="lk" id="bKml" type="button">⬇ <span data-t="kml"></span></button>
+    </div>
+    <div class="mapw">
+      <div class="lks"><button class="lk on" id="mM" type="button" data-t="mapM"></button><button class="lk" id="mS" type="button" data-t="mapS"></button></div>
+      <iframe class="mapf hide" id="mapF" title="Map" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+      <div class="note" id="mapH" data-t="mapH"></div>
     </div>
     <div class="note" data-t="cNote"></div>
     <div class="row" style="margin-top:10px">
@@ -218,7 +224,7 @@ const TX={en:{sech:'Pipe section - TIS 17-2561',wall:'wall',sname:'Thai size nam
  loginTitle:'Sign in',loginUser:'Username',loginPass:'Password',loginBtn:'Sign in',loginErr:'Incorrect username or password.',loginToCalc:'Log in to calculate.',loginErrServer:'Could not reach the login server.',
  adminBtn:'Admin',logoutBtn:'Log out',adminTitle:'Admin panel',adminAdd:'Add users (one per line: username,password)',adminAddBtn:'Add users',adminAddMsg:(n)=>'Added '+n+' user(s).',adminLog:'Login log',logT:'Time',logU:'Username',logIp:'IP',
  tabD:'Design',tabC:'Calculation',dsh:'Design - input',nr:'Number of rows',ntr:'Number of trees per row',nsp:'Number of sprinklers per tree',fq:'Flow rate per sprinkler',rdist:'Distance between rows (m)',tdist:'Distance between trees (m)',slope:'Maximum slope from pump to last tree (%)',dsum:'Design summary',kTrees:'Total trees',kSpr:'Total sprinklers',kQ:'Total flow',kL:'Pipe length, pump to last tree',kDz:'Max. elevation rise',kArea:'Planted area',useBtn:'Use flow and length in Calculation',dnote:'Pipe length = main line along the first tree column + the longest row (pump to last tree). Elevation rise = slope % x pipe length.',drh:'Design drawing - plan view',prof:'Profile - pump to last tree',pump:'Pump',last:'Last tree',mainL:'Main line',latL:'Lateral',treeL:'Tree',sprL:'Sprinkler',routeL:'Longest route',rowL:'Row',elev:'Rise',tooBig:'Too many trees to draw (max 100 x 100).',
- loc:'Location & slope',cPump:'Pump coordinates (latitude, longitude)',cLast:'Last tree coordinates (latitude, longitude)',lkE:'Open in Google Earth',lkM:'Open in Google Maps',kml:'Download KML (Google Earth Pro)',
+ loc:'Location & slope',cPump:'Pump coordinates (latitude, longitude)',cLast:'Last tree coordinates (latitude, longitude)',lkE:'Open in Google Earth',lkM:'Open in Google Maps',kml:'Download KML (Google Earth Pro)',mapM:'Map',mapS:'Satellite',mapH:'Enter coordinates to show the map.',
  cNote:'Paste coordinates as <b>latitude, longitude</b> (e.g. copied from Google Maps). Read the ground elevation at each point in Google Earth (shown at the bottom of the screen), or open the KML in Google Earth Pro, right-click the path and choose <b>Show Elevation Profile</b>.',
  ez0:'Ground elevation at pump (m)',ez1:'Ground elevation at last tree (m)',eNote:'When both elevations are filled, the maximum slope in Input is calculated automatically (elevation difference / pipe length). Clear one of them to type the slope yourself.',
  dist:'Straight-line distance',badC:'Use the format: latitude, longitude'},
@@ -227,7 +233,7 @@ th:{sech:'หน้าตัดท่อ - มอก. 17-2561',wall:'ผนั�
  loginTitle:'เข้าสู่ระบบ',loginUser:'ชื่อผู้ใช้',loginPass:'รหัสผ่าน',loginBtn:'เข้าสู่ระบบ',loginErr:'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง',loginToCalc:'เข้าสู่ระบบเพื่อคำนวณ',loginErrServer:'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้',
  adminBtn:'ผู้ดูแลระบบ',logoutBtn:'ออกจากระบบ',adminTitle:'แผงควบคุมผู้ดูแลระบบ',adminAdd:'เพิ่มผู้ใช้ (บรรทัดละ 1 คน: ชื่อผู้ใช้,รหัสผ่าน)',adminAddBtn:'เพิ่มผู้ใช้',adminAddMsg:(n)=>'เพิ่มผู้ใช้แล้ว '+n+' คน',adminLog:'บันทึกการเข้าสู่ระบบ',logT:'เวลา',logU:'ชื่อผู้ใช้',logIp:'IP',
  tabD:'ออกแบบ',tabC:'คำนวณ',dsh:'ออกแบบ - ข้อมูลนำเข้า',nr:'จำนวนแถว',ntr:'จำนวนต้นไม้ต่อแถว',nsp:'จำนวนสปริงเกอร์ต่อต้น',fq:'อัตราการไหลต่อสปริงเกอร์',rdist:'ระยะห่างระหว่างแถว (ม.)',tdist:'ระยะห่างระหว่างต้น (ม.)',slope:'ความลาดชันสูงสุดจากปั๊มถึงต้นสุดท้าย (%)',dsum:'สรุปการออกแบบ',kTrees:'จำนวนต้นรวม',kSpr:'จำนวนสปริงเกอร์รวม',kQ:'อัตราการไหลรวม',kL:'ความยาวท่อ ปั๊ม-ต้นสุดท้าย',kDz:'ความสูงที่เพิ่มขึ้นสูงสุด',kArea:'พื้นที่ปลูก',useBtn:'ใช้อัตราการไหลและความยาวท่อในการคำนวณ',dnote:'ความยาวท่อ = ท่อเมนตามแนวต้นไม้แถวแรก + แถวที่ยาวที่สุด (ปั๊มถึงต้นสุดท้าย) ความสูงที่เพิ่มขึ้น = % ความลาดชัน x ความยาวท่อ',drh:'แบบผัง - มุมมองด้านบน',prof:'รูปตัด - ปั๊มถึงต้นสุดท้าย',pump:'ปั๊ม',last:'ต้นสุดท้าย',mainL:'ท่อเมน',latL:'ท่อแขนง',treeL:'ต้นไม้',sprL:'สปริงเกอร์',routeL:'เส้นทางที่ยาวที่สุด',rowL:'แถว',elev:'สูงขึ้น',tooBig:'ต้นไม้มากเกินไปที่จะวาด (สูงสุด 100 x 100)',
- loc:'ตำแหน่งและความลาดชัน',cPump:'พิกัดปั๊ม (ละติจูด, ลองจิจูด)',cLast:'พิกัดต้นสุดท้าย (ละติจูด, ลองจิจูด)',lkE:'เปิดใน Google Earth',lkM:'เปิดใน Google Maps',kml:'ดาวน์โหลด KML (Google Earth Pro)',
+ loc:'ตำแหน่งและความลาดชัน',cPump:'พิกัดปั๊ม (ละติจูด, ลองจิจูด)',cLast:'พิกัดต้นสุดท้าย (ละติจูด, ลองจิจูด)',lkE:'เปิดใน Google Earth',lkM:'เปิดใน Google Maps',kml:'ดาวน์โหลด KML (Google Earth Pro)',mapM:'แผนที่',mapS:'ดาวเทียม',mapH:'กรอกพิกัดเพื่อแสดงแผนที่',
  cNote:'วางพิกัดในรูปแบบ <b>ละติจูด, ลองจิจูด</b> (เช่น คัดลอกจาก Google Maps) อ่านค่าระดับพื้นดินแต่ละจุดจาก Google Earth (แสดงที่ด้านล่างของจอ) หรือเปิดไฟล์ KML ใน Google Earth Pro คลิกขวาที่เส้นแล้วเลือก <b>Show Elevation Profile</b>',
  ez0:'ระดับพื้นดินที่ปั๊ม (ม.)',ez1:'ระดับพื้นดินที่ต้นสุดท้าย (ม.)',eNote:'เมื่อกรอกระดับทั้งสองค่า ความลาดชันสูงสุดในข้อมูลนำเข้าจะคำนวณให้อัตโนมัติ (ผลต่างระดับ / ความยาวท่อ) ลบค่าใดค่าหนึ่งออกเพื่อกรอกความลาดชันเอง',
  dist:'ระยะทางเส้นตรง',badC:'รูปแบบ: ละติจูด, ลองจิจูด'}};
@@ -372,6 +378,18 @@ function updateLoc(){
  const bad=($('cp').value.trim()&&!a)||($('cl').value.trim()&&!b);
  $('cDist').textContent=bad?t('badC'):(a&&b?t('dist')+': '+pn(dist)+' m':'');
  $('cDist').style.color=bad?'var(--hi)':''}
+let mapT='m',mapTm;
+function updateMap(){
+ const a=pc($('cp').value),b=pc($('cl').value),c=a&&b?[(a[0]+b[0])/2,(a[1]+b[1])/2]:(a||b),F=$('mapF'),ll=x=>x[0]+','+x[1];
+ if(!c){F.classList.add('hide');$('mapH').style.display='';F.removeAttribute('src');return}
+ const dist=a&&b?hav(a,b):0,z=a&&b?Math.max(10,Math.min(20,Math.round(Math.log2(40075016*Math.cos(c[0]*Math.PI/180)/Math.max(dist*2.2,60))-7.5))):18;
+ const u='https://maps.google.com/maps?'+(a&&b?'saddr='+ll(a)+'&daddr='+ll(b)+'&dirflg=w':'q='+ll(c))+'&t='+(mapT==='s'?'k':'m')+'&z='+z+'&output=embed';
+ if(F.getAttribute('src')!==u)F.src=u;
+ F.classList.remove('hide');$('mapH').style.display='none'}
+function mapSoon(){clearTimeout(mapTm);mapTm=setTimeout(updateMap,700)}
+$('mM').onclick=()=>{mapT='m';$('mM').classList.add('on');$('mS').classList.remove('on');updateMap()};
+$('mS').onclick=()=>{mapT='s';$('mS').classList.add('on');$('mM').classList.remove('on');updateMap()};
+$('cp').addEventListener('input',mapSoon);$('cl').addEventListener('input',mapSoon);
 $('cp').addEventListener('input',updateLoc);$('cl').addEventListener('input',updateLoc);
 $('bKml').onclick=()=>{
  const a=pc($('cp').value),b=pc($('cl').value),pm=(n,x)=>`<Placemark><name>${n}</name><Point><coordinates>${x[1]},${x[0]},0</coordinates></Point></Placemark>`;
