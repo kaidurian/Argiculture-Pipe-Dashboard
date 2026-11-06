@@ -97,7 +97,7 @@ input[readonly]{opacity:.7}
   <button class="done" id="adClose" type="button" data-t="close"></button>
 </dialog>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.14</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.15</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="tabs"><button id="tD" type="button" class="on" data-t="tabD"></button><button id="tC" type="button" data-t="tabC"></button></div>
@@ -119,12 +119,14 @@ input[readonly]{opacity:.7}
       <label><span data-t="fq"></span><input id="fq" type="number" step="any" min="0" value="120"></label>
       <label><span data-t="unit"></span><select id="dfu"></select></label>
     </div>
+    <label><span data-t="spL"></span><input id="sp" type="number" step="any" min="0" placeholder="bar"></label>
     <label><span data-t="pmL"></span><input id="pm" type="number" step="any" min="0"></label>
     <div class="row">
       <label><span data-t="zrL"></span><input id="zr" type="number" step="1" min="1"></label>
       <label><span data-t="znL"></span><select id="zn"></select></label>
     </div>
     <label><span data-t="fdL"></span><input id="fd" type="number" step="any" min="0"></label>
+    <label><span data-t="fitL"></span><input id="fit" type="number" step="any" min="0" value="20" placeholder="20"></label>
     <label style="margin-bottom:0"><span data-t="elevL"></span></label>
     <div class="row">
       <label><span data-t="ez0s"></span><input id="ez0" type="number" step="any" placeholder="m"></label>
@@ -141,6 +143,9 @@ input[readonly]{opacity:.7}
       <div class="k"><span data-t="kDz"></span><b id="dkZ">-</b><span>m</span></div>
       <div class="k"><span data-t="kArea"></span><b id="dkA">-</b><span>m²</span></div>
     </div>
+    <h2 style="margin-top:14px" data-t="pumpH"></h2>
+    <div class="sc"><table id="pmT"></table></div>
+    <div class="note" id="pmN" style="margin-top:6px"></div>
     <button class="useb" id="bUse" type="button" data-t="useBtn"></button>
     <div class="note" data-t="dnote"></div>
   </div>
@@ -162,16 +167,16 @@ input[readonly]{opacity:.7}
     <div class="note" data-t="cNote"></div>
   </div>
   <div class="card wide">
-    <h2 data-t="drh"></h2>
-    <div class="sc"><svg id="dsg" viewBox="0 0 800 460" width="100%" style="min-width:560px"></svg></div>
-    <h2 style="margin-top:14px" data-t="prof"></h2>
-    <div class="sc"><svg id="dpf" viewBox="0 0 800 150" width="100%" style="min-width:560px"></svg></div>
-  </div>
-  <div class="card wide">
     <h2 data-t="lsum"></h2>
     <div class="note" id="plN" style="margin:0 0 8px;font-weight:700"></div>
     <div class="sc mh"><table id="lsT"></table></div>
     <div class="note" data-t="lsNote"></div>
+  </div>
+  <div class="card wide">
+    <h2 data-t="drh"></h2>
+    <div class="sc"><svg id="dsg" viewBox="0 0 800 460" width="100%" style="min-width:560px"></svg></div>
+    <h2 style="margin-top:14px" data-t="prof"></h2>
+    <div class="sc"><svg id="dpf" viewBox="0 0 800 150" width="100%" style="min-width:560px"></svg></div>
   </div>
 </div>
 
@@ -238,7 +243,7 @@ const TX={en:{sech:'Pipe section - TIS 17-2561',wall:'wall',sname:'Thai size nam
  loginTitle:'Sign in',loginUser:'Username',loginPass:'Password',loginBtn:'Sign in',loginErr:'Incorrect username or password.',loginToCalc:'Log in to calculate.',loginErrServer:'Could not reach the login server.',
  adminBtn:'Admin',logoutBtn:'Log out',adminTitle:'Admin panel',adminAdd:'Add users (one per line: username,password)',adminAddBtn:'Add users',adminAddMsg:(n)=>'Added '+n+' user(s).',adminLog:'Login log',logT:'Time',logU:'Username',logIp:'IP',
  tabD:'Design',tabC:'Calculation',dsh:'Design - input',nr:'Number of rows',ntr:'Number of trees per row',nsp:'Number of sprinklers per tree',fq:'Flow rate per sprinkler',rdist:'Distance between rows (m)',tdist:'Distance between trees (m)',slope:'Maximum slope from pump to last tree (%)',dsum:'Design summary',kTrees:'Total trees',kSpr:'Total sprinklers',kQ:'Total flow',kL:'Pipe length, pump to last tree',kDz:'Height difference, pump to highest point',kArea:'Planted area',useBtn:'Use flow and length in Calculation',dnote:'Pipe length = main line along the first tree column + the longest row (pump to last tree). Height difference = pump to the highest point sprinkler.',drh:'Design drawing - plan view',prof:'Elevation Profile - Pond’s water surface to pump to the highest of sprinkler',pump:'Pump',pond:'Pond’s water surface',last:'Last tree',mainL:'Main line',latL:'Lateral',treeL:'Tree',sprL:'Sprinkler',routeL:'Longest route',rowL:'Row',elev:'Height difference',tooBig:'Too many trees to draw (max 100 x 100).',
- loc:'Location & slope',cPump:'Pump coordinates (latitude, longitude)',cLast:'Last tree coordinates (latitude, longitude)',lkE:'Open in Google Earth',lkM:'Open in Google Maps',kml:'Download KML (Google Earth Pro)',lsum:'Pipe line summary',pmL:'Distance of pipe line from pump to main line (m)',zrL:'Number of rows in each zone',znL:'Zone to release water',rowW:'rows',hlW:'Head loss',lnPump:'Pipe line, pump to main line',plan:'Plan to release water (rows)',dhL:'Distance from pump to the last sprinkler (m)',elevL:'Elevation profile',ez0s:'Pond’s water surface to pump (m)',ez1s:'Pump to the highest point sprinkler (m)',plN:'Zone to release water: ',plOf:' of ',rowsU:' rows',lnHf:'Total hf, pump line + main + 1 lateral + 1 lateral-to-sprinkler line, pump to last sprinkler (m)',dhDim:'Pump to last sprinkler',lastHi:'Highest point sprinkler',thPt:'Pipe type',thSz:'Size',thVv:'V (m/s)',thHf:'hf (m/100m)',thTh:'Total hf (m)',tgtL:'Pipe line in Design',backBtn:'Send pipe type, size and result to Design',backOk:'Sent to Design: ',stale:'Flow or length in Calculation differs from this line',clr:'Clear result',lsNote:'Click a row to highlight it on the drawing and simulate the water flow to the sprinklers. Send a line to Calculation, then send pipe type, size and result back to Design.',lnRoute:'Longest route (main + lateral)',lnMain:'Main line (total)',lnSec:'Main section',lnLat:'Lateral (each)',fdL:'Length, lateral to sprinkler (m)',lnFeed:'Lateral to sprinkler (each)',lnTot:'Total pipe length (main + all laterals + lateral-to-sprinkler lines in plan)',thLn:'Pipe line',thQty:'Qty',thLpm:'Flow (L/min)',thLen:'Length (m)',send:'Send to Calculation',mapM:'Map',mapS:'Satellite',mapH:'Enter pump (or last tree) coordinates above to show the map.',
+ loc:'Location & slope',cPump:'Pump coordinates (latitude, longitude)',cLast:'Last tree coordinates (latitude, longitude)',lkE:'Open in Google Earth',lkM:'Open in Google Maps',kml:'Download KML (Google Earth Pro)',lsum:'Pipe line summary',pmL:'Distance of pipe line from pump to main line (m)',zrL:'Number of zones',znL:'Zone to release water',rowW:'rows',hlW:'Head loss',lnPump:'Pipe line, pump to main line',plan:'Plan to release water (rows)',dhL:'Distance from pump to the last sprinkler (m)',elevL:'Elevation profile',ez0s:'Pond’s water surface to pump (m)',ez1s:'Pump to the highest point sprinkler (m)',plN:'Zone to release water: ',plOf:' of ',rowsU:' rows',lnHf:'Total hf, pump line + main + 1 lateral + 1 lateral-to-sprinkler line, pump to last sprinkler (m)',dhDim:'Pump to last sprinkler',lastHi:'Highest point sprinkler',thPt:'Pipe type',thSz:'Size',thVv:'V (m/s)',thHf:'hf (m/100m)',thTh:'Total hf (m)',tgtL:'Pipe line in Design',backBtn:'Send pipe type, size and result to Design',backOk:'Sent to Design: ',stale:'Flow or length in Calculation differs from this line',clr:'Clear result',lsNote:'Click a row to highlight it on the drawing and simulate the water flow to the sprinklers. Send a line to Calculation, then send pipe type, size and result back to Design.',lnRoute:'Longest route (main + lateral)',lnMain:'Main line (total)',lnSec:'Main section',lnLat:'Lateral (each)',fdL:'Length, lateral to sprinkler (m)',lnFeed:'Lateral to sprinkler (each)',lnHf2:'Total hf, pump line + All Main Section + 1 lateral + 1 lateral-to-sprinkler line, pump to last sprinkler (m)',spL:'Pressure per sprinkler (bar)',fitL:'Pipe fittings: elbow, coupling, tee, etc. (% of pipe head loss)',pumpH:'Pump selection',pFlow:'Total flow rate (zone to release)',pHf:'Pipe hf (pump line + all main sections + 1 lateral + 1 lateral-to-sprinkler line)',pFit:'Pipe fittings',pHL:'Total head loss (pipe + fittings)',pSt:'Static head (pond’s water surface to highest sprinkler)',pPr:'Sprinkler pressure',pTdh:'Total head for pump (static + head loss + sprinkler pressure)',pNote:'Head loss shows after every pipe line has been sent to Calculation and back.',lnTot:'Total pipe length (main + all laterals + lateral-to-sprinkler lines in plan)',thLn:'Pipe line',thQty:'Qty',thLpm:'Flow (L/min)',thLen:'Length (m)',send:'Send to Calculation',mapM:'Map',mapS:'Satellite',mapH:'Enter pump (or last tree) coordinates above to show the map.',
  cNote:'Paste coordinates as <b>latitude, longitude</b> (e.g. copied from Google Maps). Read the ground elevation at each point in Google Earth (shown at the bottom of the screen), or open the KML in Google Earth Pro, right-click the path and choose <b>Show Elevation Profile</b>.',
  ez0:'Ground elevation at pump (m)',ez1:'Ground elevation at last tree (m)',eNote:'When both elevations are filled, the maximum slope in Input is calculated automatically (elevation difference / pipe length). Clear one of them to type the slope yourself.',
  dist:'Straight-line distance',badC:'Use the format: latitude, longitude'},
@@ -247,7 +252,7 @@ th:{sech:'หน้าตัดท่อ - มอก. 17-2561',wall:'ผนั�
  loginTitle:'เข้าสู่ระบบ',loginUser:'ชื่อผู้ใช้',loginPass:'รหัสผ่าน',loginBtn:'เข้าสู่ระบบ',loginErr:'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง',loginToCalc:'เข้าสู่ระบบเพื่อคำนวณ',loginErrServer:'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้',
  adminBtn:'ผู้ดูแลระบบ',logoutBtn:'ออกจากระบบ',adminTitle:'แผงควบคุมผู้ดูแลระบบ',adminAdd:'เพิ่มผู้ใช้ (บรรทัดละ 1 คน: ชื่อผู้ใช้,รหัสผ่าน)',adminAddBtn:'เพิ่มผู้ใช้',adminAddMsg:(n)=>'เพิ่มผู้ใช้แล้ว '+n+' คน',adminLog:'บันทึกการเข้าสู่ระบบ',logT:'เวลา',logU:'ชื่อผู้ใช้',logIp:'IP',
  tabD:'ออกแบบ',tabC:'คำนวณ',dsh:'ออกแบบ - ข้อมูลนำเข้า',nr:'จำนวนแถว',ntr:'จำนวนต้นไม้ต่อแถว',nsp:'จำนวนสปริงเกอร์ต่อต้น',fq:'อัตราการไหลต่อสปริงเกอร์',rdist:'ระยะห่างระหว่างแถว (ม.)',tdist:'ระยะห่างระหว่างต้น (ม.)',slope:'ความลาดชันสูงสุดจากปั๊มถึงต้นสุดท้าย (%)',dsum:'สรุปการออกแบบ',kTrees:'จำนวนต้นรวม',kSpr:'จำนวนสปริงเกอร์รวม',kQ:'อัตราการไหลรวม',kL:'ความยาวท่อ ปั๊ม-ต้นสุดท้าย',kDz:'ผลต่างความสูง ปั๊มถึงจุดสูงสุด',kArea:'พื้นที่ปลูก',useBtn:'ใช้อัตราการไหลและความยาวท่อในการคำนวณ',dnote:'ความยาวท่อ = ท่อเมนตามแถวต้นไม้แรก + แถวที่ยาวที่สุด (ปั๊มถึงต้นสุดท้าย) ผลต่างความสูง = ปั๊มถึงสปริงเกอร์จุดสูงสุด',drh:'แบบผัง - มุมมองด้านบน',prof:'โปรไฟล์ระดับความสูง - ผิวน้ำในบ่อ ถึงปั๊ม ถึงสปริงเกอร์จุดสูงสุด',pump:'ปั๊ม',pond:'ผิวน้ำในบ่อ',last:'ต้นสุดท้าย',mainL:'ท่อเมน',latL:'ท่อแขนง',treeL:'ต้นไม้',sprL:'สปริงเกอร์',routeL:'เส้นทางที่ยาวที่สุด',rowL:'แถว',elev:'ผลต่างความสูง',tooBig:'ต้นไม้มากเกินไปที่จะวาด (สูงสุด 100 x 100)',
- loc:'ตำแหน่งและความลาดชัน',cPump:'พิกัดปั๊ม (ละติจูด, ลองจิจูด)',cLast:'พิกัดต้นสุดท้าย (ละติจูด, ลองจิจูด)',lkE:'เปิดใน Google Earth',lkM:'เปิดใน Google Maps',kml:'ดาวน์โหลด KML (Google Earth Pro)',lsum:'สรุปท่อแต่ละเส้น',pmL:'ระยะท่อจากปั๊มถึงท่อเมน (ม.)',zrL:'จำนวนแถวในแต่ละโซน',znL:'โซนที่ปล่อยน้ำ',rowW:'แถว',hlW:'สูญเสียแรงดัน',lnPump:'ท่อจากปั๊มถึงท่อเมน',plan:'แผนการปล่อยน้ำ (แถว)',dhL:'ระยะจากปั๊มถึงสปริงเกอร์ตัวสุดท้าย (ม.)',elevL:'โปรไฟล์ระดับความสูง',ez0s:'ผิวน้ำในบ่อถึงปั๊ม (ม.)',ez1s:'ปั๊มถึงสปริงเกอร์จุดสูงสุด (ม.)',plN:'โซนที่ปล่อยน้ำ: ',plOf:' จาก ',rowsU:' แถว',lnHf:'hf รวม ท่อจากปั๊ม + เมน + แขนง 1 เส้น + ท่อแขนงถึงสปริงเกอร์ 1 เส้น ปั๊มถึงสปริงเกอร์ตัวสุดท้าย (ม.)',dhDim:'ปั๊มถึงสปริงเกอร์ตัวสุดท้าย',lastHi:'สปริงเกอร์จุดสูงสุด',thPt:'ชนิดท่อ',thSz:'ขนาด',thVv:'V (ม./วิ)',thHf:'hf (ม./100ม.)',thTh:'hf รวม (ม.)',tgtL:'ท่อใน Design',backBtn:'ส่งชนิดท่อ ขนาด และผลลัพธ์กลับไป Design',backOk:'ส่งไป Design แล้ว: ',stale:'อัตราการไหลหรือความยาวในการคำนวณไม่ตรงกับท่อเส้นนี้',clr:'ล้างผลลัพธ์',lsNote:'คลิกแถวเพื่อไฮไลต์และจำลองการไหลของน้ำไปยังสปริงเกอร์ในแบบผัง ส่งท่อไปคำนวณ แล้วส่งชนิดท่อ ขนาด และผลลัพธ์กลับมาที่ Design',lnRoute:'เส้นทางที่ยาวที่สุด (เมน + แขนง)',lnMain:'ท่อเมน (รวม)',lnSec:'ท่อเมนช่วงที่',lnLat:'ท่อแขนง (ต่อแถว)',fdL:'ความยาวท่อจากท่อแขนงถึงสปริงเกอร์ (ม.)',lnFeed:'ท่อแขนงถึงสปริงเกอร์ (ต่อหัว)',lnTot:'ความยาวท่อรวม (เมน + แขนงทั้งหมด + ท่อแขนงถึงสปริงเกอร์ในแผน)',thLn:'ท่อ',thQty:'จำนวน',thLpm:'อัตราการไหล (ลิตร/นาที)',thLen:'ความยาว (ม.)',send:'ส่งไปคำนวณ',mapM:'แผนที่',mapS:'ดาวเทียม',mapH:'กรอกพิกัดปั๊ม (หรือต้นสุดท้าย) ด้านบนเพื่อแสดงแผนที่',
+ loc:'ตำแหน่งและความลาดชัน',cPump:'พิกัดปั๊ม (ละติจูด, ลองจิจูด)',cLast:'พิกัดต้นสุดท้าย (ละติจูด, ลองจิจูด)',lkE:'เปิดใน Google Earth',lkM:'เปิดใน Google Maps',kml:'ดาวน์โหลด KML (Google Earth Pro)',lsum:'สรุปท่อแต่ละเส้น',pmL:'ระยะท่อจากปั๊มถึงท่อเมน (ม.)',zrL:'จำนวนโซน',znL:'โซนที่ปล่อยน้ำ',rowW:'แถว',hlW:'สูญเสียแรงดัน',lnPump:'ท่อจากปั๊มถึงท่อเมน',plan:'แผนการปล่อยน้ำ (แถว)',dhL:'ระยะจากปั๊มถึงสปริงเกอร์ตัวสุดท้าย (ม.)',elevL:'โปรไฟล์ระดับความสูง',ez0s:'ผิวน้ำในบ่อถึงปั๊ม (ม.)',ez1s:'ปั๊มถึงสปริงเกอร์จุดสูงสุด (ม.)',plN:'โซนที่ปล่อยน้ำ: ',plOf:' จาก ',rowsU:' แถว',lnHf:'hf รวม ท่อจากปั๊ม + เมน + แขนง 1 เส้น + ท่อแขนงถึงสปริงเกอร์ 1 เส้น ปั๊มถึงสปริงเกอร์ตัวสุดท้าย (ม.)',dhDim:'ปั๊มถึงสปริงเกอร์ตัวสุดท้าย',lastHi:'สปริงเกอร์จุดสูงสุด',thPt:'ชนิดท่อ',thSz:'ขนาด',thVv:'V (ม./วิ)',thHf:'hf (ม./100ม.)',thTh:'hf รวม (ม.)',tgtL:'ท่อใน Design',backBtn:'ส่งชนิดท่อ ขนาด และผลลัพธ์กลับไป Design',backOk:'ส่งไป Design แล้ว: ',stale:'อัตราการไหลหรือความยาวในการคำนวณไม่ตรงกับท่อเส้นนี้',clr:'ล้างผลลัพธ์',lsNote:'คลิกแถวเพื่อไฮไลต์และจำลองการไหลของน้ำไปยังสปริงเกอร์ในแบบผัง ส่งท่อไปคำนวณ แล้วส่งชนิดท่อ ขนาด และผลลัพธ์กลับมาที่ Design',lnRoute:'เส้นทางที่ยาวที่สุด (เมน + แขนง)',lnMain:'ท่อเมน (รวม)',lnSec:'ท่อเมนช่วงที่',lnLat:'ท่อแขนง (ต่อแถว)',fdL:'ความยาวท่อจากท่อแขนงถึงสปริงเกอร์ (ม.)',lnFeed:'ท่อแขนงถึงสปริงเกอร์ (ต่อหัว)',lnHf2:'hf รวม ท่อจากปั๊ม + เมนทุกช่วง + แขนง 1 เส้น + ท่อแขนงถึงสปริงเกอร์ 1 เส้น ปั๊มถึงสปริงเกอร์ตัวสุดท้าย (ม.)',spL:'ความดันต่อสปริงเกอร์ (บาร์)',fitL:'ข้อต่อท่อ: ข้องอ ข้อต่อตรง สามทาง ฯลฯ (% ของแรงดันตกในท่อ)',pumpH:'การเลือกปั๊ม',pFlow:'อัตราการไหลรวม (โซนที่ปล่อยน้ำ)',pHf:'hf ท่อ (ท่อจากปั๊ม + เมนทุกช่วง + แขนง 1 เส้น + ท่อแขนงถึงสปริงเกอร์ 1 เส้น)',pFit:'ข้อต่อท่อ',pHL:'แรงดันตกรวม (ท่อ + ข้อต่อ)',pSt:'ความสูงสถิต (ผิวน้ำในบ่อถึงสปริงเกอร์จุดสูงสุด)',pPr:'ความดันสปริงเกอร์',pTdh:'เฮดรวมสำหรับปั๊ม (สถิต + แรงดันตก + ความดันสปริงเกอร์)',pNote:'แรงดันตกจะแสดงเมื่อส่งทุกเส้นท่อไปคำนวณและส่งกลับครบแล้ว',lnTot:'ความยาวท่อรวม (เมน + แขนงทั้งหมด + ท่อแขนงถึงสปริงเกอร์ในแผน)',thLn:'ท่อ',thQty:'จำนวน',thLpm:'อัตราการไหล (ลิตร/นาที)',thLen:'ความยาว (ม.)',send:'ส่งไปคำนวณ',mapM:'แผนที่',mapS:'ดาวเทียม',mapH:'กรอกพิกัดปั๊ม (หรือต้นสุดท้าย) ด้านบนเพื่อแสดงแผนที่',
  cNote:'วางพิกัดในรูปแบบ <b>ละติจูด, ลองจิจูด</b> (เช่น คัดลอกจาก Google Maps) อ่านค่าระดับพื้นดินแต่ละจุดจาก Google Earth (แสดงที่ด้านล่างของจอ) หรือเปิดไฟล์ KML ใน Google Earth Pro คลิกขวาที่เส้นแล้วเลือก <b>Show Elevation Profile</b>',
  ez0:'ระดับพื้นดินที่ปั๊ม (ม.)',ez1:'ระดับพื้นดินที่ต้นสุดท้าย (ม.)',eNote:'เมื่อกรอกระดับทั้งสองค่า ความลาดชันสูงสุดในข้อมูลนำเข้าจะคำนวณให้อัตโนมัติ (ผลต่างระดับ / ความยาวท่อ) ลบค่าใดค่าหนึ่งออกเพื่อกรอกความลาดชันเอง',
  dist:'ระยะทางเส้นตรง',badC:'รูปแบบ: ละติจูด, ลองจิจูด'}};
@@ -340,22 +345,34 @@ function drawDesign(){
  const trees=nr*nt,spr=trees*ns,q=spr*fq*fu,Lh=(nr-1)*rd+(nt-1)*td,area=(nt*td)*(nr*rd);
  const e0=$('ez0').value.trim(),e1=$('ez1').value.trim(),auto=e1!==''&&isFinite(+e1),ql0=nt*ns*fq*fu,
   dz=auto?+e1:0,
-  pm=Math.max(0,g1('pm')),zrI=Math.floor(g1('zr')),zs=zrI>=1?Math.min(zrI,nr):nr,Z=Math.ceil(nr/zs),
-  zi=Math.max(0,Math.min(Z-1,Math.floor(+$('zn').value||1)-1)),rs=zi*zs,re=Math.min(nr,rs+zs),cnt=re-rs,act=j=>j>=rs&&j<re;
- $('zr').placeholder=String(nr);
- {let o='';for(let j=0;j<Z;j++){const a=j*zs+1,b=Math.min(nr,(j+1)*zs);o+=`<option value='${j+1}'>${en?'Zone':'โซน'} ${j+1} (${t('rowW')} ${a}${b>a?'-'+b:''})</option>`}$('zn').innerHTML=o;$('zn').value=String(zi+1)}
+  pm=Math.max(0,g1('pm')),Z=Math.min(nr,Math.max(1,Math.floor(g1('zr'))||1)),zb=Math.floor(nr/Z),zx=nr%Z,zst=j=>j*zb+Math.min(j,zx),
+  zi=Math.max(0,Math.min(Z-1,Math.floor(+$('zn').value||1)-1)),rs=zst(zi),re=zst(zi+1),cnt=re-rs,act=j=>j>=rs&&j<re;
+ $('zr').placeholder='1';
+ {let o='';for(let j=0;j<Z;j++){const a=zst(j)+1,b=zst(j+1);o+=`<option value='${j+1}'>${en?'Zone':'โซน'} ${j+1} (${t('rowW')} ${a}${b>a?'-'+b:''})</option>`}$('zn').innerHTML=o;$('zn').value=String(zi+1)}
  $('plN').textContent=t('plN')+(zi+1)+t('plOf')+Z+' ('+t('rowW')+' '+(rs+1)+(re>rs+1?'-'+re:'')+')';
  $('dkT').textContent=trees;$('dkS').textContent=spr;$('dkQ').textContent=pn(q);$('dkQ2').textContent=pn(q*1000/60)+' L/min';
  $('dkL').textContent=pn(Lh+pm);$('dkZ').textContent=auto?pn(dz):'-';$('dkA').textContent=pn(area);
  {const ql=nt*ns*fq*fu,Ls=[],add=(k,n,c,qq,ll)=>Ls.push({k,n,c,q:qq,l:ll}),cl={lo:t('low'),ok:t('ok'),hi:t('high')};
   if(nr<=100&&nt<=100){const Qz=cnt*ql;add('route',t('lnRoute'),1,Qz,pm+(re-1)*rd+(nt-1)*td);if(pm>0)add('pump',t('lnPump'),1,Qz,pm);add('main',t('lnMain'),1,Qz,(re-1)*rd);for(let i=1;i<re;i++)add('sec'+i,t('lnSec')+' '+i+' ('+t('rowL')+' '+i+'→'+(i+1)+')',1,(re-Math.max(i,rs))*ql,rd);add('lat',t('lnLat'),cnt,ql,(nt-1)*td);if(fd>0)add('feed',t('lnFeed'),cnt*nt*ns,fq*fu,fd)}
-  LINES=Ls;if(SEL&&!Ls.some(x=>x.k===SEL))SEL=null;
+  let hfS=null,stS=false;LINES=Ls;if(SEL&&!Ls.some(x=>x.k===SEL))SEL=null;
   const r=Ls.map(x=>{const e=RES[x.k],bad=isBad(e,x),
    rc=e?`<td${bad?` style='opacity:.55' title='${t('stale')}'`:''}>${bad?'⚠ ':''}${ptName(e.pt)}</td><td>${e.ds}${t('inch')}</td><td>${fmt(e.v)}</td><td>${fmt(e.hf)}</td><td>${fmt(e.tot)}</td><td><span class='badge ${e.cls}'>${cl[e.cls]}</span></td>`:`<td class='mu' colspan='6'>-</td>`;
    return `<tr data-k='${x.k}'${x.k===SEL?" class='on'":''}><td style='text-align:left'>${x.n}</td><td>${x.c}</td><td>${pn(x.q)}</td><td>${pn(x.q*1000/60)}</td><td>${pn(x.l)}</td>${rc}<td><button class='lk' type='button' data-q='${x.q}' data-l='${x.l}'${x.l>0&&x.q>0?'':' disabled'}>${t('send')}</button></td><td>${e?`<button class='lk' type='button' data-x='${x.k}' title='${t('clr')}' aria-label='${t('clr')}'>✕</button>`:''}</td></tr>`});
   if(Ls.length){const m=RES.main,l=RES.lat,pu=RES.pump,xm=Ls.find(x=>x.k==='main'),xl2=Ls.find(x=>x.k==='lat'),xp=Ls.find(x=>x.k==='pump'),xf=Ls.find(x=>x.k==='feed'),fe=RES.feed,ok2=m&&l&&(!xp||pu)&&(!xf||fe),st2=ok2&&(isBad(m,xm)||isBad(l,xl2)||(xp&&isBad(pu,xp))||(xf&&isBad(fe,xf)));
    r.push(`<tr class='tot'><td style='text-align:left;font-weight:700'>${t('lnTot')}</td><td></td><td></td><td></td><td style='font-weight:700'>${pn(pm+(re-1)*rd+cnt*(nt-1)*td+(fd>0?cnt*nt*ns*fd:0))}</td><td colspan='8'></td></tr>`);
-   r.push(`<tr class='tot'><td style='text-align:left;font-weight:700'>${t('lnHf')}</td><td></td><td></td><td></td><td></td><td colspan='4'></td><td style='font-weight:700${st2?';opacity:.55':''}'${st2?` title='${t('stale')}'`:''}>${ok2?(st2?'⚠ ':'')+fmt(m.tot+l.tot+(xp?pu.tot:0)+(xf?fe.tot:0)):'-'}</td><td colspan='3'></td></tr>`)}
+   r.push(`<tr class='tot'><td style='text-align:left;font-weight:700'>${t('lnHf')}</td><td></td><td></td><td></td><td></td><td colspan='4'></td><td style='font-weight:700${st2?';opacity:.55':''}'${st2?` title='${t('stale')}'`:''}>${ok2?(st2?'⚠ ':'')+fmt(m.tot+l.tot+(xp?pu.tot:0)+(xf?fe.tot:0)):'-'}</td><td colspan='3'></td></tr>`);
+    const secs=Ls.filter(x=>/^sec\d+$/.test(x.k)),okS=l&&(!xp||pu)&&(!xf||fe)&&secs.every(x=>RES[x.k]);
+    stS=okS&&(isBad(l,xl2)||(xp&&isBad(pu,xp))||(xf&&isBad(fe,xf))||secs.some(x=>isBad(RES[x.k],x)));
+    if(okS)hfS=l.tot+(xp?pu.tot:0)+(xf?fe.tot:0)+secs.reduce((a,x)=>a+RES[x.k].tot,0);
+    r.push(`<tr class='tot'><td style='text-align:left;font-weight:700'>${t('lnHf2')}</td><td></td><td></td><td></td><td></td><td colspan='4'></td><td style='font-weight:700${stS?';opacity:.55':''}'${stS?` title='${t('stale')}'`:''}>${okS?(stS?'⚠ ':'')+fmt(hfS):'-'}</td><td colspan='3'></td></tr>`)}
+  {const Qz=cnt*nt*ns*fq*fu,fp=$('fit').value.trim()===''?20:Math.max(0,+$('fit').value||0),spb=Math.max(0,g1('sp')),spH=spb*10.197,h0s=e0!==''&&isFinite(+e0)?+e0:0,stat=h0s+dz,
+     hf=hfS,fh=hf==null?null:hf*fp/100,tl=hf==null?null:hf+fh,tdh=tl==null?null:stat+tl+spH,v=(x,d)=>x==null?'-':(stS?'⚠ ':'')+pn(x)+(d||''),
+     pr=(a,b,u,bold)=>`<tr><td style='text-align:left${bold?';font-weight:700':''}'>${a}</td><td style='${bold?'font-weight:700':''}'>${b}</td><td class='mu'>${u}</td></tr>`;
+    $('pmT').innerHTML=pr(t('pFlow')+' ('+(zi+1)+'/'+Z+')',pn(Qz)+' = '+pn(Qz*1000/60),'m³/h = L/min',true)+
+     pr(t('pHf'),v(hf),'m')+pr(t('pFit')+' ('+pn(fp)+'%)',v(fh),'m')+pr(t('pHL'),v(tl),'m',true)+
+     pr(t('pSt'),pn(stat),'m')+pr(t('pPr')+' ('+pn(spb)+' bar)',pn(spH),'m')+
+     pr(t('pTdh'),tdh==null?'-':(stS?'⚠ ':'')+pn(tdh)+' = '+pn(tdh/10.197),'m = bar',true);
+    $('pmN').textContent=hf==null?t('pNote'):''}
   $('lsT').innerHTML=(Ls.length?`<thead><tr><th style='text-align:left'>${t('thLn')}</th><th>${t('thQty')}</th><th>${t('xl')}</th><th>${t('thLpm')}</th><th>${t('thLen')}</th><th>${t('thPt')}</th><th>${t('thSz')}</th><th>${t('thVv')}</th><th>${t('thHf')}</th><th>${t('thTh')}</th><th>${t('status')}</th><th></th><th></th></tr></thead>`:'')+'<tbody>'+r.join('')+'</tbody>';
   const tv=$('tgt').value;$('tgt').innerHTML=Ls.map(x=>`<option value='${x.k}'>${x.n}</option>`).join('');if(tv&&Ls.some(x=>x.k===tv))$('tgt').value=tv}
  if(nr>100||nt>100){$('dsg').innerHTML='<text x="20" y="40" style="font-size:13px;fill:var(--hi)">'+t('tooBig')+'</text>';$('dpf').innerHTML='';return}
@@ -476,7 +493,7 @@ $('bKml').onclick=()=>{
  l.href=u;l.download='pipe-layout.kml';document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)};
 function showTab(k){const d=k=='d';$('pgDesign').classList.toggle('hide',!d);$('pgCalc').classList.toggle('hide',d);$('tD').classList.toggle('on',d);$('tC').classList.toggle('on',!d);$('bSet').classList.toggle('hide',d)}
 $('tD').onclick=()=>showTab('d');$('tC').onclick=()=>showTab('c');
-['nr','nt','ns','fq','dfu','rd','td','pm','zr','zn','fd','ez0','ez1'].forEach(i=>$(i).addEventListener('input',drawDesign));
+['nr','nt','ns','fq','dfu','rd','td','pm','zr','zn','fd','sp','fit','ez0','ez1'].forEach(i=>$(i).addEventListener('input',drawDesign));
 $('lsT').addEventListener('click',e=>{
  const x=e.target.closest('button[data-x]');if(x){delete RES[x.dataset.x];drawDesign();return}
  const tr=e.target.closest('tr[data-k]');if(!tr)return;const k=tr.dataset.k,b=e.target.closest('button[data-q]');
