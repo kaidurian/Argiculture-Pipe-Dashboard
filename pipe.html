@@ -62,6 +62,11 @@ th:first-child,td:first-child{text-align:left}tr.sel{background:color-mix(in srg
 .note{font-size:12px;color:var(--mut);margin-top:8px}
 .foot{max-width:1100px;margin:14px auto 0;padding-top:10px;border-top:1px solid var(--bd);text-align:center;font-size:12px;color:var(--mut)}
 svg text{fill:var(--mut);font-size:10px}
+.adv{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.adv li{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--bd);border-radius:8px;padding:8px 10px}
+.adv .n{flex:none;width:22px;height:22px;border-radius:50%;background:var(--ac);color:#fff;font-size:12px;font-weight:700;display:grid;place-items:center}
+.adv .n.ok{background:var(--ok)}.adv .n.lo{background:var(--lo)}.adv .n.hi{background:var(--hi)}
+.adv b{display:block;font-size:13px}.adv span.d{color:var(--mut);font-size:13px}
 </style>
 </head>
 <body>
@@ -85,7 +90,7 @@ svg text{fill:var(--mut);font-size:10px}
   <button class="done" id="adClose" type="button" data-t="close"></button>
 </dialog>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.08</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.08.1</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="grid">
@@ -112,6 +117,10 @@ svg text{fill:var(--mut);font-size:10px}
     <h2 data-t="sech"></h2>
     <svg id="sec" viewBox="0 0 360 250" width="100%" style="max-height:300px"></svg>
     <div class="note" id="secn"></div>
+  </div>
+  <div class="card wide">
+    <h2 data-t="advh"></h2>
+    <ol class="adv" id="adv"></ol>
   </div>
   <div class="card wide">
     <h2 data-t="ch"></h2>
@@ -142,11 +151,11 @@ svg text{fill:var(--mut);font-size:10px}
 </dialog>
 
 <script>
-const TX={en:{sech:'Pipe section - TIS 17-2561',wall:'wall',sname:'Thai size name',ptype:'Pipe type - Thai standard TIS 17-2561',nom:'Nominal (ID = size)',calch:'Calculation (live, with your inputs)',vis:'Visitors',by:'Created by ST.',title:'Pipe Sizing Dashboard',set:'Settings',close:'Close',sub:'Flow rate - pipe size - velocity - head loss (Hazen-Williams, matches the pipe selection chart)',in:'Input',flow:'Flow rate',unit:'Unit',size:'Pipe size (nominal)',c:'C factor',len:'Pipe length (m)',vmin:'Design velocity min (m/s)',vmax:'Design velocity max (m/s)',cnote:'<b>Default C = 150</b> (PVC/PE 140-150, new steel 120, old steel 100). PVC inner dia = OD - 2 x wall (TIS 17-2561). <b>Default design velocity: min = 1 m/s, max = 1.5 m/s.</b>',res:'Result - selected size',v:'Velocity',ms:'m/s',hl:'Head loss (gradient)',hlu:'m / 100 m',tot:'Total head loss',totu:'m over length',status:'Status',ch:'Hazen-Williams pipe selection chart (head loss - flow rate - velocity)',cn:'Grey/blue curves = pipe size. Dashed amber = constant velocity (m/s). Solid amber = current velocity. Red/purple guides = operating point.',all:'All sizes at this flow',guide:(a,b)=>'Velocity guide: below '+a+' low (sediment) - '+a+' to '+b+' OK - above '+b+' high (noise, surge).',low:'Low',ok:'OK',high:'High',inch:'"',units:['m³/h','L/min','L/s','L/h'],xl:'Flow (m³/h)',yl:'Head loss (m/100 m)',thS:'Size',thI:'ID (mm)',thV:'v (m/s)',thH:'hf (m/100m)',thT:'Status',
+const TX={en:{sech:'Pipe section - TIS 17-2561',wall:'wall',sname:'Thai size name',ptype:'Pipe type - Thai standard TIS 17-2561',nom:'Nominal (ID = size)',calch:'Calculation (live, with your inputs)',vis:'Visitors',by:'Created by ST.',title:'Pipe Sizing Dashboard',advh:'Advice - next steps',set:'Settings',close:'Close',sub:'Flow rate - pipe size - velocity - head loss (Hazen-Williams, matches the pipe selection chart)',in:'Input',flow:'Flow rate',unit:'Unit',size:'Pipe size (nominal)',c:'C factor',len:'Pipe length (m)',vmin:'Design velocity min (m/s)',vmax:'Design velocity max (m/s)',cnote:'<b>Default C = 150</b> (PVC/PE 140-150, new steel 120, old steel 100). PVC inner dia = OD - 2 x wall (TIS 17-2561). <b>Default design velocity: min = 1 m/s, max = 1.5 m/s.</b>',res:'Result - selected size',v:'Velocity',ms:'m/s',hl:'Head loss (gradient)',hlu:'m / 100 m',tot:'Total head loss',totu:'m over length',status:'Status',ch:'Hazen-Williams pipe selection chart (head loss - flow rate - velocity)',cn:'Grey/blue curves = pipe size. Dashed amber = constant velocity (m/s). Solid amber = current velocity. Red/purple guides = operating point.',all:'All sizes at this flow',guide:(a,b)=>'Velocity guide: below '+a+' low (sediment) - '+a+' to '+b+' OK - above '+b+' high (noise, surge).',low:'Low',ok:'OK',high:'High',inch:'"',units:['m³/h','L/min','L/s','L/h'],xl:'Flow (m³/h)',yl:'Head loss (m/100 m)',thS:'Size',thI:'ID (mm)',thV:'v (m/s)',thH:'hf (m/100m)',thT:'Status',
  rec:(vm,s,v,h)=>'Smallest size with v ≤ '+vm+' m/s: '+s+'" (v = '+v+' m/s, hf = '+h+' m/100 m)',norec:'No listed size meets the velocity limit.',
  loginTitle:'Sign in',loginUser:'Username',loginPass:'Password',loginBtn:'Sign in',loginErr:'Incorrect username or password.',loginToCalc:'Log in to calculate.',loginErrServer:'Could not reach the login server.',
  adminBtn:'Admin',logoutBtn:'Log out',adminTitle:'Admin panel',adminAdd:'Add users (one per line: username,password)',adminAddBtn:'Add users',adminAddMsg:(n)=>'Added '+n+' user(s).',adminLog:'Login log',logT:'Time',logU:'Username',logIp:'IP'},
-th:{sech:'หน้าตัดท่อ - มอก. 17-2561',wall:'ผนังหนา',sname:'ชื่อขนาด มอก.',ptype:'ชนิดท่อ - มาตรฐาน มอก. 17-2561',nom:'ID = ขนาดนิ้ว (ไม่ระบุชนิด)',calch:'วิธีคำนวณ (ตามค่าที่ป้อน)',vis:'ผู้เข้าชม',by:'จัดทำโดย ST.',title:'แดชบอร์ดเลือกขนาดท่อ',set:'ตั้งค่า',close:'ปิด',sub:'อัตราการไหล - ขนาดท่อ - ความเร็ว - การสูญเสียความดัน (Hazen-Williams ตามแผนภูมิเลือกขนาดท่อ)',in:'ข้อมูลนำเข้า',flow:'อัตราการไหล',unit:'หน่วย',size:'ขนาดท่อ (นิ้ว)',c:'ค่า C',len:'ความยาวท่อ (ม.)',vmin:'ความเร็วต่ำสุดที่ออกแบบ (ม./วินาที)',vmax:'ความเร็วสูงสุดที่ออกแบบ (ม./วินาที)',cnote:'<b>ค่า C เริ่มต้น = 150</b> (PVC/PE 140-150, เหล็กใหม่ 120, เหล็กเก่า 100) เส้นผ่านศูนย์กลางในท่อ PVC = OD - 2 x ความหนาผนัง (มอก. 17-2561) <b>ความเร็วออกแบบเริ่มต้น: ต่ำสุด = 1 ม./วินาที, สูงสุด = 1.5 ม./วินาที</b>',res:'ผลลัพธ์ - ขนาดท่อที่เลือก',v:'ความเร็วน้ำในท่อ',ms:'เมตร/วินาที',hl:'แรงดันตก',hlu:'ม. / 100 ม.',tot:'แรงดันตกรวม',totu:'ม. ตามความยาวท่อ',status:'สถานะ',ch:'แผนภูมิเลือกขนาดท่อ Hazen-Williams (แรงดันตก - อัตราการไหล - ความเร็ว)',cn:'เส้นเทา/น้ำเงิน = ขนาดท่อ เส้นประสีเหลืองอำพัน = ความเร็วคงที่ (ม./วินาที) เส้นทึบ = ความเร็วปัจจุบัน เส้นแดง/ม่วง = จุดทำงาน',all:'ทุกขนาดท่อที่อัตราการไหลนี้',guide:(a,b)=>'แนวทางความเร็ว: ต่ำกว่า '+a+' ต่ำ (ตะกอนสะสม) - '+a+' ถึง '+b+' เหมาะสม - เกิน '+b+' สูง (เสียงดัง, น้ำกระแทก)',low:'ต่ำ',ok:'เหมาะสม',high:'สูง',inch:' นิ้ว',units:['ลบ.ม./ชม.','ลิตร/นาที','ลิตร/วินาที','ลิตร/ชม.'],xl:'อัตราการไหล (ลบ.ม./ชม.)',yl:'แรงดันตก (ม./100 ม.)',thS:'ขนาด',thI:'ID (มม.)',thV:'v (ม./วิ)',thH:'hf (ม./100ม.)',thT:'สถานะ',
+th:{sech:'หน้าตัดท่อ - มอก. 17-2561',wall:'ผนังหนา',sname:'ชื่อขนาด มอก.',ptype:'ชนิดท่อ - มาตรฐาน มอก. 17-2561',nom:'ID = ขนาดนิ้ว (ไม่ระบุชนิด)',calch:'วิธีคำนวณ (ตามค่าที่ป้อน)',vis:'ผู้เข้าชม',by:'จัดทำโดย ST.',title:'แดชบอร์ดเลือกขนาดท่อ',advh:'คำแนะนำ - ขั้นตอนถัดไป',set:'ตั้งค่า',close:'ปิด',sub:'อัตราการไหล - ขนาดท่อ - ความเร็ว - การสูญเสียความดัน (Hazen-Williams ตามแผนภูมิเลือกขนาดท่อ)',in:'ข้อมูลนำเข้า',flow:'อัตราการไหล',unit:'หน่วย',size:'ขนาดท่อ (นิ้ว)',c:'ค่า C',len:'ความยาวท่อ (ม.)',vmin:'ความเร็วต่ำสุดที่ออกแบบ (ม./วินาที)',vmax:'ความเร็วสูงสุดที่ออกแบบ (ม./วินาที)',cnote:'<b>ค่า C เริ่มต้น = 150</b> (PVC/PE 140-150, เหล็กใหม่ 120, เหล็กเก่า 100) เส้นผ่านศูนย์กลางในท่อ PVC = OD - 2 x ความหนาผนัง (มอก. 17-2561) <b>ความเร็วออกแบบเริ่มต้น: ต่ำสุด = 1 ม./วินาที, สูงสุด = 1.5 ม./วินาที</b>',res:'ผลลัพธ์ - ขนาดท่อที่เลือก',v:'ความเร็วน้ำในท่อ',ms:'เมตร/วินาที',hl:'แรงดันตก',hlu:'ม. / 100 ม.',tot:'แรงดันตกรวม',totu:'ม. ตามความยาวท่อ',status:'สถานะ',ch:'แผนภูมิเลือกขนาดท่อ Hazen-Williams (แรงดันตก - อัตราการไหล - ความเร็ว)',cn:'เส้นเทา/น้ำเงิน = ขนาดท่อ เส้นประสีเหลืองอำพัน = ความเร็วคงที่ (ม./วินาที) เส้นทึบ = ความเร็วปัจจุบัน เส้นแดง/ม่วง = จุดทำงาน',all:'ทุกขนาดท่อที่อัตราการไหลนี้',guide:(a,b)=>'แนวทางความเร็ว: ต่ำกว่า '+a+' ต่ำ (ตะกอนสะสม) - '+a+' ถึง '+b+' เหมาะสม - เกิน '+b+' สูง (เสียงดัง, น้ำกระแทก)',low:'ต่ำ',ok:'เหมาะสม',high:'สูง',inch:' นิ้ว',units:['ลบ.ม./ชม.','ลิตร/นาที','ลิตร/วินาที','ลิตร/ชม.'],xl:'อัตราการไหล (ลบ.ม./ชม.)',yl:'แรงดันตก (ม./100 ม.)',thS:'ขนาด',thI:'ID (มม.)',thV:'v (ม./วิ)',thH:'hf (ม./100ม.)',thT:'สถานะ',
  rec:(vm,s,v,h)=>'ขนาดท่อเล็กที่สุดที่ v ≤ '+vm+' ม./วินาที: '+s+' นิ้ว (v = '+v+' ม./วินาที, hf = '+h+' ม./100 ม.)',norec:'ไม่มีขนาดท่อที่ความเร็วต่ำกว่าเกณฑ์',
  loginTitle:'เข้าสู่ระบบ',loginUser:'ชื่อผู้ใช้',loginPass:'รหัสผ่าน',loginBtn:'เข้าสู่ระบบ',loginErr:'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง',loginToCalc:'เข้าสู่ระบบเพื่อคำนวณ',loginErrServer:'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้',
  adminBtn:'ผู้ดูแลระบบ',logoutBtn:'ออกจากระบบ',adminTitle:'แผงควบคุมผู้ดูแลระบบ',adminAdd:'เพิ่มผู้ใช้ (บรรทัดละ 1 คน: ชื่อผู้ใช้,รหัสผ่าน)',adminAddBtn:'เพิ่มผู้ใช้',adminAddMsg:(n)=>'เพิ่มผู้ใช้แล้ว '+n+' คน',adminLog:'บันทึกการเข้าสู่ระบบ',logT:'เวลา',logU:'ชื่อผู้ใช้',logIp:'IP'}};
@@ -180,8 +189,37 @@ async function go(){
  $('rec').textContent=rw?t('rec')(vm,rec,fmt(rw[2]),fmt(rw[3])):t('norec');
  let h='<tr><th>'+t('thS')+'</th><th>'+t('thI')+'</th><th>'+t('thV')+'</th><th>'+t('thH')+'</th><th>'+t('thT')+'</th></tr>';
  D.rows.forEach(([x,id,v,hf])=>{const q=st(v);h+='<tr class="'+(x==ds?'sel':'')+'"><td>'+x+t('inch')+(x==rec?' ★':'')+'</td><td>'+id.toFixed(1)+'</td><td>'+fmt(v)+'</td><td>'+fmt(hf)+'</td><td><span class="badge '+q[0]+'">'+q[1]+'</span></td></tr>'});
- $('tb').innerHTML=h;draw2(qh,r.hf,ds,C,D);calcBox(qh,ds,C,Ln,r);drawSec(ds,D.id,D.od);$('tbl').textContent='HAZEN-WILLIAMS C = '+C+' | '+tlab();
+ $('tb').innerHTML=h;draw2(qh,r.hf,ds,C,D);calcBox(qh,ds,C,Ln,r);advise(qh,ds,Ln,D,r,s);drawSec(ds,D.id,D.od);$('tbl').textContent='HAZEN-WILLIAMS C = '+C+' | '+tlab();
 }
+
+function advise(qh,ds,Ln,D,r,s){
+ const en=L=='en',fr={0.5:'½',0.75:'¾',1.25:'1¼',1.5:'1½',2.5:'2½'},q=String.fromCharCode(34),nm=x=>(fr[x]||x)+q,
+ ms=en?' m/s':' ม./วิ',mt=en?' m':' ม.',m100=en?' m/100 m':' ม./100 ม.',
+ rows=D.rows.filter(x=>x[3]!==undefined),rw=rows.find(x=>x[2]<=VMAX),cur=rows.find(x=>x[0]==ds),
+ nx=cur?rows[rows.indexOf(cur)+1]:null,tot=h=>fmt(h*Ln/100)+mt,vl=+VMIN.toFixed(3),vh=+VMAX.toFixed(3),out=[];
+ // 1 - status
+ let a,b;
+ if(s[0]=='ok'){a=en?'Check velocity - OK':'ตรวจความเร็ว - เหมาะสม';
+  b=en?'Velocity '+fmt(r.v)+ms+' is inside the design range ('+vl+'-'+vh+ms+'). '+nm(ds)+' suits this flow.':'ความเร็ว '+fmt(r.v)+ms+' อยู่ในช่วงออกแบบ ('+vl+'-'+vh+ms+') ท่อ '+nm(ds)+' เหมาะกับอัตราการไหลนี้'}
+ else if(s[0]=='lo'){a=en?'Check velocity - too low':'ตรวจความเร็ว - ต่ำเกินไป';
+  b=en?'Velocity '+fmt(r.v)+ms+' is below '+vl+ms+': the pipe is oversized and sediment may settle.'+(rw&&rw[0]<ds?' Try a smaller size, '+nm(rw[0])+'.':''):'ความเร็ว '+fmt(r.v)+ms+' ต่ำกว่า '+vl+ms+' ท่อใหญ่เกินไป อาจเกิดตะกอนตกค้าง'+(rw&&rw[0]<ds?' ลองใช้ขนาดเล็กลง '+nm(rw[0]):'')}
+ else{a=en?'Check velocity - too high':'ตรวจความเร็ว - สูงเกินไป';
+  b=en?'Velocity '+fmt(r.v)+ms+' is above '+vh+ms+': risk of noise, surge and high head loss.'+(rw?' Increase to '+nm(rw[0])+'.':' No listed size meets the limit - split the flow into parallel lines.'):'ความเร็ว '+fmt(r.v)+ms+' สูงกว่า '+vh+ms+' เสี่ยงเสียงดัง แรงกระแทก และแรงดันตกสูง'+(rw?' ควรเพิ่มเป็น '+nm(rw[0]):' ไม่มีขนาดที่ผ่านเกณฑ์ ควรแบ่งน้ำเป็นหลายท่อขนาน')}
+ out.push([s[0],a,b]);
+ // 2 - recommended size
+ if(rw)out.push(['',en?'Pick the size':'เลือกขนาดท่อ',en?'Recommended: '+nm(rw[0])+' (smallest size with v ≤ '+vh+ms+'): v = '+fmt(rw[2])+ms+', hf = '+fmt(rw[3])+m100+'.'+(rw[0]==ds?' This is your current size.':''):'แนะนำ: '+nm(rw[0])+' (ขนาดเล็กที่สุดที่ v ≤ '+vh+ms+'): v = '+fmt(rw[2])+ms+', hf = '+fmt(rw[3])+m100+(rw[0]==ds?' ซึ่งเป็นขนาดที่เลือกอยู่แล้ว':'')]);
+ // 3 - head loss
+ let c;
+ if(rw&&rw[0]!=ds){const df=fmt(Math.abs(r.hf-rw[3])*Ln/100)+mt,sv=rw[3]<r.hf;
+  c=en?'Total head loss is '+tot(r.hf)+' at '+nm(ds)+' and '+tot(rw[3])+' at '+nm(rw[0])+' ('+(sv?'saves ':'adds ')+df+') over '+Ln+mt+'.':'แรงดันตกรวม '+tot(r.hf)+' ที่ '+nm(ds)+' และ '+tot(rw[3])+' ที่ '+nm(rw[0])+' ('+(sv?'ลดลง ':'เพิ่มขึ้น ')+df+') ตามความยาว '+Ln+mt}
+ else{c=en?'Total head loss is '+tot(r.hf)+' over '+Ln+mt+'.':'แรงดันตกรวม '+tot(r.hf)+' ตามความยาว '+Ln+mt;
+  if(nx&&nx[3]<r.hf)c+=en?' One size up ('+nm(nx[0])+') gives '+tot(nx[3])+', saving '+fmt((r.hf-nx[3])*Ln/100)+mt+' at a higher pipe cost.':' ถ้าเพิ่มหนึ่งขนาด ('+nm(nx[0])+') จะเหลือ '+tot(nx[3])+' ลดลง '+fmt((r.hf-nx[3])*Ln/100)+mt+' แต่ค่าท่อสูงขึ้น'}
+ out.push(['',en?'Compare head loss':'เปรียบเทียบแรงดันตก',c]);
+ // 4 - pump
+ out.push(['',en?'Size the pump':'เลือกปั๊ม',en?'Pump head ≥ pipe head loss + static lift + fitting/valve losses + required end pressure. Fittings are commonly allowed at about 10-20 % of the pipe loss.':'แรงดันปั๊ม ≥ แรงดันตกในท่อ + ความสูงยกน้ำ + แรงดันตกที่ข้อต่อ/วาล์ว + แรงดันปลายทางที่ต้องการ โดยทั่วไปเผื่อข้อต่อประมาณ 10-20 % ของแรงดันตกในท่อ']);
+ // 5 - surge (high velocity only)
+ if(s[0]=='hi')out.push(['',en?'Protect against surge':'ป้องกันน้ำกระแทก',en?'At high velocity use slow-closing valves and air release valves to limit water hammer.':'เมื่อความเร็วสูง ควรใช้วาล์วปิดช้าและวาล์วระบายอากาศเพื่อลดน้ำกระแทก']);
+ $('adv').innerHTML=out.map((o,i)=>'<li><span class="n '+o[0]+'">'+(i+1)+'</span><div><b>'+o[1]+'</b><span class="d">'+o[2]+'</span></div></li>').join('')}
 const NM={0.5:18,0.75:20,1:25,1.25:35,1.5:40,2:55,2.5:65,3:80,4:100,5:125,6:150,8:200,10:250,12:300,14:350,16:400,18:450,20:500,24:600};
 function tlab(){const o=$('pt').selectedOptions[0];return o?o.textContent:''}
 function drawSec(ds,ID,OD){const v=$('pt').value,pvc=!(v===''||v==='n'),e=OD?(OD-ID)/2:null,en=L=='en',u=en?'mm':'มม.',q2=en?String.fromCharCode(34):' นิ้ว',ni=({0.5:'½',0.75:'¾',1.25:'1¼',1.5:'1½',2.5:'2½'}[ds]||ds)+String.fromCharCode(34);
