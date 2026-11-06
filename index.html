@@ -96,14 +96,28 @@ input[readonly]{opacity:.7}
   <div class="sc"><table id="adTb"></table></div>
   <button class="done" id="adClose" type="button" data-t="close"></button>
 </dialog>
+<dialog id="rpt" style="max-width:900px">
+  <div class="dh"><h2 data-t="rptT"></h2><button class="x" id="rpX" type="button" aria-label="Close">&times;</button></div>
+  <div id="rptB" class="rp" style="max-height:68vh;overflow:auto;border:1px solid var(--bd);border-radius:8px;padding:14px"></div>
+  <div class="lks" style="margin-top:10px"><button class="lk" id="rpPrn" type="button" data-t="rptPrn"></button><button class="lk" id="rpDl" type="button" data-t="rptDl"></button><button class="lk" id="rpC" type="button" data-t="close"></button></div>
+</dialog>
+<div id="rptP" class="rp"></div>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.15</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.16</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="tabs"><button id="tD" type="button" class="on" data-t="tabD"></button><button id="tC" type="button" data-t="tabC"></button></div>
 
 <!-- ===== DESIGN FIELD ===== -->
 <div class="grid" id="pgDesign">
+  <div class="card wide">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+      <label style="margin:0;flex:1 1 220px"><span data-t="prjL"></span><input id="prj" type="text" maxlength="80" autocomplete="off"></label>
+      <div class="lks" style="margin:0"><button class="lk" id="bSave" type="button">💾 <span data-t="bSave"></span></button><button class="lk" id="bLoad" type="button">📂 <span data-t="bLoad"></span></button><button class="lk" id="bRpt" type="button">📄 <span data-t="bRpt"></span></button></div>
+    </div>
+    <input id="fLoad" type="file" accept=".json,application/json" class="hide">
+    <div class="note" id="prjMsg"></div>
+  </div>
   <div class="card">
     <h2 data-t="dsh"></h2>
     <div class="row">
@@ -132,6 +146,7 @@ input[readonly]{opacity:.7}
       <label><span data-t="ez0s"></span><input id="ez0" type="number" step="any" placeholder="m"></label>
       <label><span data-t="ez1s"></span><input id="ez1" type="number" step="any" placeholder="m"></label>
     </div>
+    <label><span data-t="ez2s"></span><input id="ez2" type="number" step="any" placeholder="m"></label>
   </div>
   <div class="card">
     <h2 data-t="dsum"></h2>
@@ -143,9 +158,6 @@ input[readonly]{opacity:.7}
       <div class="k"><span data-t="kDz"></span><b id="dkZ">-</b><span>m</span></div>
       <div class="k"><span data-t="kArea"></span><b id="dkA">-</b><span>m²</span></div>
     </div>
-    <h2 style="margin-top:14px" data-t="pumpH"></h2>
-    <div class="sc"><table id="pmT"></table></div>
-    <div class="note" id="pmN" style="margin-top:6px"></div>
     <button class="useb" id="bUse" type="button" data-t="useBtn"></button>
     <div class="note" data-t="dnote"></div>
   </div>
@@ -177,6 +189,11 @@ input[readonly]{opacity:.7}
     <div class="sc"><svg id="dsg" viewBox="0 0 800 460" width="100%" style="min-width:560px"></svg></div>
     <h2 style="margin-top:14px" data-t="prof"></h2>
     <div class="sc"><svg id="dpf" viewBox="0 0 800 150" width="100%" style="min-width:560px"></svg></div>
+  </div>
+  <div class="card wide">
+    <h2 data-t="pumpH"></h2>
+    <div class="sc"><table id="pmT"></table></div>
+    <div class="note" id="pmN" style="margin-top:6px"></div>
   </div>
 </div>
 
@@ -242,8 +259,8 @@ const TX={en:{sech:'Pipe section - TIS 17-2561',wall:'wall',sname:'Thai size nam
  rec:(vm,s,v,h)=>'Smallest size with v ≤ '+vm+' m/s: '+s+'" (v = '+v+' m/s, hf = '+h+' m/100 m)',norec:'No listed size meets the velocity limit.',
  loginTitle:'Sign in',loginUser:'Username',loginPass:'Password',loginBtn:'Sign in',loginErr:'Incorrect username or password.',loginToCalc:'Log in to calculate.',loginErrServer:'Could not reach the login server.',
  adminBtn:'Admin',logoutBtn:'Log out',adminTitle:'Admin panel',adminAdd:'Add users (one per line: username,password)',adminAddBtn:'Add users',adminAddMsg:(n)=>'Added '+n+' user(s).',adminLog:'Login log',logT:'Time',logU:'Username',logIp:'IP',
- tabD:'Design',tabC:'Calculation',dsh:'Design - input',nr:'Number of rows',ntr:'Number of trees per row',nsp:'Number of sprinklers per tree',fq:'Flow rate per sprinkler',rdist:'Distance between rows (m)',tdist:'Distance between trees (m)',slope:'Maximum slope from pump to last tree (%)',dsum:'Design summary',kTrees:'Total trees',kSpr:'Total sprinklers',kQ:'Total flow',kL:'Pipe length, pump to last tree',kDz:'Height difference, pump to highest point',kArea:'Planted area',useBtn:'Use flow and length in Calculation',dnote:'Pipe length = main line along the first tree column + the longest row (pump to last tree). Height difference = pump to the highest point sprinkler.',drh:'Design drawing - plan view',prof:'Elevation Profile - Pond’s water surface to pump to the highest of sprinkler',pump:'Pump',pond:'Pond’s water surface',last:'Last tree',mainL:'Main line',latL:'Lateral',treeL:'Tree',sprL:'Sprinkler',routeL:'Longest route',rowL:'Row',elev:'Height difference',tooBig:'Too many trees to draw (max 100 x 100).',
- loc:'Location & slope',cPump:'Pump coordinates (latitude, longitude)',cLast:'Last tree coordinates (latitude, longitude)',lkE:'Open in Google Earth',lkM:'Open in Google Maps',kml:'Download KML (Google Earth Pro)',lsum:'Pipe line summary',pmL:'Distance of pipe line from pump to main line (m)',zrL:'Number of zones',znL:'Zone to release water',rowW:'rows',hlW:'Head loss',lnPump:'Pipe line, pump to main line',plan:'Plan to release water (rows)',dhL:'Distance from pump to the last sprinkler (m)',elevL:'Elevation profile',ez0s:'Pond’s water surface to pump (m)',ez1s:'Pump to the highest point sprinkler (m)',plN:'Zone to release water: ',plOf:' of ',rowsU:' rows',lnHf:'Total hf, pump line + main + 1 lateral + 1 lateral-to-sprinkler line, pump to last sprinkler (m)',dhDim:'Pump to last sprinkler',lastHi:'Highest point sprinkler',thPt:'Pipe type',thSz:'Size',thVv:'V (m/s)',thHf:'hf (m/100m)',thTh:'Total hf (m)',tgtL:'Pipe line in Design',backBtn:'Send pipe type, size and result to Design',backOk:'Sent to Design: ',stale:'Flow or length in Calculation differs from this line',clr:'Clear result',lsNote:'Click a row to highlight it on the drawing and simulate the water flow to the sprinklers. Send a line to Calculation, then send pipe type, size and result back to Design.',lnRoute:'Longest route (main + lateral)',lnMain:'Main line (total)',lnSec:'Main section',lnLat:'Lateral (each)',fdL:'Length, lateral to sprinkler (m)',lnFeed:'Lateral to sprinkler (each)',lnHf2:'Total hf, pump line + All Main Section + 1 lateral + 1 lateral-to-sprinkler line, pump to last sprinkler (m)',spL:'Pressure per sprinkler (bar)',fitL:'Pipe fittings: elbow, coupling, tee, etc. (% of pipe head loss)',pumpH:'Pump selection',pFlow:'Total flow rate (zone to release)',pHf:'Pipe hf (pump line + all main sections + 1 lateral + 1 lateral-to-sprinkler line)',pFit:'Pipe fittings',pHL:'Total head loss (pipe + fittings)',pSt:'Static head (pond’s water surface to highest sprinkler)',pPr:'Sprinkler pressure',pTdh:'Total head for pump (static + head loss + sprinkler pressure)',pNote:'Head loss shows after every pipe line has been sent to Calculation and back.',lnTot:'Total pipe length (main + all laterals + lateral-to-sprinkler lines in plan)',thLn:'Pipe line',thQty:'Qty',thLpm:'Flow (L/min)',thLen:'Length (m)',send:'Send to Calculation',mapM:'Map',mapS:'Satellite',mapH:'Enter pump (or last tree) coordinates above to show the map.',
+ tabD:'Design',tabC:'Calculation',dsh:'Design - input',nr:'Number of rows',ntr:'Number of trees per row',nsp:'Number of sprinklers per tree',fq:'Flow rate per sprinkler',rdist:'Distance between rows (m)',tdist:'Distance between trees (m)',slope:'Maximum slope from pump to last tree (%)',dsum:'Design summary',kTrees:'Total trees',kSpr:'Total sprinklers',kQ:'Total flow',kL:'Pipe length, pump to last tree',kDz:'Height difference, pump to highest point',kArea:'Planted area',useBtn:'Use flow and length in Calculation',dnote:'Pipe length = main line along the first tree column + the longest row (pump to last tree). Height difference = pump to the highest area + the highest area to the highest sprinkler.',drh:'Design drawing - plan view',prof:'Elevation Profile - Pond’s water surface to pump to the highest of sprinkler',pump:'Pump',pond:'Pond’s water surface',last:'Last tree',mainL:'Main line',latL:'Lateral',treeL:'Tree',sprL:'Sprinkler',routeL:'Longest route',rowL:'Row',elev:'Height difference',tooBig:'Too many trees to draw (max 100 x 100).',
+ loc:'Location & slope',cPump:'Pump coordinates (latitude, longitude)',cLast:'Last tree coordinates (latitude, longitude)',lkE:'Open in Google Earth',lkM:'Open in Google Maps',kml:'Download KML (Google Earth Pro)',lsum:'Pipe line summary',pmL:'Distance of pipe line from pump to main line (m)',zrL:'Number of zones',znL:'Zone to release water',rowW:'rows',hlW:'Head loss',lnPump:'Pipe line, pump to main line',plan:'Plan to release water (rows)',dhL:'Distance from pump to the last sprinkler (m)',elevL:'Elevation profile',ez0s:'Pond’s water surface to pump (m)',ez1s:'Pump to the highest area (m)',ez2s:'The highest area to the highest sprinkler (m)',eAreaL:'Highest area',prjL:'Project name',bSave:'Save',bLoad:'Load',bRpt:'Report',rptT:'Design summary report',rptDt:'Date',rptPrn:'Print / Save PDF',rptDl:'Download HTML',loadOk:'Loaded: ',loadBad:'Cannot load this file',rpNote:'Head loss by Hazen-Williams. Pipe line results come from the Calculation tab.',plN:'Zone to release water: ',plOf:' of ',rowsU:' rows',lnHf:'Total hf, pump line + main + 1 lateral + 1 lateral-to-sprinkler line, pump to last sprinkler (m)',dhDim:'Pump to last sprinkler',lastHi:'Highest point sprinkler',thPt:'Pipe type',thSz:'Size',thVv:'V (m/s)',thHf:'hf (m/100m)',thTh:'Total hf (m)',tgtL:'Pipe line in Design',backBtn:'Send pipe type, size and result to Design',backOk:'Sent to Design: ',stale:'Flow or length in Calculation differs from this line',clr:'Clear result',lsNote:'Click a row to highlight it on the drawing and simulate the water flow to the sprinklers. Send a line to Calculation, then send pipe type, size and result back to Design.',lnRoute:'Longest route (main + lateral)',lnMain:'Main line (total)',lnSec:'Main section',lnLat:'Lateral (each)',fdL:'Length, lateral to sprinkler (m)',lnFeed:'Lateral to sprinkler (each)',lnHf2:'Total hf, pump line + All Main Section + 1 lateral + 1 lateral-to-sprinkler line, pump to last sprinkler (m)',spL:'Pressure per sprinkler (bar)',fitL:'Pipe fittings: elbow, coupling, tee, etc. (% of pipe head loss)',pumpH:'Pump selection',pFlow:'Total flow rate (zone to release)',pHf:'Pipe hf (pump line + all main sections + 1 lateral + 1 lateral-to-sprinkler line)',pFit:'Pipe fittings',pHL:'Total head loss (pipe + fittings)',pSt:'Static head (pond’s water surface to highest sprinkler)',pPr:'Sprinkler pressure',pTdh:'Total head for pump (static + head loss + sprinkler pressure)',pNote:'Head loss shows after every pipe line has been sent to Calculation and back.',lnTot:'Total pipe length (main + all laterals + lateral-to-sprinkler lines in plan)',thLn:'Pipe line',thQty:'Qty',thLpm:'Flow (L/min)',thLen:'Length (m)',send:'Send to Calculation',mapM:'Map',mapS:'Satellite',mapH:'Enter pump (or last tree) coordinates above to show the map.',
  cNote:'Paste coordinates as <b>latitude, longitude</b> (e.g. copied from Google Maps). Read the ground elevation at each point in Google Earth (shown at the bottom of the screen), or open the KML in Google Earth Pro, right-click the path and choose <b>Show Elevation Profile</b>.',
  ez0:'Ground elevation at pump (m)',ez1:'Ground elevation at last tree (m)',eNote:'When both elevations are filled, the maximum slope in Input is calculated automatically (elevation difference / pipe length). Clear one of them to type the slope yourself.',
  dist:'Straight-line distance',badC:'Use the format: latitude, longitude'},
@@ -251,8 +268,8 @@ th:{sech:'หน้าตัดท่อ - มอก. 17-2561',wall:'ผนั�
  rec:(vm,s,v,h)=>'ขนาดท่อเล็กที่สุดที่ v ≤ '+vm+' ม./วินาที: '+s+' นิ้ว (v = '+v+' ม./วินาที, hf = '+h+' ม./100 ม.)',norec:'ไม่มีขนาดท่อที่ความเร็วต่ำกว่าเกณฑ์',
  loginTitle:'เข้าสู่ระบบ',loginUser:'ชื่อผู้ใช้',loginPass:'รหัสผ่าน',loginBtn:'เข้าสู่ระบบ',loginErr:'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง',loginToCalc:'เข้าสู่ระบบเพื่อคำนวณ',loginErrServer:'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้',
  adminBtn:'ผู้ดูแลระบบ',logoutBtn:'ออกจากระบบ',adminTitle:'แผงควบคุมผู้ดูแลระบบ',adminAdd:'เพิ่มผู้ใช้ (บรรทัดละ 1 คน: ชื่อผู้ใช้,รหัสผ่าน)',adminAddBtn:'เพิ่มผู้ใช้',adminAddMsg:(n)=>'เพิ่มผู้ใช้แล้ว '+n+' คน',adminLog:'บันทึกการเข้าสู่ระบบ',logT:'เวลา',logU:'ชื่อผู้ใช้',logIp:'IP',
- tabD:'ออกแบบ',tabC:'คำนวณ',dsh:'ออกแบบ - ข้อมูลนำเข้า',nr:'จำนวนแถว',ntr:'จำนวนต้นไม้ต่อแถว',nsp:'จำนวนสปริงเกอร์ต่อต้น',fq:'อัตราการไหลต่อสปริงเกอร์',rdist:'ระยะห่างระหว่างแถว (ม.)',tdist:'ระยะห่างระหว่างต้น (ม.)',slope:'ความลาดชันสูงสุดจากปั๊มถึงต้นสุดท้าย (%)',dsum:'สรุปการออกแบบ',kTrees:'จำนวนต้นรวม',kSpr:'จำนวนสปริงเกอร์รวม',kQ:'อัตราการไหลรวม',kL:'ความยาวท่อ ปั๊ม-ต้นสุดท้าย',kDz:'ผลต่างความสูง ปั๊มถึงจุดสูงสุด',kArea:'พื้นที่ปลูก',useBtn:'ใช้อัตราการไหลและความยาวท่อในการคำนวณ',dnote:'ความยาวท่อ = ท่อเมนตามแถวต้นไม้แรก + แถวที่ยาวที่สุด (ปั๊มถึงต้นสุดท้าย) ผลต่างความสูง = ปั๊มถึงสปริงเกอร์จุดสูงสุด',drh:'แบบผัง - มุมมองด้านบน',prof:'โปรไฟล์ระดับความสูง - ผิวน้ำในบ่อ ถึงปั๊ม ถึงสปริงเกอร์จุดสูงสุด',pump:'ปั๊ม',pond:'ผิวน้ำในบ่อ',last:'ต้นสุดท้าย',mainL:'ท่อเมน',latL:'ท่อแขนง',treeL:'ต้นไม้',sprL:'สปริงเกอร์',routeL:'เส้นทางที่ยาวที่สุด',rowL:'แถว',elev:'ผลต่างความสูง',tooBig:'ต้นไม้มากเกินไปที่จะวาด (สูงสุด 100 x 100)',
- loc:'ตำแหน่งและความลาดชัน',cPump:'พิกัดปั๊ม (ละติจูด, ลองจิจูด)',cLast:'พิกัดต้นสุดท้าย (ละติจูด, ลองจิจูด)',lkE:'เปิดใน Google Earth',lkM:'เปิดใน Google Maps',kml:'ดาวน์โหลด KML (Google Earth Pro)',lsum:'สรุปท่อแต่ละเส้น',pmL:'ระยะท่อจากปั๊มถึงท่อเมน (ม.)',zrL:'จำนวนโซน',znL:'โซนที่ปล่อยน้ำ',rowW:'แถว',hlW:'สูญเสียแรงดัน',lnPump:'ท่อจากปั๊มถึงท่อเมน',plan:'แผนการปล่อยน้ำ (แถว)',dhL:'ระยะจากปั๊มถึงสปริงเกอร์ตัวสุดท้าย (ม.)',elevL:'โปรไฟล์ระดับความสูง',ez0s:'ผิวน้ำในบ่อถึงปั๊ม (ม.)',ez1s:'ปั๊มถึงสปริงเกอร์จุดสูงสุด (ม.)',plN:'โซนที่ปล่อยน้ำ: ',plOf:' จาก ',rowsU:' แถว',lnHf:'hf รวม ท่อจากปั๊ม + เมน + แขนง 1 เส้น + ท่อแขนงถึงสปริงเกอร์ 1 เส้น ปั๊มถึงสปริงเกอร์ตัวสุดท้าย (ม.)',dhDim:'ปั๊มถึงสปริงเกอร์ตัวสุดท้าย',lastHi:'สปริงเกอร์จุดสูงสุด',thPt:'ชนิดท่อ',thSz:'ขนาด',thVv:'V (ม./วิ)',thHf:'hf (ม./100ม.)',thTh:'hf รวม (ม.)',tgtL:'ท่อใน Design',backBtn:'ส่งชนิดท่อ ขนาด และผลลัพธ์กลับไป Design',backOk:'ส่งไป Design แล้ว: ',stale:'อัตราการไหลหรือความยาวในการคำนวณไม่ตรงกับท่อเส้นนี้',clr:'ล้างผลลัพธ์',lsNote:'คลิกแถวเพื่อไฮไลต์และจำลองการไหลของน้ำไปยังสปริงเกอร์ในแบบผัง ส่งท่อไปคำนวณ แล้วส่งชนิดท่อ ขนาด และผลลัพธ์กลับมาที่ Design',lnRoute:'เส้นทางที่ยาวที่สุด (เมน + แขนง)',lnMain:'ท่อเมน (รวม)',lnSec:'ท่อเมนช่วงที่',lnLat:'ท่อแขนง (ต่อแถว)',fdL:'ความยาวท่อจากท่อแขนงถึงสปริงเกอร์ (ม.)',lnFeed:'ท่อแขนงถึงสปริงเกอร์ (ต่อหัว)',lnHf2:'hf รวม ท่อจากปั๊ม + เมนทุกช่วง + แขนง 1 เส้น + ท่อแขนงถึงสปริงเกอร์ 1 เส้น ปั๊มถึงสปริงเกอร์ตัวสุดท้าย (ม.)',spL:'ความดันต่อสปริงเกอร์ (บาร์)',fitL:'ข้อต่อท่อ: ข้องอ ข้อต่อตรง สามทาง ฯลฯ (% ของแรงดันตกในท่อ)',pumpH:'การเลือกปั๊ม',pFlow:'อัตราการไหลรวม (โซนที่ปล่อยน้ำ)',pHf:'hf ท่อ (ท่อจากปั๊ม + เมนทุกช่วง + แขนง 1 เส้น + ท่อแขนงถึงสปริงเกอร์ 1 เส้น)',pFit:'ข้อต่อท่อ',pHL:'แรงดันตกรวม (ท่อ + ข้อต่อ)',pSt:'ความสูงสถิต (ผิวน้ำในบ่อถึงสปริงเกอร์จุดสูงสุด)',pPr:'ความดันสปริงเกอร์',pTdh:'เฮดรวมสำหรับปั๊ม (สถิต + แรงดันตก + ความดันสปริงเกอร์)',pNote:'แรงดันตกจะแสดงเมื่อส่งทุกเส้นท่อไปคำนวณและส่งกลับครบแล้ว',lnTot:'ความยาวท่อรวม (เมน + แขนงทั้งหมด + ท่อแขนงถึงสปริงเกอร์ในแผน)',thLn:'ท่อ',thQty:'จำนวน',thLpm:'อัตราการไหล (ลิตร/นาที)',thLen:'ความยาว (ม.)',send:'ส่งไปคำนวณ',mapM:'แผนที่',mapS:'ดาวเทียม',mapH:'กรอกพิกัดปั๊ม (หรือต้นสุดท้าย) ด้านบนเพื่อแสดงแผนที่',
+ tabD:'ออกแบบ',tabC:'คำนวณ',dsh:'ออกแบบ - ข้อมูลนำเข้า',nr:'จำนวนแถว',ntr:'จำนวนต้นไม้ต่อแถว',nsp:'จำนวนสปริงเกอร์ต่อต้น',fq:'อัตราการไหลต่อสปริงเกอร์',rdist:'ระยะห่างระหว่างแถว (ม.)',tdist:'ระยะห่างระหว่างต้น (ม.)',slope:'ความลาดชันสูงสุดจากปั๊มถึงต้นสุดท้าย (%)',dsum:'สรุปการออกแบบ',kTrees:'จำนวนต้นรวม',kSpr:'จำนวนสปริงเกอร์รวม',kQ:'อัตราการไหลรวม',kL:'ความยาวท่อ ปั๊ม-ต้นสุดท้าย',kDz:'ผลต่างความสูง ปั๊มถึงจุดสูงสุด',kArea:'พื้นที่ปลูก',useBtn:'ใช้อัตราการไหลและความยาวท่อในการคำนวณ',dnote:'ความยาวท่อ = ท่อเมนตามแถวต้นไม้แรก + แถวที่ยาวที่สุด (ปั๊มถึงต้นสุดท้าย) ผลต่างความสูง = ปั๊มถึงพื้นที่สูงสุด + พื้นที่สูงสุดถึงสปริงเกอร์ที่สูงสุด',drh:'แบบผัง - มุมมองด้านบน',prof:'โปรไฟล์ระดับความสูง - ผิวน้ำในบ่อ ถึงปั๊ม ถึงสปริงเกอร์จุดสูงสุด',pump:'ปั๊ม',pond:'ผิวน้ำในบ่อ',last:'ต้นสุดท้าย',mainL:'ท่อเมน',latL:'ท่อแขนง',treeL:'ต้นไม้',sprL:'สปริงเกอร์',routeL:'เส้นทางที่ยาวที่สุด',rowL:'แถว',elev:'ผลต่างความสูง',tooBig:'ต้นไม้มากเกินไปที่จะวาด (สูงสุด 100 x 100)',
+ loc:'ตำแหน่งและความลาดชัน',cPump:'พิกัดปั๊ม (ละติจูด, ลองจิจูด)',cLast:'พิกัดต้นสุดท้าย (ละติจูด, ลองจิจูด)',lkE:'เปิดใน Google Earth',lkM:'เปิดใน Google Maps',kml:'ดาวน์โหลด KML (Google Earth Pro)',lsum:'สรุปท่อแต่ละเส้น',pmL:'ระยะท่อจากปั๊มถึงท่อเมน (ม.)',zrL:'จำนวนโซน',znL:'โซนที่ปล่อยน้ำ',rowW:'แถว',hlW:'สูญเสียแรงดัน',lnPump:'ท่อจากปั๊มถึงท่อเมน',plan:'แผนการปล่อยน้ำ (แถว)',dhL:'ระยะจากปั๊มถึงสปริงเกอร์ตัวสุดท้าย (ม.)',elevL:'โปรไฟล์ระดับความสูง',ez0s:'ผิวน้ำในบ่อถึงปั๊ม (ม.)',ez1s:'ปั๊มถึงพื้นที่สูงสุด (ม.)',ez2s:'พื้นที่สูงสุดถึงสปริงเกอร์ที่สูงสุด (ม.)',eAreaL:'พื้นที่สูงสุด',prjL:'ชื่อโครงการ',bSave:'บันทึก',bLoad:'โหลด',bRpt:'รายงาน',rptT:'รายงานสรุปการออกแบบ',rptDt:'วันที่',rptPrn:'พิมพ์ / บันทึก PDF',rptDl:'ดาวน์โหลด HTML',loadOk:'โหลดแล้ว: ',loadBad:'ไม่สามารถโหลดไฟล์นี้',rpNote:'แรงดันตกคำนวณด้วยสูตร Hazen-Williams ผลของแต่ละเส้นท่อมาจากแท็บคำนวณ',plN:'โซนที่ปล่อยน้ำ: ',plOf:' จาก ',rowsU:' แถว',lnHf:'hf รวม ท่อจากปั๊ม + เมน + แขนง 1 เส้น + ท่อแขนงถึงสปริงเกอร์ 1 เส้น ปั๊มถึงสปริงเกอร์ตัวสุดท้าย (ม.)',dhDim:'ปั๊มถึงสปริงเกอร์ตัวสุดท้าย',lastHi:'สปริงเกอร์จุดสูงสุด',thPt:'ชนิดท่อ',thSz:'ขนาด',thVv:'V (ม./วิ)',thHf:'hf (ม./100ม.)',thTh:'hf รวม (ม.)',tgtL:'ท่อใน Design',backBtn:'ส่งชนิดท่อ ขนาด และผลลัพธ์กลับไป Design',backOk:'ส่งไป Design แล้ว: ',stale:'อัตราการไหลหรือความยาวในการคำนวณไม่ตรงกับท่อเส้นนี้',clr:'ล้างผลลัพธ์',lsNote:'คลิกแถวเพื่อไฮไลต์และจำลองการไหลของน้ำไปยังสปริงเกอร์ในแบบผัง ส่งท่อไปคำนวณ แล้วส่งชนิดท่อ ขนาด และผลลัพธ์กลับมาที่ Design',lnRoute:'เส้นทางที่ยาวที่สุด (เมน + แขนง)',lnMain:'ท่อเมน (รวม)',lnSec:'ท่อเมนช่วงที่',lnLat:'ท่อแขนง (ต่อแถว)',fdL:'ความยาวท่อจากท่อแขนงถึงสปริงเกอร์ (ม.)',lnFeed:'ท่อแขนงถึงสปริงเกอร์ (ต่อหัว)',lnHf2:'hf รวม ท่อจากปั๊ม + เมนทุกช่วง + แขนง 1 เส้น + ท่อแขนงถึงสปริงเกอร์ 1 เส้น ปั๊มถึงสปริงเกอร์ตัวสุดท้าย (ม.)',spL:'ความดันต่อสปริงเกอร์ (บาร์)',fitL:'ข้อต่อท่อ: ข้องอ ข้อต่อตรง สามทาง ฯลฯ (% ของแรงดันตกในท่อ)',pumpH:'การเลือกปั๊ม',pFlow:'อัตราการไหลรวม (โซนที่ปล่อยน้ำ)',pHf:'hf ท่อ (ท่อจากปั๊ม + เมนทุกช่วง + แขนง 1 เส้น + ท่อแขนงถึงสปริงเกอร์ 1 เส้น)',pFit:'ข้อต่อท่อ',pHL:'แรงดันตกรวม (ท่อ + ข้อต่อ)',pSt:'ความสูงสถิต (ผิวน้ำในบ่อถึงสปริงเกอร์จุดสูงสุด)',pPr:'ความดันสปริงเกอร์',pTdh:'เฮดรวมสำหรับปั๊ม (สถิต + แรงดันตก + ความดันสปริงเกอร์)',pNote:'แรงดันตกจะแสดงเมื่อส่งทุกเส้นท่อไปคำนวณและส่งกลับครบแล้ว',lnTot:'ความยาวท่อรวม (เมน + แขนงทั้งหมด + ท่อแขนงถึงสปริงเกอร์ในแผน)',thLn:'ท่อ',thQty:'จำนวน',thLpm:'อัตราการไหล (ลิตร/นาที)',thLen:'ความยาว (ม.)',send:'ส่งไปคำนวณ',mapM:'แผนที่',mapS:'ดาวเทียม',mapH:'กรอกพิกัดปั๊ม (หรือต้นสุดท้าย) ด้านบนเพื่อแสดงแผนที่',
  cNote:'วางพิกัดในรูปแบบ <b>ละติจูด, ลองจิจูด</b> (เช่น คัดลอกจาก Google Maps) อ่านค่าระดับพื้นดินแต่ละจุดจาก Google Earth (แสดงที่ด้านล่างของจอ) หรือเปิดไฟล์ KML ใน Google Earth Pro คลิกขวาที่เส้นแล้วเลือก <b>Show Elevation Profile</b>',
  ez0:'ระดับพื้นดินที่ปั๊ม (ม.)',ez1:'ระดับพื้นดินที่ต้นสุดท้าย (ม.)',eNote:'เมื่อกรอกระดับทั้งสองค่า ความลาดชันสูงสุดในข้อมูลนำเข้าจะคำนวณให้อัตโนมัติ (ผลต่างระดับ / ความยาวท่อ) ลบค่าใดค่าหนึ่งออกเพื่อกรอกความลาดชันเอง',
  dist:'ระยะทางเส้นตรง',badC:'รูปแบบ: ละติจูด, ลองจิจูด'}};
@@ -337,14 +354,14 @@ const lx0=W-m.r-300;
 g+=`<line x1='${lx0}' x2='${lx0+24}' y1='12' y2='12' stroke='var(--tx)'/><text x='${lx0+29}' y='15'>${en?'Size (inch)':'ขนาดท่อ (นิ้ว)'}</text><line x1='${lx0+130}' x2='${lx0+154}' y1='12' y2='12' stroke='${vc}' stroke-dasharray='5 3'/><text x='${lx0+159}' y='15'>${en?'Velocity (m/s)':'ความเร็ว (ม./วิ)'}</text>`;
 $('ch').innerHTML=g}
 const pn=x=>String(+Number(x).toPrecision(4));
-let LINES=[],SEL=null,LAST=null;const isBad=(e,x)=>e&&(Math.abs(e.qh-x.q)>1e-6*Math.max(1,x.q)||Math.abs(e.Ln-x.l)>1e-6*Math.max(1,x.l));const RES={},PTN={'0':'PVC 5 (PN 6)','1':'PVC 7 (PN 8)','2':'PVC 8.5 (PN 10)','3':'PVC 10.5 (PN 12.5)','4':'PVC 13.5 (PN 16)'},ptName=v=>v==='n'?t('nom'):(PTN[v]||'');
+let LINES=[],SEL=null,LAST=null,PUMP=null,TOTLEN=0;const isBad=(e,x)=>e&&(Math.abs(e.qh-x.q)>1e-6*Math.max(1,x.q)||Math.abs(e.Ln-x.l)>1e-6*Math.max(1,x.l));const RES={},PTN={'0':'PVC 5 (PN 6)','1':'PVC 7 (PN 8)','2':'PVC 8.5 (PN 10)','3':'PVC 10.5 (PN 12.5)','4':'PVC 13.5 (PN 16)'},ptName=v=>v==='n'?t('nom'):(PTN[v]||'');
 function drawDesign(){
  const en=L=='en',g1=id=>+$(id).value||0,
   nr=Math.max(1,Math.floor(g1('nr'))),nt=Math.max(1,Math.floor(g1('nt'))),ns=Math.max(1,Math.floor(g1('ns'))),
   fq=g1('fq'),rd=Math.max(0,g1('rd')),td=Math.max(0,g1('td')),fu=+$('dfu').value||1,fd=Math.max(0,g1('fd'));
  const trees=nr*nt,spr=trees*ns,q=spr*fq*fu,Lh=(nr-1)*rd+(nt-1)*td,area=(nt*td)*(nr*rd);
- const e0=$('ez0').value.trim(),e1=$('ez1').value.trim(),auto=e1!==''&&isFinite(+e1),ql0=nt*ns*fq*fu,
-  dz=auto?+e1:0,
+ const e0=$('ez0').value.trim(),e1=$('ez1').value.trim(),e1v=e1!==''&&isFinite(+e1)?+e1:0,e2=$('ez2').value.trim(),e2v=e2!==''&&isFinite(+e2)?+e2:0,auto=(e1!==''&&isFinite(+e1))||(e2!==''&&isFinite(+e2)),ql0=nt*ns*fq*fu,
+  dz=e1v+e2v,
   pm=Math.max(0,g1('pm')),Z=Math.min(nr,Math.max(1,Math.floor(g1('zr'))||1)),zb=Math.floor(nr/Z),zx=nr%Z,zst=j=>j*zb+Math.min(j,zx),
   zi=Math.max(0,Math.min(Z-1,Math.floor(+$('zn').value||1)-1)),rs=zst(zi),re=zst(zi+1),cnt=re-rs,act=j=>j>=rs&&j<re;
  $('zr').placeholder='1';
@@ -353,14 +370,13 @@ function drawDesign(){
  $('dkT').textContent=trees;$('dkS').textContent=spr;$('dkQ').textContent=pn(q);$('dkQ2').textContent=pn(q*1000/60)+' L/min';
  $('dkL').textContent=pn(Lh+pm);$('dkZ').textContent=auto?pn(dz):'-';$('dkA').textContent=pn(area);
  {const ql=nt*ns*fq*fu,Ls=[],add=(k,n,c,qq,ll)=>Ls.push({k,n,c,q:qq,l:ll}),cl={lo:t('low'),ok:t('ok'),hi:t('high')};
-  if(nr<=100&&nt<=100){const Qz=cnt*ql;add('route',t('lnRoute'),1,Qz,pm+(re-1)*rd+(nt-1)*td);if(pm>0)add('pump',t('lnPump'),1,Qz,pm);add('main',t('lnMain'),1,Qz,(re-1)*rd);for(let i=1;i<re;i++)add('sec'+i,t('lnSec')+' '+i+' ('+t('rowL')+' '+i+'→'+(i+1)+')',1,(re-Math.max(i,rs))*ql,rd);add('lat',t('lnLat'),cnt,ql,(nt-1)*td);if(fd>0)add('feed',t('lnFeed'),cnt*nt*ns,fq*fu,fd)}
-  let hfS=null,stS=false;LINES=Ls;if(SEL&&!Ls.some(x=>x.k===SEL))SEL=null;
+  if(nr<=100&&nt<=100){const Qz=cnt*ql;if(pm>0)add('pump',t('lnPump'),1,Qz,pm);for(let i=1;i<re;i++)add('sec'+i,t('lnSec')+' '+i+' ('+t('rowL')+' '+i+'→'+(i+1)+')',1,(re-Math.max(i,rs))*ql,rd);add('lat',t('lnLat'),cnt,ql,(nt-1)*td);if(fd>0)add('feed',t('lnFeed'),cnt*nt*ns,fq*fu,fd)}
+  let hfS=null,stS=false;PUMP=null;TOTLEN=0;LINES=Ls;if(SEL&&!Ls.some(x=>x.k===SEL))SEL=null;
   const r=Ls.map(x=>{const e=RES[x.k],bad=isBad(e,x),
    rc=e?`<td${bad?` style='opacity:.55' title='${t('stale')}'`:''}>${bad?'⚠ ':''}${ptName(e.pt)}</td><td>${e.ds}${t('inch')}</td><td>${fmt(e.v)}</td><td>${fmt(e.hf)}</td><td>${fmt(e.tot)}</td><td><span class='badge ${e.cls}'>${cl[e.cls]}</span></td>`:`<td class='mu' colspan='6'>-</td>`;
    return `<tr data-k='${x.k}'${x.k===SEL?" class='on'":''}><td style='text-align:left'>${x.n}</td><td>${x.c}</td><td>${pn(x.q)}</td><td>${pn(x.q*1000/60)}</td><td>${pn(x.l)}</td>${rc}<td><button class='lk' type='button' data-q='${x.q}' data-l='${x.l}'${x.l>0&&x.q>0?'':' disabled'}>${t('send')}</button></td><td>${e?`<button class='lk' type='button' data-x='${x.k}' title='${t('clr')}' aria-label='${t('clr')}'>✕</button>`:''}</td></tr>`});
-  if(Ls.length){const m=RES.main,l=RES.lat,pu=RES.pump,xm=Ls.find(x=>x.k==='main'),xl2=Ls.find(x=>x.k==='lat'),xp=Ls.find(x=>x.k==='pump'),xf=Ls.find(x=>x.k==='feed'),fe=RES.feed,ok2=m&&l&&(!xp||pu)&&(!xf||fe),st2=ok2&&(isBad(m,xm)||isBad(l,xl2)||(xp&&isBad(pu,xp))||(xf&&isBad(fe,xf)));
-   r.push(`<tr class='tot'><td style='text-align:left;font-weight:700'>${t('lnTot')}</td><td></td><td></td><td></td><td style='font-weight:700'>${pn(pm+(re-1)*rd+cnt*(nt-1)*td+(fd>0?cnt*nt*ns*fd:0))}</td><td colspan='8'></td></tr>`);
-   r.push(`<tr class='tot'><td style='text-align:left;font-weight:700'>${t('lnHf')}</td><td></td><td></td><td></td><td></td><td colspan='4'></td><td style='font-weight:700${st2?';opacity:.55':''}'${st2?` title='${t('stale')}'`:''}>${ok2?(st2?'⚠ ':'')+fmt(m.tot+l.tot+(xp?pu.tot:0)+(xf?fe.tot:0)):'-'}</td><td colspan='3'></td></tr>`);
+  if(Ls.length){const l=RES.lat,pu=RES.pump,xl2=Ls.find(x=>x.k==='lat'),xp=Ls.find(x=>x.k==='pump'),xf=Ls.find(x=>x.k==='feed'),fe=RES.feed;
+   r.push(`<tr class='tot'><td style='text-align:left;font-weight:700'>${t('lnTot')}</td><td></td><td></td><td></td><td style='font-weight:700'>${pn(TOTLEN=pm+(re-1)*rd+cnt*(nt-1)*td+(fd>0?cnt*nt*ns*fd:0))}</td><td colspan='8'></td></tr>`);
     const secs=Ls.filter(x=>/^sec\d+$/.test(x.k)),okS=l&&(!xp||pu)&&(!xf||fe)&&secs.every(x=>RES[x.k]);
     stS=okS&&(isBad(l,xl2)||(xp&&isBad(pu,xp))||(xf&&isBad(fe,xf))||secs.some(x=>isBad(RES[x.k],x)));
     if(okS)hfS=l.tot+(xp?pu.tot:0)+(xf?fe.tot:0)+secs.reduce((a,x)=>a+RES[x.k].tot,0);
@@ -372,7 +388,7 @@ function drawDesign(){
      pr(t('pHf'),v(hf),'m')+pr(t('pFit')+' ('+pn(fp)+'%)',v(fh),'m')+pr(t('pHL'),v(tl),'m',true)+
      pr(t('pSt'),pn(stat),'m')+pr(t('pPr')+' ('+pn(spb)+' bar)',pn(spH),'m')+
      pr(t('pTdh'),tdh==null?'-':(stS?'⚠ ':'')+pn(tdh)+' = '+pn(tdh/10.197),'m = bar',true);
-    $('pmN').textContent=hf==null?t('pNote'):''}
+    $('pmN').textContent=hf==null?t('pNote'):'';PUMP={Qz,fp,spb,spH,stat,hf,fh,tl,tdh,stale:stS}}
   $('lsT').innerHTML=(Ls.length?`<thead><tr><th style='text-align:left'>${t('thLn')}</th><th>${t('thQty')}</th><th>${t('xl')}</th><th>${t('thLpm')}</th><th>${t('thLen')}</th><th>${t('thPt')}</th><th>${t('thSz')}</th><th>${t('thVv')}</th><th>${t('thHf')}</th><th>${t('thTh')}</th><th>${t('status')}</th><th></th><th></th></tr></thead>`:'')+'<tbody>'+r.join('')+'</tbody>';
   const tv=$('tgt').value;$('tgt').innerHTML=Ls.map(x=>`<option value='${x.k}'>${x.n}</option>`).join('');if(tv&&Ls.some(x=>x.k===tv))$('tgt').value=tv}
  if(nr>100||nt>100){$('dsg').innerHTML='<text x="20" y="40" style="font-size:13px;fill:var(--hi)">'+t('tooBig')+'</text>';$('dpf').innerHTML='';return}
@@ -427,9 +443,9 @@ function drawDesign(){
  if(nr>1&&rd>0){const x=xl+tr+sr*2+18;g+=`<line x1='${x}' x2='${x}' y1='${ty(0)}' y2='${ty(1)}' stroke='var(--tx)' marker-start='url(#ad)' marker-end='url(#ad)'/><line x1='${xl+tr+3}' x2='${x+4}' y1='${ty(0)}' y2='${ty(0)}' stroke='var(--mut)' stroke-dasharray='2 2'/><line x1='${xl+tr+3}' x2='${x+4}' y1='${ty(1)}' y2='${ty(1)}' stroke='var(--mut)' stroke-dasharray='2 2'/><text x='${x+6}' y='${(ty(0)+ty(1))/2+4}' style='${ts}'>${pn(rd)} m</text>`}
  // results from Calculation + selected line caption
  {const rl=`fill:var(--ac);font-size:10px;font-weight:700`,mu=`fill:var(--tx);font-size:9.5px`,zs=k=>RES[k]?RES[k].ds+t('inch'):'',
-   lblL=(k,ya,yb2,xo,len)=>{const x=LINES.find(z=>z.k===k);if(!x)return'';const e=RES[k],two=Math.abs(ya-yb2)>=24&&(e||RES.main),ym=(ya+yb2)/2,xx=mx-xo;
+   lblL=(k,ya,yb2,xo,len)=>{const x=LINES.find(z=>z.k===k);if(!x)return'';const e=RES[k],two=Math.abs(ya-yb2)>=24&&e,ym=(ya+yb2)/2,xx=mx-xo;
     let o=`<text x='${xx}' y='${ym+(two?-1:4)}' text-anchor='end' style='${mu}'>${len?pn(len)+' m | ':''}${pn(x.q)} m³/h</text>`;
-    if(two)o+=e?`<text x='${xx}' y='${ym+10}' text-anchor='end' style='${rl}${isBad(e,x)?';opacity:.55':''}'>${zs(k)} | hf ${fmt(e.tot)} m</text>`:`<text x='${xx}' y='${ym+10}' text-anchor='end' style='${rl};opacity:.6'>${zs('main')}</text>`;return o};
+    if(two)o+=e?`<text x='${xx}' y='${ym+10}' text-anchor='end' style='${rl}${isBad(e,x)?';opacity:.55':''}'>${zs(k)} | hf ${fmt(e.tot)} m</text>`:''; return o};
   for(let i=1;i<re;i++)g+=lblL('sec'+i,ty(i-1),ty(i),8,0);
   if(pm>0)g+=lblL('pump',py,ty(0),18,pm);
   if(RES.lat&&nr<=20)for(let j=rs;j<re;j++)g+=`<text x='${mx+4}' y='${ty(j)-4}' style='${rl};font-size:9px'>${zs('lat')}</text>`;
@@ -441,21 +457,20 @@ function drawDesign(){
  const ly=H-14,lg=[[t('treeL'),`<circle cx='6' cy='-3' r='5' fill='var(--ok)' fill-opacity='.35' stroke='var(--ok)'/>`],[t('sprL'),`<circle cx='6' cy='-3' r='3' fill='var(--lo)'/>`],[t('mainL'),`<line x1='0' x2='14' y1='-3' y2='-3' stroke='var(--ac)' stroke-width='3'/>`],[t('latL'),`<line x1='0' x2='14' y1='-3' y2='-3' stroke='var(--lo)' stroke-width='1.4'/>`],[t('routeL')+' '+pn(pm+(re-1)*rd+(nt-1)*td)+' m',`<line x1='0' x2='14' y1='-3' y2='-3' stroke='var(--hi)' stroke-width='2' stroke-dasharray='4 2'/>`]];
  let lx=ml-60;lg.forEach(([n,ic])=>{g+=`<g transform='translate(${lx},${ly})'>${ic}<text x='19' y='0'>${n}</text></g>`;lx+=40+n.length*6});
  $('dsg').setAttribute('viewBox','0 0 '+W+' '+Math.round(H));$('dsg').innerHTML=g;
-  // elevation profile: pond water surface -> pump -> highest sprinkler (heights to scale, distances not shown)
-  let p='';{const xA=110,xP=400,xS=690,h0=e0!==''&&isFinite(+e0)?+e0:0,hS=h0+dz,lo=Math.min(0,h0,hS),hi=Math.max(0,h0,hS),rg=hi-lo,mhh=64,yBot=24+mhh,
-   yv=h=>rg>0?yBot-(h-lo)/rg*mhh:yBot-mhh/2,yA=yv(0),yP=yv(h0),yS=yv(hS),yl=yBot+34,halo='paint-order:stroke;stroke:var(--card);stroke-width:3px;stroke-linejoin:round',
-   lab=(x,y,txt)=>`<line x1='${x}' x2='${x}' y1='${y+10}' y2='${yl-13}' stroke='var(--mut)' stroke-dasharray='2 3' opacity='.5'/><text x='${x}' y='${yl}' text-anchor='middle' style='${ts}'>${txt}</text>`;
+  // elevation profile: pond water surface -> pump -> highest area -> highest sprinkler (heights to scale, distances not shown)
+  let p='';{const xs=[90,290,490,690],h0=e0!==''&&isFinite(+e0)?+e0:0,hs=[0,h0,h0+e1v,h0+e1v+e2v],lo=Math.min(...hs),hi=Math.max(...hs),rg=hi-lo,mhh=64,yBot=24+mhh,
+   yv=h=>rg>0?yBot-(h-lo)/rg*mhh:yBot-mhh/2,ys=hs.map(yv),yl=yBot+34,halo='paint-order:stroke;stroke:var(--card);stroke-width:3px;stroke-linejoin:round',
+   lab=(i,txt)=>`<line x1='${xs[i]}' x2='${xs[i]}' y1='${ys[i]+10}' y2='${yl-13}' stroke='var(--mut)' stroke-dasharray='2 3' opacity='.5'/><text x='${xs[i]}' y='${yl}' text-anchor='middle' style='${ts}'>${txt}</text>`,
+   dim=(i,v)=>v===0?'':`<line x1='${xs[i-1]}' x2='${xs[i]+34}' y1='${ys[i-1]}' y2='${ys[i-1]}' stroke='var(--mut)' stroke-dasharray='4 3'/><line x1='${xs[i]+34}' x2='${xs[i]+34}' y1='${ys[i-1]}' y2='${ys[i]}' stroke='var(--hi)' marker-start='url(#ad2)' marker-end='url(#ad2)'/><text x='${xs[i]+42}' y='${(ys[i-1]+ys[i])/2+4}' style='${ts};fill:var(--hi);${halo}'>${pn(v)} m</text>`;
    p=`<defs><marker id='ad2' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='6' markerHeight='6' orient='auto-start-reverse'><path d='M0,0L10,5L0,10z' fill='var(--hi)'/></marker></defs>`+
-   `<rect x='${xA-80}' y='${yA}' width='90' height='14' fill='var(--lo)' fill-opacity='.3'/><line x1='${xA-80}' x2='${xA+10}' y1='${yA}' y2='${yA}' stroke='var(--lo)' stroke-width='2.5'/>`+
-   `<line x1='${xA}' x2='${xP+34}' y1='${yA}' y2='${yA}' stroke='var(--mut)' stroke-dasharray='4 3'/>`+
-   (dz!==0?`<line x1='${xP}' x2='${xS+34}' y1='${yP}' y2='${yP}' stroke='var(--mut)' stroke-dasharray='4 3'/>`:'')+
-   `<polyline points='${xA},${yA} ${xP},${yP} ${xS},${yS}' fill='none' stroke='var(--tx)' stroke-width='2' stroke-linejoin='round'/>`;
-   if(h0!==0)p+=`<line x1='${xP+34}' x2='${xP+34}' y1='${yA}' y2='${yP}' stroke='var(--hi)' marker-start='url(#ad2)' marker-end='url(#ad2)'/><text x='${xP+42}' y='${(yA+yP)/2+4}' style='${ts};fill:var(--hi);${halo}'>${pn(h0)} m</text>`;
-   if(dz!==0)p+=`<line x1='${xS+34}' x2='${xS+34}' y1='${yP}' y2='${yS}' stroke='var(--hi)' marker-start='url(#ad2)' marker-end='url(#ad2)'/><text x='${xS+42}' y='${(yP+yS)/2+4}' style='${ts};fill:var(--hi);${halo}'>${pn(dz)} m</text>`;
-   p+=`<circle cx='${xA}' cy='${yA}' r='5' fill='var(--lo)' stroke='var(--tx)'/>`+
-   `<circle cx='${xP}' cy='${yP}' r='9' fill='var(--ok)' stroke='var(--tx)'/><text x='${xP}' y='${yP+4}' text-anchor='middle' style='${ts};fill:#fff'>P</text>`+
-   `<circle cx='${xS}' cy='${yS}' r='7' fill='none' stroke='var(--hi)' stroke-width='2'/>`+
-   lab(xA,yA,t('pond'))+lab(xP,yP,t('pump'))+lab(xS,yS,t('lastHi'))}
+   `<rect x='${xs[0]-80}' y='${ys[0]}' width='90' height='14' fill='var(--lo)' fill-opacity='.3'/><line x1='${xs[0]-80}' x2='${xs[0]+10}' y1='${ys[0]}' y2='${ys[0]}' stroke='var(--lo)' stroke-width='2.5'/>`+
+   `<polyline points='${xs.map((x,i)=>x+','+ys[i]).join(' ')}' fill='none' stroke='var(--tx)' stroke-width='2' stroke-linejoin='round'/>`+
+   dim(1,h0)+dim(2,e1v)+dim(3,e2v)+
+   `<circle cx='${xs[0]}' cy='${ys[0]}' r='5' fill='var(--lo)' stroke='var(--tx)'/>`+
+   `<circle cx='${xs[1]}' cy='${ys[1]}' r='9' fill='var(--ok)' stroke='var(--tx)'/><text x='${xs[1]}' y='${ys[1]+4}' text-anchor='middle' style='${ts};fill:#fff'>P</text>`+
+   `<circle cx='${xs[2]}' cy='${ys[2]}' r='6' fill='var(--mut)' stroke='var(--tx)'/>`+
+   `<circle cx='${xs[3]}' cy='${ys[3]}' r='7' fill='none' stroke='var(--hi)' stroke-width='2'/>`+
+   lab(0,t('pond'))+lab(1,t('pump'))+lab(2,t('eAreaL'))+lab(3,t('lastHi'))}
  $('dpf').innerHTML=p}
 function pc(v){const m=String(v).match(/-?\d+(?:\.\d+)?/g);if(!m||m.length<2)return null;const a=+m[0],b=+m[1];return Math.abs(a)>90||Math.abs(b)>180?null:[a,b]}
 function hav(a,b){const R=6371000,r=x=>x*Math.PI/180,dl=r(b[0]-a[0]),dn=r(b[1]-a[1]),h=Math.sin(dl/2)**2+Math.cos(r(a[0]))*Math.cos(r(b[0]))*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(h))}
@@ -493,7 +508,7 @@ $('bKml').onclick=()=>{
  l.href=u;l.download='pipe-layout.kml';document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)};
 function showTab(k){const d=k=='d';$('pgDesign').classList.toggle('hide',!d);$('pgCalc').classList.toggle('hide',d);$('tD').classList.toggle('on',d);$('tC').classList.toggle('on',!d);$('bSet').classList.toggle('hide',d)}
 $('tD').onclick=()=>showTab('d');$('tC').onclick=()=>showTab('c');
-['nr','nt','ns','fq','dfu','rd','td','pm','zr','zn','fd','sp','fit','ez0','ez1'].forEach(i=>$(i).addEventListener('input',drawDesign));
+['nr','nt','ns','fq','dfu','rd','td','pm','zr','zn','fd','sp','fit','ez0','ez1','ez2'].forEach(i=>$(i).addEventListener('input',drawDesign));
 $('lsT').addEventListener('click',e=>{
  const x=e.target.closest('button[data-x]');if(x){delete RES[x.dataset.x];drawDesign();return}
  const tr=e.target.closest('tr[data-k]');if(!tr)return;const k=tr.dataset.k,b=e.target.closest('button[data-q]');
@@ -504,6 +519,60 @@ $('bBack').onclick=async()=>{clearTimeout(tmr);try{await go()}catch(e){}const k=
 $('bUse').onclick=()=>{const g1=id=>+$(id).value||0,nr=Math.max(1,Math.floor(g1('nr'))),nt=Math.max(1,Math.floor(g1('nt'))),ns=Math.max(1,Math.floor(g1('ns'))),
  q=nr*nt*ns*g1('fq')*(+$('dfu').value||1),Lh=(nr-1)*g1('rd')+(nt-1)*g1('td');
  $('q').value=+q.toPrecision(6);$('u').selectedIndex=0;$('l').value=+Lh.toPrecision(6);showTab('c');run()};
+// ===== save / load / report =====
+const SAVE_IN=['prj','nr','nt','rd','td','ns','fq','dfu','sp','pm','zr','fd','fit','ez0','ez1','ez2','cp','cl','c','vl','vm'];
+const esc=x=>String(x==null?'':x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function dlFile(name,mime,txt){const u=URL.createObjectURL(new Blob([txt],{type:mime})),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+const fname=ext=>(($('prj').value||'').trim().replace(/[^\w\u0E00-\u0E7F.-]+/g,'_').slice(0,60)||'pipe-design')+'_'+new Date().toISOString().slice(0,10)+ext;
+const RES_KEY=/^(pump|lat|feed|sec\d+)$/;
+$('bSave').onclick=()=>{const inputs={zn:$('zn').value};SAVE_IN.forEach(i=>inputs[i]=$(i).value);const results={};
+ Object.keys(RES).forEach(k=>{if(RES_KEY.test(k)){const e=RES[k];results[k]={pt:e.pt,ds:e.ds,v:e.v,hf:e.hf,tot:e.tot,cls:e.cls,qh:e.qh,Ln:e.Ln}}});
+ dlFile(fname('.json'),'application/json',JSON.stringify({app:'pipe-sizing',rev:16,saved:new Date().toISOString(),inputs,results},null,1))};
+$('bLoad').onclick=()=>$('fLoad').click();
+$('fLoad').onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const msg=$('prjMsg');
+ if(f.size>2e6){msg.textContent=t('loadBad');return}
+ const rd=new FileReader();rd.onerror=()=>{msg.textContent=t('loadBad')};
+ rd.onload=()=>{try{const o=JSON.parse(rd.result);if(!o||o.app!=='pipe-sizing'||!o.inputs||typeof o.inputs!=='object')throw 0;
+  SAVE_IN.forEach(i=>{const v=o.inputs[i];if(typeof v!=='string'&&typeof v!=='number')return;const el=$(i),sv=String(v);
+   if(el.tagName==='SELECT'){if([...el.options].some(x=>x.value===sv))el.value=sv}else el.value=sv.slice(0,120)});
+  Object.keys(RES).forEach(k=>delete RES[k]);
+  const num=x=>typeof x==='number'&&isFinite(x)?x:null;
+  if(o.results&&typeof o.results==='object')Object.keys(o.results).forEach(k=>{if(!RES_KEY.test(k))return;const e=o.results[k];if(!e||typeof e!=='object')return;
+   const r={ds:num(e.ds),v:num(e.v),hf:num(e.hf),tot:num(e.tot),qh:num(e.qh),Ln:num(e.Ln),pt:String(e.pt),cls:['lo','ok','hi'].includes(e.cls)?e.cls:'ok'};
+   if(['ds','v','hf','tot','qh','Ln'].every(z=>r[z]!==null)&&(r.pt==='n'||PTN[r.pt]))RES[k]=r});
+  SEL=null;drawDesign();const zn=String(o.inputs.zn||'');if([...$('zn').options].some(x=>x.value===zn))$('zn').value=zn;
+  drawDesign();updateLoc();run();msg.textContent=t('loadOk')+f.name}catch(err){msg.textContent=t('loadBad')}};
+ rd.readAsText(f)};
+const RPCSS=`.rp{--tx:#1a1d21;--mut:#6b7280;--card:#fff;--bd:#d1d5db;--ac:#2563eb;--ok:#16a34a;--lo:#0284c7;--hi:#dc2626;--grid:#d9dde3;background:#fff;color:#1a1d21;font:12.5px/1.45 system-ui,"Segoe UI","Noto Sans Thai",Sarabun,sans-serif}
+.rp h1{font-size:18px;margin:0 0 2px}.rp .meta{color:#6b7280}.rp h3{font-size:13px;margin:16px 0 6px;text-transform:uppercase;letter-spacing:.04em;color:#374151;border-bottom:2px solid #2563eb;padding-bottom:3px}
+.rp table{border-collapse:collapse;width:100%;min-width:0;font-size:12px}.rp th,.rp td{padding:4px 6px;border-bottom:1px solid #e5e7eb;text-align:right}.rp th:first-child,.rp td:first-child,.rp td.l{text-align:left}.rp th{background:#f3f4f6}
+.rp tr.tot td{font-weight:700;background:#f9fafb}.rp .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}.rp .note{color:#6b7280;font-size:11.5px;margin-top:6px}
+.rp svg{width:100%;height:auto;min-width:0!important;max-width:100%;display:block}.rp svg text{fill:#6b7280;font-size:10px}.rp .pg{break-inside:avoid}
+@media(max-width:560px){.rp .two{grid-template-columns:1fr}}`;
+$('rptStyle')||document.head.appendChild(Object.assign(document.createElement('style'),{id:'rptStyle',textContent:RPCSS+`#rptP{display:none}@media print{body.prn>*:not(#rptP){display:none!important}body.prn #rptP{display:block}body.prn{background:#fff;padding:0;color-scheme:light}@page{margin:12mm}}`}));
+function rptHTML(){
+ const g=id=>$(id).value,v=id=>g(id).trim()===''?'-':pn(+g(id)),cl={lo:t('low'),ok:t('ok'),hi:t('high')},sel=SEL;
+ SEL=null;drawDesign();const plan=$('dsg').outerHTML.replace(' id="dsg"',''),prof=$('dpf').outerHTML.replace(' id="dpf"','');SEL=sel;drawDesign();
+ const kv=(a,b,c)=>`<tr><td class="l">${a}</td><td>${b}</td>${c!==undefined?`<td>${c}</td>`:''}</tr>`,P=PUMP,
+  zz=Math.max(1,Math.floor(+g('zr'))||1),
+  inp=[[t('nr'),v('nr')],[t('ntr'),v('nt')],[t('rdist'),v('rd')],[t('tdist'),v('td')],[t('nsp'),v('ns')],[t('fq'),v('fq')+' '+esc($('dfu').selectedOptions[0].text)],[t('spL'),v('sp')],[t('pmL'),v('pm')],[t('zrL'),String(zz)+' ('+t('znL')+': '+esc($('zn').selectedOptions[0]?$('zn').selectedOptions[0].text:'-')+')'],[t('fdL'),v('fd')],[t('fitL'),v('fit')],[t('ez0s'),v('ez0')],[t('ez1s'),v('ez1')],[t('ez2s'),v('ez2')]],
+  kp=[[t('kTrees'),$('dkT').textContent],[t('kSpr'),$('dkS').textContent],[t('kQ'),$('dkQ').textContent+' m³/h ('+$('dkQ2').textContent+')'],[t('kL'),$('dkL').textContent+' m'],[t('kDz'),$('dkZ').textContent+' m'],[t('kArea'),$('dkA').textContent+' m²']],
+  rows=LINES.map(x=>{const e=RES[x.k],bad=isBad(e,x);return `<tr><td class="l">${esc(x.n)}</td><td>${x.c}</td><td>${pn(x.q)}</td><td>${pn(x.q*1000/60)}</td><td>${pn(x.l)}</td>`+(e?`<td>${esc(ptName(e.pt))}</td><td>${e.ds}${t('inch')}</td><td>${fmt(e.v)}</td><td>${fmt(e.hf)}</td><td>${fmt(e.tot)}</td><td>${cl[e.cls]||''}${bad?' ⚠':''}</td>`:'<td colspan="6">-</td>')+'</tr>'}).join(''),
+  prj=g('prj').trim();
+ return `<h1>${esc(t('title'))}</h1><div class="meta">${prj?'<b>'+esc(prj)+'</b> · ':''}${esc(t('rptDt'))}: ${new Date().toLocaleDateString(L=='th'?'th-TH':'en-GB')} · Rev.16</div>
+<div class="two pg"><div><h3>${t('dsh')}</h3><table>${inp.map(r=>kv(r[0],r[1])).join('')}</table></div><div><h3>${t('dsum')}</h3><table>${kp.map(r=>kv(r[0],r[1])).join('')}</table></div></div>
+<div class="pg"><h3>${t('lsum')}</h3><table><thead><tr><th>${t('thLn')}</th><th>${t('thQty')}</th><th>${t('xl')}</th><th>${t('thLpm')}</th><th>${t('thLen')}</th><th>${t('thPt')}</th><th>${t('thSz')}</th><th>${t('thVv')}</th><th>${t('thHf')}</th><th>${t('thTh')}</th><th>${t('status')}</th></tr></thead><tbody>${rows}
+<tr class="tot"><td class="l" colspan="4">${t('lnTot')}</td><td>${pn(TOTLEN)}</td><td colspan="6"></td></tr>
+<tr class="tot"><td class="l" colspan="9">${t('lnHf2')}</td><td>${P&&P.hf!=null?fmt(P.hf):'-'}</td><td></td></tr></tbody></table></div>
+<div class="pg"><h3>${t('pumpH')}</h3><table>${$('pmT').innerHTML}</table>${$('pmN').textContent?`<div class="note">${esc($('pmN').textContent)}</div>`:''}</div>
+<div class="pg"><h3>${t('drh')}</h3>${plan}</div><div class="pg"><h3>${t('prof')}</h3>${prof}</div>
+<div class="note">${t('rpNote')} C = ${esc(g('c'))}</div>`}
+$('bRpt').onclick=()=>{$('rptB').innerHTML=rptHTML();$('rpt').showModal()};
+$('rpX').onclick=$('rpC').onclick=()=>$('rpt').close();
+$('rpt').addEventListener('click',e=>{if(e.target===$('rpt'))$('rpt').close()});
+$('rpPrn').onclick=()=>{$('rptP').innerHTML=$('rptB').innerHTML;$('rpt').close();document.body.classList.add('prn');
+ window.addEventListener('afterprint',()=>{document.body.classList.remove('prn');$('rptP').innerHTML=''},{once:true});window.print()};
+$('rpDl').onclick=()=>dlFile(fname('.html'),'text/html','<!DOCTYPE html><html lang="'+L+'"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(t('rptT'))+'</title><style>body{margin:16px}'+RPCSS+'</style></head><body><div class="rp">'+$('rptB').innerHTML+'</div></body></html>');
 function setLang(l){L=l;try{localStorage.setItem('lang',l)}catch(e){}
  document.documentElement.lang=l;document.title=t('title');
  document.querySelectorAll('[data-t]').forEach(e=>e.innerHTML=t(e.dataset.t));
