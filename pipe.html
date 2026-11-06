@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pipe Sizing Dashboard</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1a1d21;--mut:#6b7280;--bd:#e2e5ea;--ac:#2563eb;--ok:#16a34a;--lo:#0284c7;--hi:#dc2626;--grid:#d9dde3;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111317;--card:#1b1e24;--tx:#e8eaed;--mut:#9aa1ac;--bd:#2c3038;--ac:#60a5fa;--ok:#4ade80;--lo:#38bdf8;--hi:#f87171;--grid:#2c3038;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#111317;--card:#1b1e24;--tx:#e8eaed;--mut:#9aa1ac;--bd:#2c3038;--ac:#60a5fa;--ok:#4ade80;--lo:#38bdf8;--hi:#f87171;--grid:#2c3038;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.45 system-ui,-apple-system,"Segoe UI","Noto Sans Thai",Sarabun,sans-serif;padding:16px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;max-width:1100px;margin:0 auto 14px}
+h1{font-size:18px;margin:0 0 2px}.sub{color:var(--mut);margin:0;font-size:12px}
+.lang{display:flex;border:1px solid var(--bd);border-radius:8px;overflow:hidden;flex:none}
+.lang button{border:0;background:var(--card);color:var(--mut);padding:6px 12px;font:inherit;cursor:pointer}
+.lang button.on{background:var(--ac);color:#fff}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));max-width:1100px;margin:auto}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px}
+.card h2{font-size:13px;margin:0 0 10px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{display:block;font-size:12px;color:var(--mut);margin-bottom:8px}
+input,select{width:100%;margin-top:3px;padding:8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--tx);font:inherit}
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.k{border:1px solid var(--bd);border-radius:8px;padding:10px}.k b{display:block;font-size:22px}.k span{font-size:11px;color:var(--mut)}
+.badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:600;color:#fff}
+.k .badge{font-size:12px;color:#fff}
+.top-r{display:flex;gap:8px;flex:none;align-items:flex-start;flex-wrap:wrap}
+@media(max-width:560px){
+ .top{flex-direction:column;align-items:stretch;gap:8px}
+ .top-r{justify-content:flex-start}
+ h1{font-size:16px}
+}
+.gear{border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);padding:6px 12px;font:inherit;cursor:pointer}
+.gear:hover{border-color:var(--ac)}
+dialog{background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:12px;padding:16px;width:calc(100% - 32px);max-width:420px;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+.dh{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.dh h2{margin:0}
+.x{border:0;background:transparent;color:var(--mut);font-size:22px;line-height:1;cursor:pointer;padding:0 4px}
+.done{width:100%;margin-top:6px;padding:9px;border:0;border-radius:8px;background:var(--ac);color:#fff;font:inherit;font-weight:600;cursor:pointer}
+.ok{background:var(--ok)}.lo{background:var(--lo)}.hi{background:var(--hi)}
+.lov{width:calc(100% - 32px);max-width:320px;padding:0}
+.lob{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:24px;width:calc(100% - 32px);max-width:320px}
+.lob h2{margin:0 0 14px;font-size:16px}
+.lob label{margin-bottom:10px}
+.lob .err{color:var(--hi);font-size:12px;min-height:16px;margin-bottom:6px}
+.lob button{width:100%;padding:10px;border:0;border-radius:8px;background:var(--ac);color:#fff;font:inherit;font-weight:600;cursor:pointer}
+.hide{display:none!important}
+.admin{background:var(--card);border:1px solid var(--bd);border-radius:8px;color:var(--tx);padding:6px 12px;font:inherit;cursor:pointer}
+.admin:hover{border-color:var(--ac)}
+input:disabled,select:disabled{opacity:.5;cursor:not-allowed}
+.loginbar{font-size:12px;color:var(--mut);margin-top:4px}
+#adlg{max-width:640px}
+#adlg textarea{width:100%;min-height:120px;padding:8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--tx);font:12px/1.4 monospace;margin-top:6px}
+#adlg table{font-size:12px}
+.wide{grid-column:1/-1}.sc{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:480px}th,td{padding:6px 8px;text-align:right;border-bottom:1px solid var(--bd)}
+th:first-child,td:first-child{text-align:left}tr.sel{background:color-mix(in srgb,var(--ac) 14%,transparent)}
+.note{font-size:12px;color:var(--mut);margin-top:8px}
+.foot{max-width:1100px;margin:14px auto 0;padding-top:10px;border-top:1px solid var(--bd);text-align:center;font-size:12px;color:var(--mut)}
+svg text{fill:var(--mut);font-size:10px}
+</style>
+</head>
+<body>
+<dialog id="lov" class="lov">
+  <div class="lob">
+    <div class="dh"><h2 data-t="loginTitle"></h2><button class="x" id="loX" type="button" aria-label="Close">&times;</button></div>
+    <div class="err" id="loErr"></div>
+    <label><span data-t="loginUser"></span><input id="loU" type="text" autocomplete="username"></label>
+    <label><span data-t="loginPass"></span><input id="loP" type="password" autocomplete="current-password"></label>
+    <button id="loBtn" type="button" data-t="loginBtn"></button>
+  </div>
+</dialog>
+<dialog id="adlg">
+  <div class="dh"><h2 data-t="adminTitle"></h2><button class="x" id="adX" type="button" aria-label="Close">&times;</button></div>
+  <h3 style="font-size:12px;text-transform:uppercase;color:var(--mut);margin:0 0 6px" data-t="adminAdd"></h3>
+  <textarea id="adBulk" placeholder="username1,password1&#10;username2,password2"></textarea>
+  <button class="done" id="adAddBtn" type="button" data-t="adminAddBtn"></button>
+  <div class="note" id="adAddMsg"></div>
+  <h3 style="font-size:12px;text-transform:uppercase;color:var(--mut);margin:16px 0 6px" data-t="adminLog"></h3>
+  <div class="sc"><table id="adTb"></table></div>
+  <button class="done" id="adClose" type="button" data-t="close"></button>
+</dialog>
+<div class="top">
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.08</small></h1><p class="sub" data-t="sub"></p></div>
+  <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
+</div>
+<div class="grid">
+  <div class="card">
+    <h2 data-t="in"></h2>
+    <div class="row">
+      <label><span data-t="flow"></span><input id="q" type="number" step="any" value="9.6"></label>
+      <label><span data-t="unit"></span><select id="u"></select></label>
+    </div>
+    <label><span data-t="ptype"></span><select id="pt"></select></label>
+    <label><span data-t="size"></span><select id="d"></select></label>
+  </div>
+  <div class="card">
+    <h2 data-t="res"></h2>
+    <div class="kpi">
+      <div class="k"><span data-t="v"></span><b id="rv">-</b><span data-t="ms"></span></div>
+      <div class="k"><span data-t="hl"></span><b id="rh">-</b><span data-t="hlu"></span></div>
+      <div class="k"><span data-t="tot"></span><b id="rt">-</b><span data-t="totu"></span></div>
+      <div class="k"><span data-t="status"></span><b id="rs">-</b><span id="rn"></span></div>
+    </div>
+    <div class="note" id="rec"></div>
+  </div>
+  <div class="card">
+    <h2 data-t="sech"></h2>
+    <svg id="sec" viewBox="0 0 360 250" width="100%" style="max-height:300px"></svg>
+    <div class="note" id="secn"></div>
+  </div>
+  <div class="card wide">
+    <h2 data-t="ch"></h2>
+    <div class="sc"><svg id="ch" viewBox="0 0 800 460" width="100%" style="min-width:640px"></svg></div>
+    <div class="note" data-t="cn"></div>
+  </div>
+  <div class="card wide">
+    <h2 data-t="calch"></h2>
+    <div id="cb" class="sc"></div>
+  </div>
+  <div class="card wide">
+    <h2><span data-t="all"></span> <span id="tbl" style="text-transform:none;letter-spacing:0;font-weight:700;color:var(--ac);margin-left:8px"></span></h2>
+    <div class="sc"><table id="tb"></table></div>
+    <div class="note" style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap"><span id="gd"></span><span style="white-space:nowrap"><span id="vis" style="display:none"><span data-t="vis"></span>: <b id="vn">-</b></span></span></div>
+  </div>
+</div>
+
+<dialog id="dlg">
+  <div class="dh"><h2 data-t="set"></h2><button class="x" id="bX" type="button" aria-label="Close">&times;</button></div>
+  <label><span data-t="c"></span><input id="c" type="number" step="any" value="150"></label>
+  <label><span data-t="len"></span><input id="l" type="number" step="any" value="1"></label>
+  <div class="row">
+    <label><span data-t="vmin"></span><input id="vl" type="number" step="any" min="0" value="1"></label>
+    <label><span data-t="vmax"></span><input id="vm" type="number" step="any" value="1.5"></label>
+  </div>
+  <div class="note" data-t="cnote"></div>
+  <button class="done" id="bOk" type="button" data-t="close"></button>
+</dialog>
+
+<script>
+const TX={en:{sech:'Pipe section - TIS 17-2561',wall:'wall',sname:'Thai size name',ptype:'Pipe type - Thai standard TIS 17-2561',nom:'Nominal (ID = size)',calch:'Calculation (live, with your inputs)',vis:'Visitors',by:'Created by ST.',title:'Pipe Sizing Dashboard',set:'Settings',close:'Close',sub:'Flow rate - pipe size - velocity - head loss (Hazen-Williams, matches the pipe selection chart)',in:'Input',flow:'Flow rate',unit:'Unit',size:'Pipe size (nominal)',c:'C factor',len:'Pipe length (m)',vmin:'Design velocity min (m/s)',vmax:'Design velocity max (m/s)',cnote:'<b>Default C = 150</b> (PVC/PE 140-150, new steel 120, old steel 100). PVC inner dia = OD - 2 x wall (TIS 17-2561). <b>Default design velocity: min = 1 m/s, max = 1.5 m/s.</b>',res:'Result - selected size',v:'Velocity',ms:'m/s',hl:'Head loss (gradient)',hlu:'m / 100 m',tot:'Total head loss',totu:'m over length',status:'Status',ch:'Hazen-Williams pipe selection chart (head loss - flow rate - velocity)',cn:'Grey/blue curves = pipe size. Dashed amber = constant velocity (m/s). Solid amber = current velocity. Red/purple guides = operating point.',all:'All sizes at this flow',guide:(a,b)=>'Velocity guide: below '+a+' low (sediment) - '+a+' to '+b+' OK - above '+b+' high (noise, surge).',low:'Low',ok:'OK',high:'High',inch:'"',units:['m³/h','L/min','L/s','L/h'],xl:'Flow (m³/h)',yl:'Head loss (m/100 m)',thS:'Size',thI:'ID (mm)',thV:'v (m/s)',thH:'hf (m/100m)',thT:'Status',
+ rec:(vm,s,v,h)=>'Smallest size with v ≤ '+vm+' m/s: '+s+'" (v = '+v+' m/s, hf = '+h+' m/100 m)',norec:'No listed size meets the velocity limit.',
+ loginTitle:'Sign in',loginUser:'Username',loginPass:'Password',loginBtn:'Sign in',loginErr:'Incorrect username or password.',loginToCalc:'Log in to calculate.',loginErrServer:'Could not reach the login server.',
+ adminBtn:'Admin',logoutBtn:'Log out',adminTitle:'Admin panel',adminAdd:'Add users (one per line: username,password)',adminAddBtn:'Add users',adminAddMsg:(n)=>'Added '+n+' user(s).',adminLog:'Login log',logT:'Time',logU:'Username',logIp:'IP'},
+th:{sech:'หน้าตัดท่อ - มอก. 17-2561',wall:'ผนังหนา',sname:'ชื่อขนาด มอก.',ptype:'ชนิดท่อ - มาตรฐาน มอก. 17-2561',nom:'ID = ขนาดนิ้ว (ไม่ระบุชนิด)',calch:'วิธีคำนวณ (ตามค่าที่ป้อน)',vis:'ผู้เข้าชม',by:'จัดทำโดย ST.',title:'แดชบอร์ดเลือกขนาดท่อ',set:'ตั้งค่า',close:'ปิด',sub:'อัตราการไหล - ขนาดท่อ - ความเร็ว - การสูญเสียความดัน (Hazen-Williams ตามแผนภูมิเลือกขนาดท่อ)',in:'ข้อมูลนำเข้า',flow:'อัตราการไหล',unit:'หน่วย',size:'ขนาดท่อ (นิ้ว)',c:'ค่า C',len:'ความยาวท่อ (ม.)',vmin:'ความเร็วต่ำสุดที่ออกแบบ (ม./วินาที)',vmax:'ความเร็วสูงสุดที่ออกแบบ (ม./วินาที)',cnote:'<b>ค่า C เริ่มต้น = 150</b> (PVC/PE 140-150, เหล็กใหม่ 120, เหล็กเก่า 100) เส้นผ่านศูนย์กลางในท่อ PVC = OD - 2 x ความหนาผนัง (มอก. 17-2561) <b>ความเร็วออกแบบเริ่มต้น: ต่ำสุด = 1 ม./วินาที, สูงสุด = 1.5 ม./วินาที</b>',res:'ผลลัพธ์ - ขนาดท่อที่เลือก',v:'ความเร็วน้ำในท่อ',ms:'เมตร/วินาที',hl:'แรงดันตก',hlu:'ม. / 100 ม.',tot:'แรงดันตกรวม',totu:'ม. ตามความยาวท่อ',status:'สถานะ',ch:'แผนภูมิเลือกขนาดท่อ Hazen-Williams (แรงดันตก - อัตราการไหล - ความเร็ว)',cn:'เส้นเทา/น้ำเงิน = ขนาดท่อ เส้นประสีเหลืองอำพัน = ความเร็วคงที่ (ม./วินาที) เส้นทึบ = ความเร็วปัจจุบัน เส้นแดง/ม่วง = จุดทำงาน',all:'ทุกขนาดท่อที่อัตราการไหลนี้',guide:(a,b)=>'แนวทางความเร็ว: ต่ำกว่า '+a+' ต่ำ (ตะกอนสะสม) - '+a+' ถึง '+b+' เหมาะสม - เกิน '+b+' สูง (เสียงดัง, น้ำกระแทก)',low:'ต่ำ',ok:'เหมาะสม',high:'สูง',inch:' นิ้ว',units:['ลบ.ม./ชม.','ลิตร/นาที','ลิตร/วินาที','ลิตร/ชม.'],xl:'อัตราการไหล (ลบ.ม./ชม.)',yl:'แรงดันตก (ม./100 ม.)',thS:'ขนาด',thI:'ID (มม.)',thV:'v (ม./วิ)',thH:'hf (ม./100ม.)',thT:'สถานะ',
+ rec:(vm,s,v,h)=>'ขนาดท่อเล็กที่สุดที่ v ≤ '+vm+' ม./วินาที: '+s+' นิ้ว (v = '+v+' ม./วินาที, hf = '+h+' ม./100 ม.)',norec:'ไม่มีขนาดท่อที่ความเร็วต่ำกว่าเกณฑ์',
+ loginTitle:'เข้าสู่ระบบ',loginUser:'ชื่อผู้ใช้',loginPass:'รหัสผ่าน',loginBtn:'เข้าสู่ระบบ',loginErr:'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง',loginToCalc:'เข้าสู่ระบบเพื่อคำนวณ',loginErrServer:'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้',
+ adminBtn:'ผู้ดูแลระบบ',logoutBtn:'ออกจากระบบ',adminTitle:'แผงควบคุมผู้ดูแลระบบ',adminAdd:'เพิ่มผู้ใช้ (บรรทัดละ 1 คน: ชื่อผู้ใช้,รหัสผ่าน)',adminAddBtn:'เพิ่มผู้ใช้',adminAddMsg:(n)=>'เพิ่มผู้ใช้แล้ว '+n+' คน',adminLog:'บันทึกการเข้าสู่ระบบ',logT:'เวลา',logU:'ชื่อผู้ใช้',logIp:'IP'}};
+let L='en';try{L=localStorage.getItem('lang')||(navigator.language||'').startsWith('th')?'th':'en';const sv=localStorage.getItem('lang');if(sv)L=sv}catch(e){}
+const t=k=>TX[L][k];
+const S=[0.5,0.75,1,1.25,1.5,2,2.5,3,4,5,6,8,10,12,14,16,18,20,24],UV=[1,0.06,3.6,0.001];
+const $=id=>document.getElementById(id);
+function build(){const ds=$('d').value||2,us=$('u').selectedIndex<0?0:$('u').selectedIndex,pv=$('pt').value||'4';
+ $('pt').innerHTML=[['n',t('nom')],['0','PVC 5 (PN 6)'],['1','PVC 7 (PN 8)'],['2','PVC 8.5 (PN 10)'],['3','PVC 10.5 (PN 12.5)'],['4','PVC 13.5 (PN 16)']].map(o=>`<option value='${o[0]}'${o[0]==pv?' selected':''}>${o[1]}</option>`).join('');
+ $('d').innerHTML=S.map(s=>'<option value="'+s+'"'+(s==ds?' selected':'')+'>'+s+t('inch')+'</option>').join('');
+ $('u').innerHTML=UV.map((u,i)=>'<option value="'+u+'"'+(i==us?' selected':'')+'>'+t('units')[i]+'</option>').join('')}
+const API = 'https://argiculture-pipe-dashboard.mammoetbackup1.workers.dev';
+let TOKEN=null,ADMIN=false;
+try{TOKEN=localStorage.getItem('tok');ADMIN=localStorage.getItem('adm')==='1'}catch(e){}
+let VMIN=1,VMAX=1.5;
+const st=v=>v<VMIN?['lo',t('low')]:v>VMAX?['hi',t('high')]:['ok',t('ok')];
+function fmt(x){return x>=100?x.toFixed(0):x>=10?x.toFixed(1):x.toFixed(2)}
+let seq=0,tmr;
+function run(){clearTimeout(tmr);tmr=setTimeout(go,150)}
+async function go(){
+ if(!TOKEN){$('rn').textContent=t('loginToCalc');return}
+ const my=++seq,qh=(+$('q').value||0)*(+$('u').value),C=+$('c').value||140,Ln=+$('l').value||0,vm=+$('vm').value||1.5,ds=+$('d').value;
+ VMIN=$('vl').value===''?1:Math.max(0,+$('vl').value||0);VMAX=vm;
+ $('gd').textContent=t('guide')(+VMIN.toFixed(3),+VMAX.toFixed(3));
+ let D;try{const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},body:JSON.stringify({qh,ds,C,pt:$('pt').value})});if(res.status===401){lockUI();$('rn').textContent=t('loginToCalc');return}if(!res.ok)throw 0;D=await res.json()}catch(e){$('rn').textContent='Calculation server unavailable';return}
+ if(my!==seq)return;
+ const r={v:D.v,hf:D.hf,d:D.d},s=st(r.v);
+ $('rv').textContent=fmt(r.v);$('rh').textContent=fmt(r.hf);$('rt').textContent=fmt(r.hf*Ln/100);
+ $('rs').innerHTML='<span class="badge '+s[0]+'">'+s[1]+'</span>';$('rn').textContent=ds+t('inch')+' @ '+fmt(qh)+' '+t('units')[0];
+ const rw=D.rows.find(x=>x[3]!==undefined&&x[2]<=vm),rec=rw?rw[0]:null;
+ $('rec').textContent=rw?t('rec')(vm,rec,fmt(rw[2]),fmt(rw[3])):t('norec');
+ let h='<tr><th>'+t('thS')+'</th><th>'+t('thI')+'</th><th>'+t('thV')+'</th><th>'+t('thH')+'</th><th>'+t('thT')+'</th></tr>';
+ D.rows.forEach(([x,id,v,hf])=>{const q=st(v);h+='<tr class="'+(x==ds?'sel':'')+'"><td>'+x+t('inch')+(x==rec?' ★':'')+'</td><td>'+id.toFixed(1)+'</td><td>'+fmt(v)+'</td><td>'+fmt(hf)+'</td><td><span class="badge '+q[0]+'">'+q[1]+'</span></td></tr>'});
+ $('tb').innerHTML=h;draw2(qh,r.hf,ds,C,D);calcBox(qh,ds,C,Ln,r);drawSec(ds,D.id,D.od);$('tbl').textContent='HAZEN-WILLIAMS C = '+C+' | '+tlab();
+}
+const NM={0.5:18,0.75:20,1:25,1.25:35,1.5:40,2:55,2.5:65,3:80,4:100,5:125,6:150,8:200,10:250,12:300,14:350,16:400,18:450,20:500,24:600};
+function tlab(){const o=$('pt').selectedOptions[0];return o?o.textContent:''}
+function drawSec(ds,ID,OD){const v=$('pt').value,pvc=!(v===''||v==='n'),e=OD?(OD-ID)/2:null,en=L=='en',u=en?'mm':'มม.',q2=en?String.fromCharCode(34):' นิ้ว',ni=({0.5:'½',0.75:'¾',1.25:'1¼',1.5:'1½',2.5:'2½'}[ds]||ds)+String.fromCharCode(34);
+ const cx=130,cy=108,R=82,r=OD?R*ID/OD:R,ts='fill:var(--tx);font-size:11px;font-weight:700';
+ let g=`<defs><marker id='ar' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='6' markerHeight='6' orient='auto-start-reverse'><path d='M0,0L10,5L0,10z' fill='var(--tx)'/></marker></defs>`;
+ if(OD)g+=`<circle cx='${cx}' cy='${cy}' r='${R}' fill='var(--ac)' fill-opacity='.35' stroke='var(--ac)' stroke-width='1.5'/>`;
+ g+=`<circle cx='${cx}' cy='${cy}' r='${r}' fill='var(--card)' stroke='var(--ac)' stroke-width='${OD?1.5:2}'/><circle cx='${cx}' cy='${cy}' r='${r}' fill='var(--lo)' fill-opacity='.14'/>`;
+ g+=`<line x1='${cx-r}' x2='${cx+r}' y1='${cy}' y2='${cy}' stroke='var(--tx)' marker-start='url(#ar)' marker-end='url(#ar)'/><text x='${cx}' y='${cy-7}' text-anchor='middle' style='${ts}'>ID ${ID.toFixed(1)} ${u}${OD?'':' ('+ni+')'}</text>`;
+ if(OD){const y=cy+R+24;g+=`<line x1='${cx-R}' x2='${cx-R}' y1='${cy}' y2='${y+4}' stroke='var(--mut)' stroke-dasharray='2 2'/><line x1='${cx+R}' x2='${cx+R}' y1='${cy}' y2='${y+4}' stroke='var(--mut)' stroke-dasharray='2 2'/><line x1='${cx-R}' x2='${cx+R}' y1='${y}' y2='${y}' stroke='var(--tx)' marker-start='url(#ar)' marker-end='url(#ar)'/><text x='${cx}' y='${y+15}' text-anchor='middle' style='${ts}'>OD ${OD} ${u} (${ni})</text>`;
+  const pm=(R+r)/2,px=cx+pm*0.7071,py=cy-pm*0.7071;g+=`<circle cx='${px}' cy='${py}' r='2.5' fill='var(--tx)'/><line x1='${px}' y1='${py}' x2='248' y2='24' stroke='var(--tx)'/><text x='252' y='28' style='${ts}'>${t('wall')} e = ${e.toFixed(1)} ${u}</text>`}
+ $('sec').innerHTML=g;
+ $('secn').textContent=tlab()+' | '+ds+q2+(pvc&&NM[ds]?' ('+t('sname')+' '+NM[ds]+')':'')+' | '+(OD?'OD '+OD+' x ':'')+'ID '+ID.toFixed(1)+(e?' x e '+e.toFixed(1):'')+' '+u}
+function calcBox(qh,ds,C,Ln,r){const en=L=='en',p=x=>String(+Number(x).toPrecision(4)),Q=qh/3600,d=r.d,A=Math.PI*d*d/4,hm=r.hf/100,
+ row=(a,v)=>`<tr><td>${a}</td><td><b>${v}</b></td></tr>`;
+ $('cb').innerHTML=`<table style='min-width:320px'><tr><th>${en?'Step':'ขั้นตอน'}</th><th>${en?'Result':'ผลลัพธ์'}</th></tr>`+
+ row('1. '+(en?'Flow':'อัตราการไหล'),p(Q)+' m³/s')+
+ row('2. '+(en?'Diameter':'เส้นผ่าศูนย์กลาง'),p(d)+' m')+
+ row('3. '+(en?'Area':'พื้นที่หน้าตัด'),p(A)+' m²')+
+ row('4. '+(en?'Velocity':'ความเร็ว'),p(Q/A)+(en?' m/s':' ม./วิ'))+
+ row('5. '+(en?'Head loss':'แรงดันตก'),p(hm)+' m/m')+
+ row('6. '+(en?'Head loss per 100 m':'แรงดันตกต่อ 100 ม.'),p(r.hf)+' m/100 m')+
+ row('7. '+(en?'Total head loss':'แรงดันตกรวม'),p(r.hf*Ln/100)+' m')+`</table>`}
+function draw2(qh,hf,ds,C,D){
+const W=800,H=460,m={l:56,r:40,t:34,b:44},pw=W-m.l-m.r,ph=H-m.t-m.b;
+const X=v=>m.l+(Math.log10(v)+1)/5*pw,Y=v=>H-m.b-(Math.log10(v)+1)/3*ph;
+const fr={0.5:'½',0.75:'¾',1.25:'1¼',1.5:'1½',2.5:'2½'},nm=s=>(fr[s]||s)+(L=='en'?String.fromCharCode(34):''),lab=v=>String(+v.toPrecision(2));
+const vc='#d97706',en=L=='en',msu=en?'m/s':'ม./วิ';
+let g=`<defs><clipPath id='cp'><rect x='${m.l}' y='${m.t}' width='${pw}' height='${ph}'/></clipPath></defs>`;
+g+=`<text x='${m.l}' y='16' style='font-size:12px;font-weight:700;fill:var(--tx)'>HAZEN-WILLIAMS  C = ${C}  |  ${tlab()}</text>`;
+for(let e=-1;e<=4;e++)for(let k=1;k<10;k++){const v=k*Math.pow(10,e);if(v<0.1||v>10000)continue;const x=X(v);g+=`<line x1='${x}' x2='${x}' y1='${m.t}' y2='${H-m.b}' stroke='var(--grid)' stroke-width='${k==1?1.2:0.5}'/>`;if([1,2,3,4,5,7].includes(k))g+=`<text x='${x}' y='${H-m.b+14}' text-anchor='middle'>${lab(v)}</text>`}
+for(let e=-1;e<=2;e++)for(let k=1;k<10;k++){const v=k*Math.pow(10,e);if(v<0.1||v>100)continue;const y=Y(v);g+=`<line y1='${y}' y2='${y}' x1='${m.l}' x2='${W-m.r}' stroke='var(--grid)' stroke-width='${k==1?1.2:0.5}'/>`;if([1,2,3,4,5,7].includes(k))g+=`<text x='${m.l-5}' y='${y+3}' text-anchor='end'>${lab(v)}</text>`}
+g+=`<rect x='${m.l}' y='${m.t}' width='${pw}' height='${ph}' fill='none' stroke='var(--tx)' stroke-width='1.2'/>`;
+g+=`<text x='${m.l+pw/2}' y='${H-6}' text-anchor='middle' style='font-size:11px'>${t('xl')}</text><text transform='translate(12,${m.t+ph/2}) rotate(-90)' text-anchor='middle' style='font-size:11px'>${t('yl')}</text>`;
+g+=`<g clip-path='url(#cp)'>`;let lab2='';
+D.curves.forEach(([s,pts])=>{let p='',lx=null,lh=0;const sel=s==ds;pts.forEach(([q,h],i)=>{p+=(i?'L':'M')+X(q).toFixed(1)+','+Y(h).toFixed(1);if(h>=0.1&&h<=100){lx=q;lh=h}});
+g+=`<path d='${p}' fill='none' stroke='${sel?'var(--ac)':'var(--tx)'}' stroke-width='${sel?2.4:0.9}' opacity='${sel?1:0.8}'/>`;
+if(lx!==null){const st2=`fill:${sel?'var(--ac)':'var(--tx)'};font-weight:${sel?700:400}`;lab2+=lh>90?`<text x='${X(lx)}' y='${m.t-4}' text-anchor='middle' style='${st2}'>${nm(s)}</text>`:`<text x='${W-m.r+4}' y='${Y(lh)+3}' style='${st2}'>${nm(s)}</text>`}});
+D.vcurves.forEach(([v,pts,cur])=>{let p='',lx=null,ly=null;pts.forEach(([q,h],i)=>{p+=(i?'L':'M')+X(q).toFixed(1)+','+Y(h).toFixed(1);if(q>=0.1&&q<=10000&&h>=0.1&&h<=100){lx=X(q);ly=Y(h)}});
+g+=`<path d='${p}' fill='none' stroke='${vc}' stroke-width='${cur?2:0.9}' stroke-dasharray='${cur?'':'5 3'}' opacity='${cur?1:0.8}'/>`;
+if(lx!==null)g+=`<text x='${lx-4}' y='${ly-4}' text-anchor='end' style='fill:${vc};font-weight:${cur?700:400}'>${cur?v.toFixed(2):v} ${msu}</text>`});
+if(qh>0&&hf>0){const px=X(Math.min(Math.max(qh,0.1),10000)),py=Y(Math.min(Math.max(hf,0.1),100));
+g+=`<line x1='${px}' x2='${px}' y1='${py}' y2='${H-m.b}' stroke='var(--hi)' stroke-dasharray='4 3'/><line x1='${m.l}' x2='${px}' y1='${py}' y2='${py}' stroke='#9333ea' stroke-dasharray='4 3'/><circle cx='${px}' cy='${py}' r='6' fill='none' stroke='var(--hi)' stroke-width='2'/><text x='${px+9}' y='${py-8}' style='fill:var(--tx);font-weight:700'>${fmt(qh)} / ${fmt(hf)}</text>`}
+g+=`</g>`+lab2;
+const lx0=W-m.r-300;
+g+=`<line x1='${lx0}' x2='${lx0+24}' y1='12' y2='12' stroke='var(--tx)'/><text x='${lx0+29}' y='15'>${en?'Size (inch)':'ขนาดท่อ (นิ้ว)'}</text><line x1='${lx0+130}' x2='${lx0+154}' y1='12' y2='12' stroke='${vc}' stroke-dasharray='5 3'/><text x='${lx0+159}' y='15'>${en?'Velocity (m/s)':'ความเร็ว (ม./วิ)'}</text>`;
+$('ch').innerHTML=g}
+function setLang(l){L=l;try{localStorage.setItem('lang',l)}catch(e){}
+ document.documentElement.lang=l;document.title=t('title');
+ document.querySelectorAll('[data-t]').forEach(e=>e.innerHTML=t(e.dataset.t));
+ $('bEn').classList.toggle('on',l=='en');$('bTh').classList.toggle('on',l=='th');build();run()}
+['q','u','d','c','l','vl','vm','pt'].forEach(i=>$(i).addEventListener('input',run));
+const dlg=$('dlg');$('bSet').onclick=()=>dlg.showModal();$('bX').onclick=$('bOk').onclick=()=>dlg.close();
+dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});
+$('bEn').onclick=()=>setLang('en');$('bTh').onclick=()=>setLang('th');
+$('bLogin').onclick=()=>{$('loErr').textContent='';$('lov').showModal()};
+$('loX').onclick=()=>$('lov').close();
+$('lov').addEventListener('click',e=>{if(e.target===$('lov'))$('lov').close()});
+$('bLogout').onclick=()=>{lockUI();$('rn').textContent=''};
+
+const INP=['q','u','d','c','l','vl','vm','pt'];
+function lockUI(){TOKEN=null;ADMIN=false;try{localStorage.removeItem('tok');localStorage.removeItem('adm')}catch(e){}
+ INP.forEach(i=>$(i).disabled=true);$('bAdmin').classList.add('hide');$('bLogout').classList.add('hide');$('bLogin').classList.remove('hide')}
+function unlockUI(){INP.forEach(i=>$(i).disabled=false);$('bLogin').classList.add('hide');$('bLogout').classList.remove('hide');if(ADMIN)$('bAdmin').classList.remove('hide')}
+function showLogin(){lockUI();$('lov').showModal()}
+function hideLogin(){if($('lov').open)$('lov').close();unlockUI()}
+async function doLogin(){
+ $('loErr').textContent='';const u=$('loU').value.trim(),p=$('loP').value;
+ if(!u||!p)return;
+ let r;try{r=await fetch(API+'/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})})}catch(e){$('loErr').textContent=t('loginErrServer');return}
+ if(!r.ok){$('loErr').textContent=t('loginErr');return}
+ const d=await r.json();TOKEN=d.token;ADMIN=!!d.admin;
+ try{localStorage.setItem('tok',TOKEN);localStorage.setItem('adm',ADMIN?'1':'0')}catch(e){}
+ $('loP').value='';hideLogin();build();run()}
+$('loBtn').onclick=doLogin;
+$('loP').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+$('loU').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+
+const adlg=$('adlg');
+$('bAdmin').onclick=async()=>{adlg.showModal();await loadAdminLog()};
+$('adX').onclick=$('adClose').onclick=()=>adlg.close();
+adlg.addEventListener('click',e=>{if(e.target===adlg)adlg.close()});
+async function loadAdminLog(){
+ $('adTb').innerHTML='';
+ let r;try{r=await fetch(API+'/adminlog',{method:'POST',headers:{'Authorization':'Bearer '+TOKEN}})}catch(e){return}
+ if(r.status===401){adlg.close();showLogin();return}
+ if(!r.ok)return;const rows=await r.json();
+ let h='<tr><th>'+t('logT')+'</th><th>'+t('logU')+'</th><th>'+t('logIp')+'</th></tr>';
+ rows.forEach(x=>{h+='<tr><td>'+new Date(x.t).toLocaleString()+'</td><td>'+x.u+'</td><td>'+(x.ip||'')+'</td></tr>'});
+ $('adTb').innerHTML=h}
+$('adAddBtn').onclick=async()=>{
+ const lines=$('adBulk').value.split(/\n/).map(x=>x.trim()).filter(Boolean);
+ if(!lines.length)return;
+ $('adAddMsg').textContent='...';
+ let r;try{r=await fetch(API+'/adminusers',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},body:JSON.stringify({users:lines})})}catch(e){$('adAddMsg').textContent=t('loginErrServer');return}
+ if(r.status===401){adlg.close();showLogin();return}
+ if(!r.ok){$('adAddMsg').textContent='Error';return}
+ const d=await r.json();$('adAddMsg').textContent=t('adminAddMsg')(d.added);$('adBulk').value='';await loadAdminLog()};
+
+if(TOKEN)unlockUI();else lockUI();
+setLang(L);
+(async()=>{try{
+ const db=await claude.use('db'),user=await claude.use('user');
+ if(!db||!user)return;
+ const id=await user.id(),col=db.collection('visitors'),me=col.doc(id);
+ const s=await me.get();if(!s.exists)await me.set({t:Date.now()});
+ col.onSnapshot(sn=>{$('vn').textContent=sn.size;$('vis').style.display=''},()=>{});
+}catch(e){}})();
+</script>
+</body>
+</html>
