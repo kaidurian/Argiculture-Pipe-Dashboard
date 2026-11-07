@@ -105,7 +105,7 @@ input[readonly]{opacity:.7}
 </dialog>
 <div id="rptP" class="rp"></div>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.21</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.21.1</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="tabs"><button id="tD" type="button" class="on" data-t="tabD"></button><button id="tC" type="button" data-t="tabC"></button></div>
@@ -398,12 +398,12 @@ function drawDesign(){
   return sym?up.map(s_=>Object.assign({},s_,{c:2})):up.concat(dn)};
  const zlen=z=>{const S=segs(z),Ln=s_=>Math.abs(s_.p2-s_.p1)*rd,su=S.filter(s_=>s_.dir!==-1).reduce((a,s_)=>a+Ln(s_),0),sd=S.filter(s_=>s_.dir===-1).reduce((a,s_)=>a+Ln(s_),0),lt=zLines(z).find(x=>x.k==='lat');return (MY?Math.abs(Em-eZ(z))*rd:0)+Math.max(su,sd)+(lt?lt.l:0)};
  const zLines=z=>{const rs_=zst(z),re_=zst(z+1),cnt_=re_-rs_,ql_=nt*ns*fq*fu,o=[],ad=(k,n,c,qq,ll,a,b)=>o.push({k,n,c,q:qq,l:ll,a,b});
-  {const pl_=pm+(MY?Math.abs(Em-eZ(z))*rd:0);if(pl_>0)ad('pump',t('lnPump'),1,cnt_*ql_,pl_)}
+  {const pl_=pm+(MY?Math.abs(Em-eZ(z))*rd:0);ad('pump',t('lnPump'),1,cnt_*ql_,pl_)}
   segs(z).forEach((g_,n)=>ad('sec'+(MY?n+1:g_.p2),t('lnSec')+' '+(n+1)+' ('+t('rowL')+' '+(g_.p1+1)+'→'+(g_.p2+1)+')'+(g_.c>1?' ×2':''),g_.c,g_.q,Math.abs(g_.p2-g_.p1)*rd,g_.p1,g_.p2));
   ad('lat',t('lnLat'),cnt_*(MX?2:1),MX?ql_/2:ql_,MX?(nt-1)*td/2:(nt-1)*td);if(fd>0)ad('feed',t('lnFeed'),cnt_*nt*ns,fq*fu,fd);return o};
  const zhf=(Ls_,R)=>{const l=R.lat,xl=Ls_.find(x=>x.k==='lat'),xp=Ls_.find(x=>x.k==='pump'),xf=Ls_.find(x=>x.k==='feed'),ss=Ls_.filter(x=>/^sec\d+$/.test(x.k)),pu=R.pump,fe=R.feed,
-  ok=!!(l&&(!xp||pu)&&(!xf||fe)&&ss.every(x=>R[x.k])),st=ok&&(isBad(l,xl)||(xp&&isBad(pu,xp))||(xf&&isBad(fe,xf))||ss.some(x=>isBad(R[x.k],x)));
-  return{ok,st:!!st,hf:ok?l.tot+(xp?pu.tot:0)+(xf?fe.tot:0)+ss.reduce((a,x)=>a+R[x.k].tot,0):null}};
+  ok=!!(l&&(!xp||xp.l<=0||pu)&&(!xf||fe)&&ss.every(x=>R[x.k])),st=ok&&(isBad(l,xl)||(xp&&isBad(pu,xp))||(xf&&isBad(fe,xf))||ss.some(x=>isBad(R[x.k],x)));
+  return{ok,st:!!st,hf:ok?l.tot+(xp&&pu?pu.tot:0)+(xf?fe.tot:0)+ss.reduce((a,x)=>a+R[x.k].tot,0):null}};
  {let o='';for(let j=0;j<Z;j++){const a=zst(j)+1,b=zst(j+1);o+=`<option value='${j+1}'>${en?'Zone':'โซน'} ${j+1} (${t('rowW')} ${a}${b>a?'-'+b:''})</option>`}$('zn').innerHTML=o;$('zn').value=String(zi+1)}
  $('plN').textContent=t('plN')+(zi+1)+t('plOf')+Z+' ('+t('rowW')+' '+(rs+1)+(re>rs+1?'-'+re:'')+')';
  $('dkT').textContent=trees;$('dkS').textContent=spr;$('dkQ').textContent=pn(q);$('dkQ2').textContent=pn(q*1000/60)+' L/min';
