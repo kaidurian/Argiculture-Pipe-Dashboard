@@ -105,7 +105,7 @@ input[readonly]{opacity:.7}
 </dialog>
 <div id="rptP" class="rp"></div>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.19</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.20</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="tabs"><button id="tD" type="button" class="on" data-t="tabD"></button><button id="tC" type="button" data-t="tabC"></button></div>
@@ -381,7 +381,7 @@ function drawDesign(){
   dz=e1v+e2v,
   pm=Math.max(0,g1('pm')),Z=Math.min(nr,Math.max(1,Math.floor(g1('zr'))||1)),zb=Math.floor(nr/Z),zx=nr%Z,zst=j=>j*zb+Math.min(j,zx),
   zi=Math.max(0,Math.min(Z-1,Math.floor(+$('zn').value||1)-1)),rs=zst(zi),re=zst(zi+1),cnt=re-rs,act=j=>j>=rs&&j<re,
-  MX=$('pmx').value==='m',MY=$('pmy').value==='m',Em=(nr-1)/2,eZ=z=>MY?zst(z)+(zst(z+1)-zst(z)-1)/2:0;
+  MX=$('pmx').value==='m',MY=$('pmy').value==='m',Em=(nr-1)/2,eZ=z=>MY?Math.max(zst(z),Math.min(zst(z+1)-1,Em)):0;
  $('zr').placeholder='1';
  // results are kept per zone: switching zone stores the current zone's results and loads the other zone's
  if(CURZ!==zi){if(CURZ!==null&&CURZ>=0)ZR[CURZ]=Object.assign({},RES);Object.keys(RES).forEach(k=>delete RES[k]);Object.assign(RES,ZR[zi]||{});CURZ=zi}
@@ -389,11 +389,14 @@ function drawDesign(){
  // main sections of zone z: p1->p2 in row positions, flow q, c = branches (2 = symmetric above/below)
  const segs=z=>{const rs_=zst(z),re_=zst(z+1),cnt_=re_-rs_,o=[];
   if(!MY){let l=null;for(let i=1;i<re_;i++){const q=(re_-Math.max(i,rs_))*ql0;if(l&&Math.abs(l.q-q)<=1e-9*Math.max(1,q))l.p2=i;else o.push(l={p1:i-1,p2:i,q,c:1})}return o}
-  const e=rs_+(cnt_-1)/2;if(Math.abs(e-Em)>1e-9)o.push({p1:Em,p2:e,q:cnt_*ql0,c:1});
-  for(let p=e;p<re_-1;){const r=Math.floor(p+1e-9)+1;o.push({p1:p,p2:r,q:(re_-1-Math.floor(p+1e-9))*ql0,c:2});p=r}return o};
- const zlen=z=>zLines(z).reduce((a,x)=>a+(/^sec\d+$|^lat$/.test(x.k)?x.l:0),0);
+  const e=eZ(z),up=[],dn=[];
+  for(let p=e;p<re_-1;){const f=Math.floor(p+1e-9),r=f+1;up.push({p1:p,p2:r,q:(re_-1-f)*ql0,c:1,dir:1});p=r}
+  for(let p=e;p>rs_;){const f=Math.ceil(p-1e-9),r=f-1;dn.push({p1:p,p2:r,q:(f-rs_)*ql0,c:1,dir:-1});p=r}
+  const sym=up.length===dn.length&&up.every((s_,k)=>Math.abs(s_.q-dn[k].q)<1e-9*Math.max(1,s_.q)&&Math.abs((s_.p2-s_.p1)+(dn[k].p2-dn[k].p1))<1e-9);
+  return sym?up.map(s_=>Object.assign({},s_,{c:2})):up.concat(dn)};
+ const zlen=z=>{const S=segs(z),Ln=s_=>Math.abs(s_.p2-s_.p1)*rd,su=S.filter(s_=>s_.dir!==-1).reduce((a,s_)=>a+Ln(s_),0),sd=S.filter(s_=>s_.dir===-1).reduce((a,s_)=>a+Ln(s_),0),lt=zLines(z).find(x=>x.k==='lat');return (MY?Math.abs(Em-eZ(z))*rd:0)+Math.max(su,sd)+(lt?lt.l:0)};
  const zLines=z=>{const rs_=zst(z),re_=zst(z+1),cnt_=re_-rs_,ql_=nt*ns*fq*fu,o=[],ad=(k,n,c,qq,ll,a,b)=>o.push({k,n,c,q:qq,l:ll,a,b});
-  if(pm>0)ad('pump',t('lnPump'),1,cnt_*ql_,pm);
+  {const pl_=pm+(MY?Math.abs(Em-eZ(z))*rd:0);if(pl_>0)ad('pump',t('lnPump'),1,cnt_*ql_,pl_)}
   segs(z).forEach((g_,n)=>ad('sec'+(MY?n+1:g_.p2),t('lnSec')+' '+(n+1)+' ('+t('rowL')+' '+(g_.p1+1)+'→'+(g_.p2+1)+')'+(g_.c>1?' ×2':''),g_.c,g_.q,Math.abs(g_.p2-g_.p1)*rd,g_.p1,g_.p2));
   ad('lat',t('lnLat'),cnt_*(MX?2:1),MX?ql_/2:ql_,MX?(nt-1)*td/2:(nt-1)*td);if(fd>0)ad('feed',t('lnFeed'),cnt_*nt*ns,fq*fu,fd);return o};
  const zhf=(Ls_,R)=>{const l=R.lat,xl=Ls_.find(x=>x.k==='lat'),xp=Ls_.find(x=>x.k==='pump'),xf=Ls_.find(x=>x.k==='feed'),ss=Ls_.filter(x=>/^sec\d+$/.test(x.k)),pu=R.pump,fe=R.feed,
@@ -402,7 +405,7 @@ function drawDesign(){
  {let o='';for(let j=0;j<Z;j++){const a=zst(j)+1,b=zst(j+1);o+=`<option value='${j+1}'>${en?'Zone':'โซน'} ${j+1} (${t('rowW')} ${a}${b>a?'-'+b:''})</option>`}$('zn').innerHTML=o;$('zn').value=String(zi+1)}
  $('plN').textContent=t('plN')+(zi+1)+t('plOf')+Z+' ('+t('rowW')+' '+(rs+1)+(re>rs+1?'-'+re:'')+')';
  $('dkT').textContent=trees;$('dkS').textContent=spr;$('dkQ').textContent=pn(q);$('dkQ2').textContent=pn(q*1000/60)+' L/min';
- $('dkL').textContent=pn((LHM=nr<=100&&nt<=100?Math.max(...Array.from({length:Z},(_,z)=>zlen(z))):Lh)+pm);$('dkZ').textContent=auto?pn(dz):'-';$('dkA').textContent=pn(area);
+ $('dkL').textContent=pn((LHM=nr<=100&&nt<=100?Math.max(...Array.from({length:Z},(_,z)=>zlen(z))):Lh)+pm);$('dkZ').textContent=(auto||(e0!==''&&isFinite(+e0)))?pn((e0!==''&&isFinite(+e0)?+e0:0)+dz):'-';$('dkA').textContent=pn(area);
  {const ql=nt*ns*fq*fu,Ls=[],add=(k,n,c,qq,ll)=>Ls.push({k,n,c,q:qq,l:ll}),cl={lo:t('low'),ok:t('ok'),hi:t('high')};
   if(nr<=100&&nt<=100)zLines(zi).forEach(x=>Ls.push(x))
   let hfS=null,stS=false;PUMP=null;TOTLEN=0;LINES=Ls;if(SEL&&!Ls.some(x=>x.k===SEL))SEL=null;
@@ -410,7 +413,7 @@ function drawDesign(){
    rc=e?`<td${bad?` style='opacity:.55' title='${t('stale')}'`:''}>${bad?'⚠ ':''}${ptName(e.pt)}</td><td>${e.ds}${t('inch')}</td><td>${fmt(e.v)}</td><td>${fmt(e.hf)}</td><td>${fmt(e.tot)}</td><td><span class='badge ${e.cls}'>${cl[e.cls]}</span></td>`:`<td class='mu' colspan='6'>-</td>`;
    return `<tr data-k='${x.k}'${x.k===SEL?" class='on'":''}><td style='text-align:left'>${x.n}</td><td>${x.c}</td><td>${pn(x.q)}</td><td>${pn(x.q*1000/60)}</td><td>${pn(x.l)}</td>${rc}<td><button class='lk' type='button' data-q='${x.q}' data-l='${x.l}'${x.l>0&&x.q>0?'':' disabled'}>${t('send')}</button></td><td>${e?`<button class='lk' type='button' data-x='${x.k}' title='${t('clr')}' aria-label='${t('clr')}'>✕</button>`:''}</td></tr>`});
   if(Ls.length){const l=RES.lat,pu=RES.pump,xl2=Ls.find(x=>x.k==='lat'),xp=Ls.find(x=>x.k==='pump'),xf=Ls.find(x=>x.k==='feed'),fe=RES.feed;
-   r.push(`<tr class='tot'><td style='text-align:left;font-weight:700'>${t('lnTot')}</td><td></td><td></td><td></td><td style='font-weight:700'>${pn(TOTLEN=pm+Array.from({length:Z},(_,z)=>zLines(z).reduce((a,x)=>a+(x.k==='pump'?0:x.c*x.l),0)).reduce((a,b)=>a+b,0))}</td><td colspan='8'></td></tr>`);
+   r.push(`<tr class='tot'><td style='text-align:left;font-weight:700'>${t('lnTot')}</td><td></td><td></td><td></td><td style='font-weight:700'>${pn(TOTLEN=pm+Array.from({length:Z},(_,z)=>zLines(z).reduce((a,x)=>a+(x.k==='pump'?x.l-pm:x.c*x.l),0)).reduce((a,b)=>a+b,0))}</td><td colspan='8'></td></tr>`);
     const zz_=zhf(Ls,RES),okS=zz_.ok;stS=zz_.st;hfS=zz_.hf;
     r.push(`<tr class='tot'><td style='text-align:left;font-weight:700'>${t('lnHf2')}</td><td></td><td></td><td></td><td></td><td colspan='4'></td><td style='font-weight:700${stS?';opacity:.55':''}'${stS?` title='${t('stale')}'`:''}>${okS?(stS?'⚠ ':'')+fmt(hfS):'-'}</td><td colspan='3'></td></tr>`)}
   {const Qz=cnt*nt*ns*fq*fu,fp=$('fit').value.trim()===''?20:Math.max(0,+$('fit').value||0),spb=Math.max(0,g1('sp')),spH=spb*10.197,h0s=e0!==''&&isFinite(+e0)?+e0:0,stat=h0s+dz,
@@ -435,7 +438,7 @@ function drawDesign(){
   $('lsT').innerHTML=(Ls.length?`<thead><tr><th style='text-align:left'>${t('thLn')}</th><th>${t('thQty')}</th><th>${t('xl')}</th><th>${t('thLpm')}</th><th>${t('thLen')}</th><th>${t('thPt')}</th><th>${t('thSz')}</th><th>${t('thVv')}</th><th>${t('thHf')}</th><th>${t('thTh')}</th><th>${t('status')}</th><th></th><th></th></tr></thead>`:'')+'<tbody>'+r.join('')+'</tbody>';
   const tv=$('tgt').value;$('tgt').innerHTML=Ls.map(x=>`<option value='${x.k}'>${x.n}</option>`).join('');if(tv&&Ls.some(x=>x.k===tv))$('tgt').value=tv}
  if(nr>100||nt>100){$('dsg').innerHTML='<text x="20" y="40" style="font-size:13px;fill:var(--hi)">'+t('tooBig')+'</text>';$('dpf').innerHTML='';return}
- const gap=Z>1?Math.max(1.5,Math.min(16,110/(Z-1))):0,extra=(Z-1)*gap,W=800,ml=150+extra,mr=70,mt=40,mb=Z>1?150:110,aw=W-ml-mr,ah=380,wm=(nt-1)*td,hm=(nr-1)*rd;
+ const gap=Z>1?Math.max(1.5,Math.min(16,110/(Z-1))):0,extra=(Z-1)*gap,W=800,ml=180+extra,mr=70,mt=40,mb=Z>1?150:110,aw=W-ml-mr,ah=380,wm=(nt-1)*td,hm=(nr-1)*rd;
  let sc=Math.min(wm>0?aw/wm:1e9,hm>0?ah/hm:1e9);if(sc>1e8)sc=20;
  const dx=td*sc,dy=rd*sc,gh=hm*sc,H=mt+gh+mb,X0=ml,YB=mt+gh;
  const dmin=Math.min(nt>1?dx:99,nr>1?dy:99),tr=Math.max(2.5,Math.min(9,dmin*0.3)),sr=Math.max(1.3,tr*0.3);
@@ -446,7 +449,7 @@ function drawDesign(){
 
  {const HC='#f59e0b',hs=`stroke='${HC}' stroke-opacity='.55' stroke-width='11' stroke-linecap='round' stroke-linejoin='round' fill='none'`,hseg=(i,j)=>`<line x1='${xa}' x2='${xa}' y1='${ty(i)}' y2='${ty(j)}' ${hs}/>`,lx0=MX?tx(0):xa;
   if(SEL==='route')g+=`<polyline points='${px},${py} ${mx},${hy} ${xa},${hy} ${xa},${ty(re-1)} ${xl},${ty(re-1)}' ${hs}/>`;
-  else if(SEL==='pump')g+=`<line x1='${px}' x2='${mx}' y1='${py}' y2='${hy}' ${hs}/>`;
+  else if(SEL==='pump')g+=`<line x1='${px}' x2='${mx}' y1='${py}' y2='${hy}' ${hs}/>`+(MY&&hy!==ty(eZ(zi))?`<line x1='${xa}' x2='${xa}' y1='${hy}' y2='${ty(eZ(zi))}' ${hs}/>`:'');
   else if(SEL==='main')g+=hseg(0,re-1);
   else if(/^sec\d+$/.test(SEL||'')){const sx=LINES.find(z=>z.k===SEL);if(sx){g+=hseg(sx.a,sx.b);if(sx.c>1)g+=hseg(2*eZ(zi)-sx.a,2*eZ(zi)-sx.b)}}
   else if(SEL==='lat')for(let j=rs;j<re;j++)g+=`<line x1='${lx0}' x2='${xl}' y1='${ty(j)}' y2='${ty(j)}' ${hs}/>`}
@@ -457,12 +460,12 @@ function drawDesign(){
  if(Z>1)g+=`<line x1='${mx}' x2='${mx-extra}' y1='${hy}' y2='${hy}' stroke='var(--ac)' stroke-width='3' opacity='.35'/><line x1='${mx}' x2='${xa}' y1='${hy}' y2='${hy}' stroke='var(--ac)' stroke-width='3'/>`;
  for(let z=0;z<Z;z++){const xz=zmx(z),yz=ty(zst(z+1)-1);g+=`<line x1='${xz}' x2='${xz}' y1='${MY?Math.min(hy,yz):hy}' y2='${MY?Math.max(hy,ty(zst(z))):yz}' stroke='var(--ac)' stroke-width='3' opacity='${z===zi?1:.35}'/>`;
   if(Z>1&&gap>=6&&dy>=14)g+=`<text x='${xz}' y='${yz-6}' text-anchor='middle' style='fill:var(--ac);font-size:8px;font-weight:700;opacity:${z===zi?1:.6};cursor:pointer' data-z='${z}'>Z${z+1}</text>`;
-  if(Z>1){const vr=Math.max(1.6,Math.min(4.5,gap*.4)),op=z===zi;g+=`<circle cx='${xz}' cy='${hy-14}' r='${vr}' fill='${op?'var(--ac)':'var(--card)'}' stroke='${op?'var(--tx)':'var(--hi)'}' stroke-width='1.4' data-z='${z}' style='cursor:pointer'/><circle cx='${xz}' cy='${hy-14}' r='${vr+4}' fill='transparent' data-z='${z}' style='cursor:pointer'><title>${en?'Zone ':'โซน '}${z+1}</title></circle>`}}
+  if(Z>1){const vr=Math.max(1.6,Math.min(4.5,gap*.4)),op=z===zi,vyz=MY&&Math.abs(ty(eZ(z))-hy)>=20?(hy+ty(eZ(z)))/2:hy-14;g+=`<circle cx='${xz}' cy='${vyz}' r='${vr}' fill='${op?'var(--ac)':'var(--card)'}' stroke='${op?'var(--tx)':'var(--hi)'}' stroke-width='1.4' data-z='${z}' style='cursor:pointer'/><circle cx='${xz}' cy='${vyz}' r='${vr+4}' fill='transparent' data-z='${z}' style='cursor:pointer'><title>${en?'Zone ':'โซน '}${z+1}</title></circle>`}}
  // longest route
  g+=`<polyline points='${px},${py} ${mx},${hy} ${xa},${hy} ${xa},${ty(re-1)} ${xl},${ty(re-1)}' fill='none' stroke='var(--hi)' stroke-width='2' stroke-dasharray='6 4'/>`;
  let rip='',slab='';
  {const Qz=cnt*ql0,fl=(x1,y1,x2,y2,qq)=>`<line class='fl' x1='${x1}' y1='${y1}' x2='${x2}' y2='${y2}' style='animation-duration:${Math.max(.45,Math.min(2.6,.5*Qz/Math.max(qq,1e-9))).toFixed(2)}s'/>`,
-  lat=j=>fl(xa,ty(j),xl,ty(j),MX?ql0/2:ql0)+(MX?fl(xa,ty(j),tx(0),ty(j),ql0/2):''),pu=()=>fl(px,py,mx,hy,Qz),hd=()=>xa<mx?fl(mx,hy,xa,hy,Qz):'',vm=()=>!MY&&hy!==ty(0)?fl(xa,hy,xa,ty(0),Qz):'',
+  lat=j=>fl(xa,ty(j),xl,ty(j),MX?ql0/2:ql0)+(MX?fl(xa,ty(j),tx(0),ty(j),ql0/2):''),pu=()=>fl(px,py,mx,hy,Qz),hd=()=>xa<mx?fl(mx,hy,xa,hy,Qz):'',vm=()=>hy!==ty(eZ(zi))?fl(xa,hy,xa,ty(eZ(zi)),Qz):'',
   ms2=f=>{let o='';const e=eZ(zi);segs(zi).forEach((s_,n)=>{if(n<f)return;o+=fl(xa,ty(s_.p1),xa,ty(s_.p2),s_.q);if(s_.c>1)o+=fl(xa,ty(2*e-s_.p1),xa,ty(2*e-s_.p2),s_.q)});return o},
   lats=a=>{let o='';for(let j=a;j<re;j++)o+=lat(j);return o},K=SEL;let sim='',rows=[];
   if(LINES.some(x=>x.k===K)){
@@ -495,7 +498,7 @@ function drawDesign(){
     let o=`<text x='${xx}' y='${ym+(two?-1:4)}' text-anchor='end' style='${mu}'>${len?pn(len)+' m | ':''}${pn(x.q)} m³/h</text>`;
     if(two)o+=e?`<text x='${xx}' y='${ym+10}' text-anchor='end' style='${rl}${isBad(e,x)?';opacity:.55':''}'>${zs(k)} | hf ${fmt(e.tot)} m</text>`:''; return o};
   LINES.filter(x=>/^sec\d+$/.test(x.k)).forEach(x=>{g+=lblL(x.k,ty(x.a),ty(x.b),8,x.l,mx-extra)});
-  if(pm>0)g+=lblL('pump',py,hy,18,pm);
+  {const xp_=LINES.find(x=>x.k==='pump');if(xp_&&MY){const e=RES.pump,cx_=(px+14+mx)/2;g+=`<text x='${cx_}' y='${py-6}' text-anchor='middle' style='${mu}'>${pn(xp_.l)} m | ${pn(xp_.q)} m³/h</text>`+(e?`<text x='${cx_}' y='${py+12}' text-anchor='middle' style='${rl}${isBad(e,xp_)?';opacity:.55':''}'>${zs('pump')} | hf ${fmt(e.tot)} m</text>`:'')}else if(pm>0)g+=lblL('pump',py,hy,18,pm)}
   if(Z>1)for(let z=0;z<Z;z++){if(z===zi||!ZR[z])continue;const R_=ZR[z],xz=zmx(z),fs=Math.max(5,Math.min(8,gap-1.5));
    zLines(z).forEach(x=>{const e=R_[x.k];if(!e||isBad(e,x))return;
     if(/^sec\d+$/.test(x.k))g+=`<text transform='translate(${xz-1.5},${(ty(x.a)+ty(x.b))/2}) rotate(-90)' text-anchor='middle' style='fill:var(--ac);font-size:${fs}px;font-weight:700;opacity:.75${hl}'>${zc(e)}</text>`;
@@ -612,20 +615,22 @@ const RPCSS=`.rp{--tx:#1a1d21;--mut:#6b7280;--card:#fff;--bd:#d1d5db;--ac:#2563e
 $('rptStyle')||document.head.appendChild(Object.assign(document.createElement('style'),{id:'rptStyle',textContent:RPCSS+`#rptP{display:none}@media print{body.prn>*:not(#rptP){display:none!important}body.prn #rptP{display:block}body.prn{background:#fff;padding:0;color-scheme:light}@page{margin:12mm}}`}));
 function rptHTML(){
  const g=id=>$(id).value,v=id=>g(id).trim()===''?'-':pn(+g(id)),cl={lo:t('low'),ok:t('ok'),hi:t('high')},sel=SEL;
- SEL=null;drawDesign();const plan=$('dsg').outerHTML.replace(' id="dsg"',''),prof=$('dpf').outerHTML.replace(' id="dpf"','');SEL=sel;drawDesign();
+ const zb=[],z0=$('zn').value,nz=$('zn').options.length;let prof='';SEL=null;
+ for(let z=1;z<=nz;z++){$('zn').value=String(z);drawDesign();if(z===1)prof=$('dpf').outerHTML.replace(' id="dpf"','');
+  zb.push({zt:$('zn').selectedOptions[0].text,rows:LINES.map(x=>{const e=RES[x.k],bad=isBad(e,x);return `<tr><td class="l">${esc(x.n)}</td><td>${x.c}</td><td>${pn(x.q)}</td><td>${pn(x.q*1000/60)}</td><td>${pn(x.l)}</td>`+(e?`<td>${esc(ptName(e.pt))}</td><td>${e.ds}${t('inch')}</td><td>${fmt(e.v)}</td><td>${fmt(e.hf)}</td><td>${fmt(e.tot)}</td><td>${cl[e.cls]||''}${bad?' ⚠':''}</td>`:'<td colspan="6">-</td>')+'</tr>'}).join(''),
+   hf:PUMP&&PUMP.hf!=null?fmt(PUMP.hf):'-',pmT:$('pmT').innerHTML,pmN:$('pmN').textContent,plan:$('dsg').outerHTML.replace(' id="dsg"','')})}
+ $('zn').value=z0;SEL=sel;drawDesign();
  const kv=(a,b,c)=>`<tr><td class="l">${a}</td><td>${b}</td>${c!==undefined?`<td>${c}</td>`:''}</tr>`,P=PUMP,
   zz=Math.max(1,Math.floor(+g('zr'))||1),
-  inp=[[t('nr'),v('nr')],[t('ntr'),v('nt')],[t('rdist'),v('rd')],[t('tdist'),v('td')],[t('nsp'),v('ns')],[t('fq'),v('fq')+' '+esc($('dfu').selectedOptions[0].text)],[t('spL'),v('sp')],[t('pmL'),v('pm')],[t('zrL'),String(zz)+' ('+t('znL')+': '+esc($('zn').selectedOptions[0]?$('zn').selectedOptions[0].text:'-')+')'],[t('fdL'),v('fd')],[t('fitL'),v('fit')],[t('ez0s'),v('ez0')],[t('ez1s'),v('ez1')],[t('ez2s'),v('ez2')]],
+  inp=[[t('nr'),v('nr')],[t('ntr'),v('nt')],[t('rdist'),v('rd')],[t('tdist'),v('td')],[t('nsp'),v('ns')],[t('fq'),v('fq')+' '+esc($('dfu').selectedOptions[0].text)],[t('spL'),v('sp')],[t('pmL'),v('pm')],[t('zrL'),String(zz)],[t('pmxL'),esc($('pmx').selectedOptions[0].text)],[t('pmyL'),esc($('pmy').selectedOptions[0].text)],[t('fdL'),v('fd')],[t('fitL'),v('fit')],[t('ez0s'),v('ez0')],[t('ez1s'),v('ez1')],[t('ez2s'),v('ez2')]],
   kp=[[t('kTrees'),$('dkT').textContent],[t('kSpr'),$('dkS').textContent],[t('kQ'),$('dkQ').textContent+' m³/h ('+$('dkQ2').textContent+')'],[t('kL'),$('dkL').textContent+' m'],[t('kDz'),$('dkZ').textContent+' m'],[t('kArea'),$('dkA').textContent+' m²']],
-  rows=LINES.map(x=>{const e=RES[x.k],bad=isBad(e,x);return `<tr><td class="l">${esc(x.n)}</td><td>${x.c}</td><td>${pn(x.q)}</td><td>${pn(x.q*1000/60)}</td><td>${pn(x.l)}</td>`+(e?`<td>${esc(ptName(e.pt))}</td><td>${e.ds}${t('inch')}</td><td>${fmt(e.v)}</td><td>${fmt(e.hf)}</td><td>${fmt(e.tot)}</td><td>${cl[e.cls]||''}${bad?' ⚠':''}</td>`:'<td colspan="6">-</td>')+'</tr>'}).join(''),
   prj=g('prj').trim();
  return `<h1>${esc(t('title'))}</h1><div class="meta">${prj?'<b>'+esc(prj)+'</b> · ':''}${esc(t('rptDt'))}: ${new Date().toLocaleDateString(L=='th'?'th-TH':'en-GB')} · Rev.18</div>
 <div class="two pg"><div><h3>${t('dsh')}</h3><table>${inp.map(r=>kv(r[0],r[1])).join('')}</table></div><div><h3>${t('dsum')}</h3><table>${kp.map(r=>kv(r[0],r[1])).join('')}</table></div></div>
-<div class="pg"><h3>${t('lsum')}</h3><table><thead><tr><th>${t('thLn')}</th><th>${t('thQty')}</th><th>${t('xl')}</th><th>${t('thLpm')}</th><th>${t('thLen')}</th><th>${t('thPt')}</th><th>${t('thSz')}</th><th>${t('thVv')}</th><th>${t('thHf')}</th><th>${t('thTh')}</th><th>${t('status')}</th></tr></thead><tbody>${rows}
-<tr class="tot"><td class="l" colspan="4">${t('lnTot')}</td><td>${pn(TOTLEN)}</td><td colspan="6"></td></tr>
-<tr class="tot"><td class="l" colspan="9">${t('lnHf2')}</td><td>${P&&P.hf!=null?fmt(P.hf):'-'}</td><td></td></tr></tbody></table></div>
-<div class="pg"><h3>${t('pumpH')}</h3><table>${$('pzT').innerHTML}</table><div class="note">${esc($('pzN').textContent)}</div><br><table>${$('pmT').innerHTML}</table>${$('pmN').textContent?`<div class="note">${esc($('pmN').textContent)}</div>`:''}</div>
-<div class="pg"><h3>${t('drh')}</h3>${plan}</div><div class="pg"><h3>${t('prof')}</h3>${prof}</div>
+${zb.map(b=>`<div class="pg"><h3>${t('lsum')} – ${esc(b.zt)}</h3><table><thead><tr><th>${t('thLn')}</th><th>${t('thQty')}</th><th>${t('xl')}</th><th>${t('thLpm')}</th><th>${t('thLen')}</th><th>${t('thPt')}</th><th>${t('thSz')}</th><th>${t('thVv')}</th><th>${t('thHf')}</th><th>${t('thTh')}</th><th>${t('status')}</th></tr></thead><tbody>${b.rows}
+<tr class="tot"><td class="l" colspan="9">${t('lnHf2')}</td><td>${b.hf}</td><td></td></tr></tbody></table><h3>${t('pumpH')} – ${esc(b.zt)}</h3><table>${b.pmT}</table>${b.pmN?`<div class="note">${esc(b.pmN)}</div>`:''}</div><div class="pg"><h3>${t('drh')} – ${esc(b.zt)}</h3>${b.plan}</div>`).join('')}
+<div class="pg"><table>${kv(t('lnTot'),pn(TOTLEN)+' m')}</table><h3>${t('pumpH')}</h3><table>${$('pzT').innerHTML}</table><div class="note">${esc($('pzN').textContent)}</div></div>
+<div class="pg"><h3>${t('prof')}</h3>${prof}</div>
 <div class="note">${t('rpNote')} C = ${esc(g('c'))}</div>`}
 $('bRpt').onclick=()=>{$('rptB').innerHTML=rptHTML();$('rpt').showModal()};
 $('rpX').onclick=$('rpC').onclick=()=>$('rpt').close();
