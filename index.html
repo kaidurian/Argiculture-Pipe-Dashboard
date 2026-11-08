@@ -105,7 +105,7 @@ input[readonly]{opacity:.7}
 </dialog>
 <div id="rptP" class="rp"></div>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.18</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.22</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="tabs"><button id="tD" type="button" class="on" data-t="tabD"></button><button id="tC" type="button" data-t="tabC"></button><button id="tO" type="button" data-t="tabO"></button></div>
@@ -690,7 +690,7 @@ function rptHTML(){
   inp=[[t('nr'),v('nr')],[t('ntr'),v('nt')],[t('rdist'),v('rd')],[t('tdist'),v('td')],[t('nsp'),v('ns')],[t('fq'),v('fq')+' '+esc($('dfu').selectedOptions[0].text)],[t('spL'),v('sp')],[t('pmL'),v('pm')],[t('zrL'),String(zz)],[t('pmxL'),esc($('pmx').selectedOptions[0].text)],[t('pmyL'),esc($('pmy').selectedOptions[0].text)],[t('fdL'),v('fd')],[t('fitL'),v('fit')],[t('ez0s'),v('ez0')],[t('ez1s'),v('ez1')],[t('ez2s'),v('ez2')]],
   kp=[[t('kTrees'),$('dkT').textContent],[t('kSpr'),$('dkS').textContent],[t('kQ'),$('dkQ').textContent+' m³/h ('+$('dkQ2').textContent+')'],[t('kL'),$('dkL').textContent+' m'],[t('kDz'),$('dkZ').textContent+' m'],[t('kArea'),$('dkA').textContent+' m²']],
   prj=g('prj').trim();
- return `<h1>${esc(t('title'))}</h1><div class="meta">${prj?'<b>'+esc(prj)+'</b> · ':''}${esc(t('rptDt'))}: ${new Date().toLocaleDateString(L=='th'?'th-TH':'en-GB')} · Rev.22</div>
+ return `<h1>${esc(t('title'))}</h1><div class="meta">${prj?'<b>'+esc(prj)+'</b> · ':''}${esc(t('rptDt'))}: ${new Date().toLocaleDateString(L=='th'?'th-TH':'en-GB')} · Rev.18</div>
 <div class="two pg"><div><h3>${t('dsh')}</h3><table>${inp.map(r=>kv(r[0],r[1])).join('')}</table></div><div><h3>${t('dsum')}</h3><table>${kp.map(r=>kv(r[0],r[1])).join('')}</table></div></div>
 ${zb.map(b=>`<div class="pg"><h3>${t('lsum')} – ${esc(b.zt)}</h3><table><thead><tr><th>${t('thLn')}</th><th>${t('thQty')}</th><th>${t('xl')}</th><th>${t('thLpm')}</th><th>${t('thLen')}</th><th>${t('thPt')}</th><th>${t('thSz')}</th><th>${t('thVv')}</th><th>${t('thHf')}</th><th>${t('thTh')}</th><th>${t('status')}</th></tr></thead><tbody>${b.rows}
 <tr class="tot"><td class="l" colspan="9">${t('lnHf2')}</td><td>${b.hf}</td><td></td></tr></tbody></table><h3>${t('pumpH')} – ${esc(b.zt)}</h3><table>${b.pmT}</table>${b.pmN?`<div class="note">${esc(b.pmN)}</div>`:''}</div><div class="pg"><h3>${t('drh')} – ${esc(b.zt)}</h3>${b.plan}</div>`).join('')}
