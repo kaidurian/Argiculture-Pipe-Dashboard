@@ -105,7 +105,7 @@ input[readonly]{opacity:.7}
 </dialog>
 <div id="rptP" class="rp"></div>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.29</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.30</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="tabs"><button id="tD" type="button" class="on" data-t="tabD"></button><button id="tC" type="button" data-t="tabC"></button><button id="tO" type="button" data-t="tabO"></button></div>
@@ -209,7 +209,7 @@ input[readonly]{opacity:.7}
   <div class="card wide">
     <h2 data-t="drh"></h2>
     <label id="allzW" style="display:none;margin:0 0 6px;font-weight:600"><input type="checkbox" id="allz" checked> <span data-t="allzL"></span></label>
-    <div style="margin:0 0 6px"><button class="useb" id="accAdd" type="button" style="width:auto;padding:6px 12px;margin:0"></button></div>
+    <div style="margin:0 0 6px;display:flex;align-items:center;gap:14px;flex-wrap:wrap"><button class="useb" id="accAdd" type="button" style="width:auto;padding:6px 12px;margin:0"></button><label style="margin:0;font-weight:600"><input type="checkbox" id="fitAll" checked> <span id="fitAllT"></span></label></div>
     <div class="sc"><svg id="dsg" viewBox="0 0 800 460" width="100%" style="min-width:560px"></svg></div>
     <div class="note" id="dsgN"></div>
     <h2 style="margin-top:14px" data-t="prof"></h2>
@@ -563,10 +563,16 @@ function drawDesign(){
     mk('T|'+z+'|'+j,end?(nb===2?'Tee':'Elb'):(nb===2?'Cross':'Tee'),sz(dm!=null?dm:dp,lx?ds(lx.k):null),1,xz,ty(j),z,xz+7,ty(j)+11,'start',{j})}
    lt.forEach(x=>{const lf=x.n.indexOf(' – '+t('sideL'))>=0,rg=x.n.indexOf(' – '+t('sideR'))>=0,sd=lf?['l']:rg?['r']:(x.c>x.rows.length?['l','r']:['r']);
     x.rows.forEach(j=>sd.forEach(s2=>{const o=tr+sr*2+4,cx=s2==='r'?xr(j)+o:tx(0,j)-o;mk('C|'+z+'|'+j+'|'+s2,'Cap',sz(ds(x.k)),1,cx,ty(j),z,cx+(s2==='r'?7:-7),ty(j)+3,s2==='r'?'start':'end',{j,sd:s2})}))});
-   Sg.forEach((s_,n)=>{const pv=Sg[n-1];if(pv&&(s_.dir||0)===(pv.dir||0)){const a=ds(pv.k),b=ds(s_.k);if(a!=null&&b!=null&&a!==b){const lb=a+'"→'+b+'"';mk('R|'+z+'|'+n+'|a','Red',lb,1,xz,ty(s_.p1),z,xz-8,ty(s_.p1)-5,'end');if(s_.c>1)mk('R|'+z+'|'+n+'|b','Red',lb,1,xz,ty(2*e-s_.p1),z,xz-8,ty(2*e-s_.p1)+12,'end')}}})}
+   Sg.forEach((s_,n)=>{const pv=Sg[n-1];if(pv&&(s_.dir||0)===(pv.dir||0)){const a=ds(pv.k),b=ds(s_.k);if(a!=null&&b!=null&&a!==b){const lb=a+'"→'+b+'"';mk('R|'+z+'|'+n+'|a','Red',lb,1,xz,ty(s_.p1),z,xz-8,ty(s_.p1)-5,'end');if(s_.c>1)mk('R|'+z+'|'+n+'|b','Red',lb,1,xz,ty(2*e-s_.p1),z,xz-8,ty(2*e-s_.p1)+12,'end')}}});
+   {const fs0=Sg.filter(s_=>Math.abs(s_.p1-e)<1e-9),dpp=ds('pump');
+    if(dpp!=null&&fs0.length){const by={};fs0.forEach(s_=>{const b=ds(s_.k);if(b!=null&&b!==dpp)by[b]=(by[b]||0)+s_.c});
+     const vert=Math.abs(hy-ty(e))>=14,sg=hy>ty(e)?1:-1;let ki=0;
+     Object.keys(by).forEach(b=>{const lb=dpp+'\"→'+b+'\"',rx=vert?xz:xz+(mx>xz+1?9:-9),ry=vert?ty(e)+sg*10:ty(e)+(MY?0:10)+ki*11;
+      mk('R|'+z+'|P|'+b,'Red',lb,by[b],rx,ry+(vert?ki*11*sg:0),z,rx-8,ry+(vert?ki*11*sg:0)+3,'end');ki++})}}
+  }
   ACC.forEach((a,i)=>{if(!(a.z>=0&&a.z<Z))return;const z=a.z,xz=zmx(z);for(let j=zst(z);j<zst(z+1);j++){if(a.j>=0&&a.j!==j)continue;const x=a.w==='l'?(xz+xr(j))/2:a.w==='s'?tx(0,j):xz+14,y=a.w==='s'?ty(j)-tr-sr*2-4:ty(j)+(a.w==='l'?0:-9);
    FL.push({id:'A|'+i+'|'+j,acc:i,f:'X',s:'',q:a.q*(a.m===1?RN[j]:a.m===2?RN[j]*ns:1),x,y,z,j,lx:x+7,ly:y-4,an:'start',del:false,lb:a.lb,ov:false})}})}
- FLG=FL;DCX=Object.assign(DCX||{},{Z,zi,zs:Array.from({length:Z+1},(_,z)=>zst(z)),RN,ns,SD:SIDE});$('accAdd').textContent='➕ '+(en?'Add accessory':'เพิ่มอุปกรณ์');
+ FLG=FL;DCX=Object.assign(DCX||{},{Z,zi,zs:Array.from({length:Z+1},(_,z)=>zst(z)),RN,ns,SD:SIDE});$('accAdd').textContent='➕ '+(en?'Add accessory':'เพิ่มอุปกรณ์');$('fitAllT').textContent=en?'Show all fitting & accessory names (all zones)':'แสดงชื่อข้อต่อและอุปกรณ์ทั้งหมด (ทุกโซน)';
  // results from Calculation + selected line caption
  {const hl=';paint-order:stroke;stroke:var(--card);stroke-width:3px;stroke-linejoin:round',CLSN={'0':5,'1':7,'2':8.5,'3':10.5,'4':13.5},zc=e=>e?e.ds+'"'+(CLSN[e.pt]!=null?'('+CLSN[e.pt]+')':''):'',rl=`fill:var(--ac);font-size:10px;font-weight:700${hl}`,mu=`fill:var(--tx);font-size:9.5px${hl}`,zs=k=>RES[k]?RES[k].ds+t('inch')+(CLSN[RES[k].pt]!=null?' ('+CLSN[RES[k].pt]+')':''):'',
     bl=k=>RES[k]?ptName(RES[k].pt)+' '+RES[k].ds+t('inch'):'-',
@@ -581,9 +587,11 @@ function drawDesign(){
     else if(isLat(x.k))g+=`<text x='${tx(0,x.rows[0])-8}' y='${ty(x.rows[0])-3}' text-anchor='end' style='fill:var(--lo);font-size:8px;font-weight:700${hl}'>${zc(e)}</text>`});}
   LINES.filter(x=>isLat(x.k)&&RES[x.k]).forEach(x=>{const lf=x.n.indexOf(' – '+t('sideL'))>=0;x.rows.forEach((j,i)=>{if(dy<11&&i>0)return;g+=`<text x='${lf?xa-4:xa+4}' y='${ty(j)-4}' text-anchor='${lf?'end':'start'}' data-k='${x.k}' style='${rl};font-size:9px${isBad(RES[x.k],x)?';opacity:.55':''}'>${bl(x.k)}</text>`})});
   // fittings and accessories (same list as the BOM): diamond = tee / elbow / cross, square = end cap, ring = reducer, orange = added accessory; click one to edit or delete it
-  {const hz=dy>=24,fst=`fill:var(--mut);font-size:8px;font-weight:700${hl}`;
-   $('dsgN').textContent=(en?'Click a fitting to edit or delete it; click a tree for the detail drawing.':'กดที่ข้อต่อเพื่อแก้ไข/ลบ กดที่ต้นไม้เพื่อดูแบบขยาย')+(hz?'':(en?' Rows are close together, so fitting names show on hover only.':' แถวอยู่ชิดกัน ชื่อข้อต่อจะแสดงเมื่อเอาเมาส์ชี้'));
-   FL.forEach(f=>{const q_=f.q!==1?' ×'+pn(f.q):'';g+=`<g data-fid='${esc(f.id)}' style='cursor:pointer' opacity='${f.del?.3:(ALL||f.z===zi?1:.45)}'>${mkr(f,f.x,f.y)}<circle cx='${f.x}' cy='${f.y}' r='7' fill='transparent'/><title>${esc(f.lb)}${q_}${f.del?' ('+(en?'deleted':'ลบแล้ว')+')':''}</title>${hz&&f.z===zi&&!f.del?`<text x='${f.lx}' y='${f.ly}' text-anchor='${f.an}' style='${fst}'>${esc(f.lb)}${q_}</text>`:''}</g>`})}
+  {const hz=dy>=24,SA=$('fitAll').checked,fst=`fill:var(--mut);font-size:8px;font-weight:700${hl}`,lq=f=>f.lb+(f.q!==1?' ×'+pn(f.q):''),
+   // label spacing: place labels top to bottom; a label that would touch an earlier one is moved down until it is clear (a thin leader line joins it to its fitting)
+   LP={},placed=[];FL.filter(f=>!f.del&&(hz||SA)&&(f.z===zi||ALL||SA)).map(f=>{const w=lq(f).length*4.8+2;return{f,w,x0:f.an==='end'?f.lx-w:f.lx,y0:f.ly-7,sy:f.ly}}).sort((a,b)=>a.y0-b.y0||a.x0-b.x0).forEach(l=>{let n=0;const hit=()=>placed.some(p=>l.x0<p.x0+p.w+3&&p.x0<l.x0+l.w+3&&l.y0<p.y0+10&&p.y0<l.y0+10);while(n++<80&&hit())l.y0+=10;placed.push(l);LP[l.f.id]=l.y0+7});
+   $('dsgN').textContent=(en?'Click a fitting to edit or delete it; click a tree for the detail drawing.':'กดที่ข้อต่อเพื่อแก้ไข/ลบ กดที่ต้นไม้เพื่อดูแบบขยาย')+(hz||SA?'':(en?' Rows are close together, so fitting names show on hover only (tick "Show all" to list them).':' แถวอยู่ชิดกัน ชื่อข้อต่อจะแสดงเมื่อเอาเมาส์ชี้ (ติ๊ก "แสดงชื่อทั้งหมด" เพื่อแสดงทุกชื่อ)'));
+   FL.forEach(f=>{const q_=f.q!==1?' ×'+pn(f.q):'';g+=`<g data-fid='${esc(f.id)}' style='cursor:pointer' opacity='${f.del?.3:(ALL||f.z===zi?1:.45)}'>${mkr(f,f.x,f.y)}<circle cx='${f.x}' cy='${f.y}' r='7' fill='transparent'/><title>${esc(f.lb)}${q_}${f.del?' ('+(en?'deleted':'ลบแล้ว')+')':''}</title>${LP[f.id]!=null?`${Math.abs(LP[f.id]-f.ly)>4?`<line x1='${f.x}' y1='${f.y}' x2='${f.lx}' y2='${LP[f.id]-3}' stroke='var(--mut)' stroke-width='.6' opacity='.6'/>`:''}<text x='${f.lx}' y='${LP[f.id]}' text-anchor='${f.an}' style='${fst}'>${esc(f.lb)}${q_}</text>`:''}</g>`})}
   const sl2=LINES.find(x=>x.k===SEL);if(sl2){const e=RES[sl2.k];
    g+=`<rect x='8' y='5' width='11' height='11' rx='2' fill='#f59e0b' fill-opacity='.7'/><text x='24' y='14' style='fill:var(--tx);font-size:11px;font-weight:700'>${sl2.n} | ${pn(sl2.l)} m${e?' | '+ptName(e.pt)+' '+e.ds+t('inch'):''}</text>`}}
 
@@ -765,7 +773,7 @@ function detail(z,j){const X=DCX;if(!X||!X.SD[j])return;X.z=z;X.j=j;const S=X.SD
  mk=fs.map(f=>{const p=pos(f),x=p[0],y=p[1];return`<g data-fid='${esc(f.id)}' style='cursor:pointer' opacity='${f.del?.3:1}'>${mkr(f,x,y,1.8)}<circle cx='${x}' cy='${y}' r='12' fill='transparent'/><text x='${x}' y='${y<Y?y-14:y+28}' text-anchor='middle' style='fill:var(--tx);font-size:11px;font-weight:700'>${esc(f.lb)}${f.q!==1?' ×'+pn(f.q):''}</text></g>`}).join('');
  const d=ovl('accDt',900,`<h3 style="margin:0 0 6px">${T2('Detail drawing','แบบขยาย')} — ${T2('Zone','โซน')} ${z+1}, ${T2('Row','แถว')} ${j+1}</h3><div class="note" style="margin:0 0 6px">${T2('Click a fitting to edit or delete it. Trees per side:','กดที่ข้อต่อเพื่อแก้ไข/ลบ จำนวนต้นแต่ละข้าง:')} ${S.ln>0?T2('left','ซ้าย')+' '+pn(S.ln)+' ':''}${S.rn>0?T2('right','ขวา')+' '+pn(S.rn):''} · ${pn(X.ns)} ${T2('sprinklers per tree','สปริงเกลอร์ต่อต้น')}</div><div class="sc"><svg viewBox="0 0 760 250" width="100%" style="min-width:560px"><line x1='${jx}' y1='40' x2='${jx}' y2='220' stroke='var(--ac)' stroke-width='4'/><text x='${jx+8}' y='44' style='fill:var(--mut);font-size:11px'>${T2('Main line','ท่อเมน')}</text>${side(1,S.rn)}${side(-1,S.ln)}${mk}</svg></div><div style="display:flex;gap:8px;margin-top:10px"><button class="useb" id="dtAdd" type="button" style="width:auto;padding:7px 14px;margin:0">➕ ${T2('Add accessory here','เพิ่มอุปกรณ์ที่แถวนี้')}</button><button class="useb" id="dtX" type="button" style="width:auto;padding:7px 14px;margin:0;background:#64748b">${T2('Close','ปิด')}</button></div>`);
  d.onclick=e=>{const m=e.target.closest('[data-fid]');if(m){openEd([m.dataset.fid]);return}const b=e.target.closest('button');if(b&&b.id==='dtAdd')openAdd(z,j);else if((b&&b.id==='dtX')||e.target===d)d.remove()}}
-$('accAdd').onclick=()=>openAdd();
+$('accAdd').onclick=()=>openAdd();$('fitAll').addEventListener('input',()=>drawDesign());
 $('lsT').addEventListener('click',e=>{
  const x=e.target.closest('button[data-x]');if(x){delete RES[x.dataset.x];drawDesign();return}
  const tr=e.target.closest('tr[data-k]');if(!tr)return;const k=tr.dataset.k,b=e.target.closest('button[data-q]');
