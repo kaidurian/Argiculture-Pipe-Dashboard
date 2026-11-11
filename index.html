@@ -105,7 +105,7 @@ input[readonly]{opacity:.7}
 </dialog>
 <div id="rptP" class="rp"></div>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.33</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.33.1</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="tabs"><button id="tD" type="button" class="on" data-t="tabD"></button><button id="tC" type="button" data-t="tabC"></button><button id="tO" type="button" data-t="tabO"></button></div>
@@ -408,6 +408,7 @@ g+=`<line x1='${lx0}' x2='${lx0+24}' y1='12' y2='12' stroke='var(--tx)'/><text x
 $('ch').innerHTML=g}
 const pn=x=>String(+Number(x).toPrecision(4));
 let LHM=0,BP={},BX=[],BOMD=null,BR=[],RPTA=false,LINES=[],SEL=null,LAST=null,PUMP=null,TOTLEN=0;const isBad=(e,x)=>e&&(Math.abs(e.qh-x.q)>1e-6*Math.max(1,x.q)||Math.abs(e.Ln-x.l)>1e-6*Math.max(1,x.l));const RES={},ZR={};let CURZ=null;const PTN={'0':'PVC 5 (PN 6)','1':'PVC 7 (PN 8)','2':'PVC 8.5 (PN 10)','3':'PVC 10.5 (PN 12.5)','4':'PVC 13.5 (PN 16)'},ptName=v=>v==='n'?t('nom'):(PTN[v]||'');
+let VF={x:false,y:false,W:800,H:0};const toD=p=>({x:VF.x?VF.W-p.x:p.x,y:VF.y?VF.H-p.y:p.y});
 let FOV={},FLP={},ACC=[],FLG=[],DCX=null,SNP=null,DRG=false;
 const isLat=k=>/^lat\d*$/.test(k);
 function drawDesign(){
@@ -624,7 +625,7 @@ function drawDesign(){
    else if(/^sec\d+$/.test(x.k)){h_+=ht(xa,ty(x.a),xa,ty(x.b),x.k);if(x.c>1){const e_=eZ(zi);h_+=ht(xa,ty(2*e_-x.a),xa,ty(2*e_-x.b),x.k)}}
    else if(isLat(x.k))x.rows.forEach(j=>{h_+=ht(Math.min(tx(0,j),xa),ty(j),Math.max(xr(j),xa),ty(j),x.k)})});
   g=g.replace('<!--HIT-->',h_)}
- $('dsg').innerHTML=g;
+ VF={x:FX,y:FY,W:W,H:H0};$('dsg').innerHTML=g;
  // mirrored view (pump on the right / start at the top): keep every text readable
  if(FX||FY)$('dsg').querySelectorAll('#planG text').forEach(el=>{const x=+el.getAttribute('x')||0,y=+el.getAttribute('y')||0,t0=el.getAttribute('transform')||'',m=/^translate\(\s*(-?[\d.]+)[ ,]+(-?[\d.]+)\s*\)/.exec(t0),ax=m?+m[1]+x:x,ay=m?+m[2]+y:y,an=el.getAttribute('text-anchor')||'start';
   el.setAttribute('transform',('translate('+ax+' '+ay+') scale('+(FX?-1:1)+' '+(FY?-1:1)+') translate('+(-ax)+' '+(-ay)+') '+t0).trim());
@@ -771,7 +772,7 @@ $('dsg').addEventListener('click',e=>{if(DRG||(e.target.closest&&e.target.closes
 $('dsg').addEventListener('touchstart',e=>{if(e.target.closest&&e.target.closest('[data-flb]'))e.preventDefault()},{passive:false});
 $('dsg').addEventListener('dblclick',e=>{const gl=e.target.closest&&e.target.closest('[data-flb]');if(gl&&FLP[gl.dataset.flb]){delete FLP[gl.dataset.flb];drawDesign()}});
 $('dsg').addEventListener('pointerdown',e=>{const gl=e.target.closest&&e.target.closest('[data-flb]');if(!gl||e.button>0)return;if(e.pointerType!=='touch')e.preventDefault();try{gl.setPointerCapture(e.pointerId)}catch(_){}
- const id=gl.dataset.flb,sv=$('dsg'),pt=sv.createSVGPoint(),at=ev=>{pt.x=ev.clientX;pt.y=ev.clientY;const m=($('planG')||sv).getScreenCTM();return m?pt.matrixTransform(m.inverse()):{x:0,y:0}},p0=at(e),dx0=+gl.dataset.dx,dy0=+gl.dataset.dy,x0=e.clientX,y0=e.clientY,ld=[...sv.querySelectorAll('[data-fll]')].find(n=>n.dataset.fll===id);let mv=false,nd=null;
+ const id=gl.dataset.flb,sv=$('dsg'),pt=sv.createSVGPoint(),at=ev=>{pt.x=ev.clientX;pt.y=ev.clientY;const m=sv.getScreenCTM();return m?toD(pt.matrixTransform(m.inverse())):{x:0,y:0}},p0=at(e),dx0=+gl.dataset.dx,dy0=+gl.dataset.dy,x0=e.clientX,y0=e.clientY,ld=[...sv.querySelectorAll('[data-fll]')].find(n=>n.dataset.fll===id);let mv=false,nd=null;
  const onMv=ev=>{if(!mv&&Math.hypot(ev.clientX-x0,ev.clientY-y0)<4)return;mv=true;ev.preventDefault();const p=at(ev),ddx=p.x-p0.x,ddy=p.y-p0.y;nd={dx:+(dx0+ddx).toFixed(1),dy:+(dy0+ddy).toFixed(1)};gl.setAttribute('transform','translate('+ddx+','+ddy+')');if(ld){const bb=gl.getBBox();ld.setAttribute('x2',Math.max(bb.x+ddx,Math.min(+ld.getAttribute('x1'),bb.x+bb.width+ddx)));ld.setAttribute('y2',bb.y+ddy+bb.height/2)}};
  const onUp=()=>{window.removeEventListener('pointermove',onMv);window.removeEventListener('pointerup',onUp);window.removeEventListener('pointercancel',onUp);if(mv&&nd){FLP[id]=nd;DRG=true;setTimeout(()=>{DRG=false},80);drawDesign()}};
  window.addEventListener('pointermove',onMv,{passive:false});window.addEventListener('pointerup',onUp);window.addEventListener('pointercancel',onUp)});
@@ -779,7 +780,7 @@ $('dsg').addEventListener('pointerdown',e=>{const gl=e.target.closest&&e.target.
 // touch: stop the page from scrolling when a finger starts on a fitting (touch-action does not work on inner SVG elements)
 $('dsg').addEventListener('touchstart',e=>{if(e.target.closest&&e.target.closest('[data-fid^="A|"]'))e.preventDefault()},{passive:false});
 $('dsg').addEventListener('pointerdown',e=>{const gI=e.target.closest('[data-fid^="A|"]');if(!gI||e.button>0||!SNP)return;if(e.pointerType!=='touch')e.preventDefault();try{gI.setPointerCapture(e.pointerId)}catch(_){}const id=gI.dataset.fid,pa=id.split('|'),ai=+pa[1],jj=+pa[2],a=ACC[ai],f=FLG.find(x=>x.id===id);if(!a||!f)return;
- const sv=$('dsg'),pt=sv.createSVGPoint(),at=ev=>{pt.x=ev.clientX;pt.y=ev.clientY;const m=($('planG')||sv).getScreenCTM();return m?pt.matrixTransform(m.inverse()):{x:0,y:0}},x0=e.clientX,y0=e.clientY;let best=null,mv=false;
+ const sv=$('dsg'),pt=sv.createSVGPoint(),at=ev=>{pt.x=ev.clientX;pt.y=ev.clientY;const m=sv.getScreenCTM();return m?toD(pt.matrixTransform(m.inverse())):{x:0,y:0}},x0=e.clientX,y0=e.clientY;let best=null,mv=false;
  const near=p=>{let b=null;Object.values(SNP).forEach(s=>{if(s.z!==-1&&s.z!==a.z)return;const dx=s.x2-s.x1,dy=s.y2-s.y1,l2=dx*dx+dy*dy,u=Math.max(0,Math.min(1,((p.x-s.x1)*dx+(p.y-s.y1)*dy)/l2)),qx=s.x1+dx*u,qy=s.y1+dy*u,d=Math.hypot(p.x-qx,p.y-qy);if(!b||d<b.d)b={d,t:s.t,k:s.k,u,x:qx,y:qy}});return b};
  let ring=null;const onMv=ev=>{if(!mv&&Math.hypot(ev.clientX-x0,ev.clientY-y0)<4)return;mv=true;ev.preventDefault();const b=near(at(ev));if(!b)return;best=b;gI.setAttribute('transform','translate('+(b.x-f.x)+','+(b.y-f.y)+')');
   if(!ring){ring=document.createElementNS('http://www.w3.org/2000/svg','circle');ring.setAttribute('r','9');ring.setAttribute('fill','none');ring.setAttribute('stroke','#f59e0b');ring.setAttribute('stroke-width','1.5');ring.setAttribute('stroke-dasharray','3 2');ring.style.pointerEvents='none';($('planG')||sv).appendChild(ring)}ring.setAttribute('cx',b.x);ring.setAttribute('cy',b.y)};
@@ -822,7 +823,7 @@ function palCursor(){const sv=$('dsg');if(sv)sv.style.cursor=PAL!=null?'crosshai
 function fillPal(){const el=$('fitPal');if(!el)return;el.innerHTML=FCAT.map((f,i)=>`<button type="button" class="fchip${PAL===i?' on':''}" data-fc="${i}">◆ ${esc(f[L=='th'?1:0])}</button>`).join('');
  $('fitPalL').textContent=T2('Size / name (optional, added to the fitting):','ขนาด / ชื่อ (ไม่บังคับ เติมท้ายชื่อข้อต่อ):');$('fitSz').placeholder=T2('e.g. 2"','เช่น 2"');
  $('fitPalN').textContent=T2('Click a fitting to select it, then click a line in the drawing to place it (Esc or click it again to stop) – or drag it from here onto a line. It is added to the BOM automatically.','คลิกข้อต่อเพื่อเลือก แล้วคลิกที่เส้นในแบบเพื่อวาง (กด Esc หรือคลิกซ้ำเพื่อหยุด) หรือลากจากที่นี่ไปวางบนเส้น ข้อต่อจะเพิ่มเข้า BOM อัตโนมัติ');palCursor()}
-function svgPt(ev){const sv=$('dsg'),pt=sv.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;const m=($('planG')||sv).getScreenCTM();return m?pt.matrixTransform(m.inverse()):null}
+function svgPt(ev){const sv=$('dsg'),pt=sv.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;const m=sv.getScreenCTM();return m?toD(pt.matrixTransform(m.inverse())):null}
 function snapNear(p,zone){if(!SNP||!p)return null;let b=null;Object.values(SNP).forEach(s=>{if(zone!=null&&s.z!==-1&&s.z!==zone)return;const dx=s.x2-s.x1,dy=s.y2-s.y1,l2=dx*dx+dy*dy,u=Math.max(0,Math.min(1,((p.x-s.x1)*dx+(p.y-s.y1)*dy)/l2)),qx=s.x1+dx*u,qy=s.y1+dy*u,d=Math.hypot(p.x-qx,p.y-qy);if(!b||d<b.d)b={d,t:s.t,k:s.k,z:s.z,u,x:qx,y:qy}});return b}
 function palRing(b){const sv=$('dsg');if(!b){if(PRING){PRING.remove();PRING=null}return}if(!PRING||!PRING.isConnected){PRING=document.createElementNS('http://www.w3.org/2000/svg','circle');PRING.setAttribute('r','9');PRING.setAttribute('fill','none');PRING.setAttribute('stroke','#f59e0b');PRING.setAttribute('stroke-width','1.5');PRING.setAttribute('stroke-dasharray','3 2');PRING.style.pointerEvents='none';($('planG')||sv).appendChild(PRING)}PRING.setAttribute('cx',b.x);PRING.setAttribute('cy',b.y)}
 function placeFit(ci,b){if(!b||!DCX||!DCX.zs)return;const f=FCAT[ci],sz=($('fitSz').value||'').trim(),lb=f[L=='th'?1:0]+(sz?' '+sz:''),z=b.z>=0?b.z:DCX.zi,j=b.t==='l'?+b.k:DCX.zs[z];
