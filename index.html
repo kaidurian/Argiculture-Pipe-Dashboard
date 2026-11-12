@@ -105,7 +105,7 @@ input[readonly]{opacity:.7}
 </dialog>
 <div id="rptP" class="rp"></div>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.34</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.35</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="tabs"><button id="tD" type="button" class="on" data-t="tabD"></button><button id="tC" type="button" data-t="tabC"></button><button id="tO" type="button" data-t="tabO"></button></div>
@@ -411,7 +411,7 @@ $('ch').innerHTML=g}
 const pn=x=>String(+Number(x).toPrecision(4));
 let LHM=0,BP={},BX=[],BOMD=null,BR=[],RPTA=false,LINES=[],SEL=null,LAST=null,PUMP=null,TOTLEN=0;const isBad=(e,x)=>e&&(Math.abs(e.qh-x.q)>1e-6*Math.max(1,x.q)||Math.abs(e.Ln-x.l)>1e-6*Math.max(1,x.l));const RES={},ZR={};let CURZ=null;const PTN={'0':'PVC 5 (PN 6)','1':'PVC 7 (PN 8)','2':'PVC 8.5 (PN 10)','3':'PVC 10.5 (PN 12.5)','4':'PVC 13.5 (PN 16)'},ptName=v=>v==='n'?t('nom'):(PTN[v]||'');
 let ZNONE=false,VF={x:false,y:false,W:800,H:0};const toD=p=>({x:VF.x?VF.W-p.x:p.x,y:VF.y?VF.H-p.y:p.y});
-let FOV={},FLP={},ACC=[],FLG=[],DCX=null,SNP=null,DRG=false;
+let ZVO={},ZVL=[],FOV={},FLP={},ACC=[],FLG=[],DCX=null,SNP=null,DRG=false;
 const isLat=k=>/^lat\d*$/.test(k);
 function drawDesign(){
  const CM=$('lsrc').value==='c'&&CR.length>0,CRs=CM?CR.slice().sort((a,b)=>((a.dir==='y')-(b.dir==='y'))||a.pos-b.pos):[];
@@ -522,7 +522,7 @@ function drawDesign(){
  for(let z=0;z<Z;z++){const xz=zmx(z),yz=ty(zst(z+1)-1);g+=prim(z)?`<line x1='${xz}' x2='${xz}' y1='${MY?Math.min(hy,yz):hy}' y2='${MY?Math.max(hy,ty(zst(z))):yz}' stroke='var(--ac)' stroke-width='3' opacity='${zA(z)?1:.35}'/>`:`<line x1='${xz}' x2='${xz}' y1='${hy}' y2='${ty(n1)}' stroke='var(--hi)' stroke-width='2.5' stroke-dasharray='5 3' opacity='${zA(z)?1:.35}'/><line x1='${xz}' x2='${xz}' y1='${ty(n1)}' y2='${yz}' stroke='#a855f7' stroke-width='3' opacity='${zA(z)?1:.35}'/>`;
   if(Z>1&&(z!==zi||ZNX))g+=`<line x1='${xz}' x2='${xz}' y1='${prim(z)&&MY?Math.min(hy,yz):hy}' y2='${prim(z)?(MY?Math.max(hy,ty(zst(z))):yz):yz}' stroke='transparent' stroke-width='10' data-z='${z}' style='cursor:pointer'/>`;
   if(Z>1&&gap>=6&&dy>=14)g+=`<text x='${xz}' y='${yz-6}' text-anchor='middle' style='fill:var(--ac);font-size:8px;font-weight:700;opacity:${zA(z)?1:.6};cursor:pointer' data-z='${z}'>Z${z+1}</text>`;
-  if(Z>1){const vr=Math.max(1.6,Math.min(4.5,gap*.4)),op=zA(z),vyz=(myz(z)||!prim(z))&&Math.abs(ty(eZ(z))-hy)>=20?(hy+ty(eZ(z)))/2:hy-14;g+=`<circle cx='${xz}' cy='${vyz}' r='${vr}' fill='${op?'var(--ac)':'var(--card)'}' stroke='${op?'var(--tx)':'var(--hi)'}' stroke-width='1.4' data-z='${z}' style='cursor:pointer'/><circle cx='${xz}' cy='${vyz}' r='${vr+4}' fill='transparent' data-z='${z}' style='cursor:pointer'><title>${en?'Zone ':'โซน '}${z+1}</title></circle>`}}
+  if(Z>1){const vr=Math.max(1.6,Math.min(4.5,gap*.4)),op=zA(z),vyz=(myz(z)||!prim(z))&&Math.abs(ty(eZ(z))-hy)>=20?(hy+ty(eZ(z)))/2:hy-14;ZVL.push({z,xz,vyz,vr,op})}}
  // longest route
  g+=`<polyline points='${px},${py} ${MY&&Z>1?xa:mx},${hy} ${xa},${hy} ${xa},${ty(re-1)} ${xr(re-1)},${ty(re-1)}' fill='none' stroke='var(--hi)' stroke-width='2' stroke-dasharray='6 4'/>`;
  let rip='',slab='';
@@ -569,6 +569,7 @@ function drawDesign(){
  for(let z=0;z<Z;z++){const xz_=zmx(z);sg('m',z,z,xz_,Math.max(hy,ty(zst(z))),xz_,Math.min(hy,ty(zst(z+1)-1)))}
  for(let j=0;j<nr;j++){const xz_=zmx(zOf[j]);sg('l',j,zOf[j],MX?Math.min(tx(0,j),xz_):xz_,ty(j),Math.max(xr(j),xz_),ty(j))}
  SNP=SNAPS;
+  ZVL.splice(0).forEach(v=>{const o=ZVO[v.z]||{};let x=v.xz,y=v.vyz;if(o.t){const q=snapPos(o);if(q){x=q[0];y=q[1]}}const at_=`data-z='${v.z}' data-zv='1' style='cursor:grab;touch-action:none'`;g+=`<circle cx='${x}' cy='${y}' r='${v.vr}' fill='${v.op?'var(--ac)':'var(--card)'}' stroke='${v.op?'var(--tx)':'var(--hi)'}' stroke-width='1.4' ${at_}/><circle cx='${x}' cy='${y}' r='${v.vr+4}' fill='transparent' ${at_}><title>${en?'Zone ':'โซน '}${v.z+1}${o.nm?' – '+esc(o.nm):''} (${en?'drag to move; click the active zone valve to set size / name':'ลากเพื่อย้าย คลิกวาล์วของโซนที่เลือกเพื่อตั้งขนาด/ชื่อ'})</title></circle>`;if(o.nm)g+=`<text x='${x+v.vr+5}' y='${y+3}' style='fill:var(--mut);font-size:8px;font-weight:700'>${esc(o.nm)}</text>`});
  const FL=[],NSZ=en?'size not set':'ยังไม่ระบุขนาด',sz=(x,y)=>x==null?NSZ:(y==null||x===y?x+'"':x+'"×'+y+'"');
  {const mk=(id,f,s,q,x,y,z,lx,ly,an,ex)=>{return;const o=FOV[id]||{};FL.push(Object.assign({id,f,s,q:o.q!=null?+o.q:q,x,y,z,lx,ly,an,del:!!o.del,lb:o.lb||t('f'+f)+' '+s,ov:!!(o.lb||o.q!=null)},ex))};
   for(let z=0;z<Z;z++){const R_=z===zi?RES:(ZR[z]||{}),Sg=segs(z),e=eZ(z),a_=zst(z),b_=zst(z+1),xz=zmx(z),ds=k=>R_[k]?R_[k].ds:null,lt=zLines(z).filter(x=>isLat(x.k)),dp=ds('pump');
@@ -713,7 +714,7 @@ const bmo=x=>(+x).toLocaleString(undefined,{minimumFractionDigits:2,maximumFract
 function renderBom(){const el=$('bomT');if(!el)return;if(!BOMD){el.innerHTML='';BR=[];return}
  BR=[];BOMD.pipes.forEach(p=>BR.push({lab:p.label,u:'m',q:p.len,pk:'p|'+p.k}));
  if(BOMD.un>0)BR.push({lab:t('bomUns'),u:'m',q:BOMD.un,np:1});(BOMD.fits||[]).forEach(f=>BR.push({lab:f.lb,u:t('pcs'),q:f.q,pk:'f|'+f.k,fi:f.ids}));
- BR.push({lab:t('bomSpr'),u:t('pcs'),q:BOMD.spr,pk:'spr'});if(BOMD.Z>1)BR.push({lab:t('bomVal'),u:t('pcs'),q:BOMD.Z,pk:'val'});BR.push({lab:t('bomPump'),u:t('pcs'),q:1,pk:'pump'});
+ BR.push({lab:t('bomSpr'),u:t('pcs'),q:BOMD.spr,pk:'spr'});if(BOMD.Z>1)BR.push({lab:t('bomVal')+(()=>{const n=Object.keys(ZVO).filter(k=>+k<BOMD.Z&&ZVO[k].nm).sort((a,b)=>a-b).map(k=>'Z'+(+k+1)+': '+ZVO[k].nm);return n.length?' ('+n.join('; ')+')':''})(),u:t('pcs'),q:BOMD.Z,pk:'val'});BR.push({lab:t('bomPump'),u:t('pcs'),q:1,pk:'pump'});
  BX.forEach((x,i)=>BR.push({xi:i}));const cur=esc($('bcur').value||'');
  el.innerHTML=`<thead><tr><th style="text-align:left">${t('bomItem')}</th><th>${t('bomUnit')}</th><th>${t('bomQty')}</th><th>${t('bomPrice')} (${cur})</th><th>${t('bomCost')} (${cur})</th><th></th></tr></thead><tbody>`+BR.map((r,i)=>r.xi!=null?
   `<tr><td style="text-align:left"><input type="text" data-bx="${r.xi}" data-f="n" value="${esc(BX[r.xi].n)}" style="width:170px"></td><td><input type="text" data-bx="${r.xi}" data-f="u" value="${esc(BX[r.xi].u)}" style="width:60px"></td><td><input type="number" min="0" step="any" data-bx="${r.xi}" data-f="q" value="${BX[r.xi].q}" style="width:90px"></td><td><input type="number" min="0" step="any" data-bx="${r.xi}" data-f="p" value="${BX[r.xi].p}" style="width:90px"></td><td data-bc></td><td><button type="button" data-bdel="${r.xi}">✕</button></td></tr>`:
@@ -781,7 +782,7 @@ $('dsg').addEventListener('click',e=>{if(DRG||(e.target.closest&&e.target.closes
  const fi=e.target.closest('[data-fid]');if(fi){const f=(FLG||[]).find(x=>x.id===fi.dataset.fid);if(f&&other(f.z)){actZ(f.z);return}openEd([fi.dataset.fid]);return}
  const tt=e.target.closest('[data-tr]');if(tt){const a=tt.dataset.tr.split('|');if(other(+a[0])){actZ(+a[0]);return}detail(+a[0],+a[1]);return}
  const k=e.target.closest('[data-k]');if(k){ZNONE=false;SEL=SEL===k.dataset.k?null:k.dataset.k;drawDesign();return}
- const z=e.target.closest('[data-z]');if(z){actZ(+z.dataset.z);return}
+ const z=e.target.closest('[data-z]');if(z){const zz=+z.dataset.z;if(z.dataset.zv&&!other(zz)){const o=ZVO[zz]||{},v=prompt(T2('Zone valve size / name (optional, empty to clear):','ขนาด / ชื่อวาล์วโซน (ไม่บังคับ เว้นว่างเพื่อลบ):'),o.nm||'');if(v!==null){o.nm=v.trim().slice(0,30);if(!o.nm)delete o.nm;if(Object.keys(o).length)ZVO[zz]=o;else delete ZVO[zz];drawDesign()}return}actZ(zz);return}
  // blank area: clear the selected line and make no zone active
  if(nz_>1&&ZNONE&&!SEL){ZNONE=false;drawDesign();return}if(SEL||(nz_>1&&!ZNONE)){SEL=null;if(nz_>1)ZNONE=true;drawDesign()}});
 
@@ -792,6 +793,14 @@ $('dsg').addEventListener('pointerdown',e=>{const gl=e.target.closest&&e.target.
  const id=gl.dataset.flb,sv=$('dsg'),pt=sv.createSVGPoint(),at=ev=>{pt.x=ev.clientX;pt.y=ev.clientY;const m=sv.getScreenCTM();return m?toD(pt.matrixTransform(m.inverse())):{x:0,y:0}},p0=at(e),dx0=+gl.dataset.dx,dy0=+gl.dataset.dy,x0=e.clientX,y0=e.clientY,ld=[...sv.querySelectorAll('[data-fll]')].find(n=>n.dataset.fll===id);let mv=false,nd=null;
  const onMv=ev=>{if(!mv&&Math.hypot(ev.clientX-x0,ev.clientY-y0)<4)return;mv=true;ev.preventDefault();const p=at(ev),ddx=p.x-p0.x,ddy=p.y-p0.y;nd={dx:+(dx0+ddx).toFixed(1),dy:+(dy0+ddy).toFixed(1)};gl.setAttribute('transform','translate('+ddx+','+ddy+')');if(ld){const bb=gl.getBBox();ld.setAttribute('x2',Math.max(bb.x+ddx,Math.min(+ld.getAttribute('x1'),bb.x+bb.width+ddx)));ld.setAttribute('y2',bb.y+ddy+bb.height/2)}};
  const onUp=()=>{window.removeEventListener('pointermove',onMv);window.removeEventListener('pointerup',onUp);window.removeEventListener('pointercancel',onUp);if(mv&&nd){FLP[id]=nd;DRG=true;setTimeout(()=>{DRG=false},80);drawDesign()}};
+ window.addEventListener('pointermove',onMv,{passive:false});window.addEventListener('pointerup',onUp);window.addEventListener('pointercancel',onUp)});
+// drag a zone valve along the pump line or its own zone's main line (snaps like a fitting)
+$('dsg').addEventListener('touchstart',e=>{if(e.target.closest&&e.target.closest('[data-zv]'))e.preventDefault()},{passive:false});
+$('dsg').addEventListener('pointerdown',e=>{const gI=e.target.closest('[data-zv]');if(!gI||e.button>0||!SNP)return;if(e.pointerType!=='touch')e.preventDefault();try{gI.setPointerCapture(e.pointerId)}catch(_){}
+ const z=+gI.dataset.z,sv=$('dsg'),pt=sv.createSVGPoint(),at=ev=>{pt.x=ev.clientX;pt.y=ev.clientY;const m=sv.getScreenCTM();return m?toD(pt.matrixTransform(m.inverse())):{x:0,y:0}},x0=e.clientX,y0=e.clientY,grp=[...sv.querySelectorAll('[data-zv]')].filter(n=>+n.dataset.z===z),cx0=+gI.getAttribute('cx'),cy0=+gI.getAttribute('cy');let best=null,mv=false;
+ const near=p=>{let b=null;Object.values(SNP).forEach(s=>{if(s.t==='l'||(s.z!==-1&&s.z!==z))return;const dx=s.x2-s.x1,dy=s.y2-s.y1,l2=dx*dx+dy*dy,u=Math.max(0,Math.min(1,((p.x-s.x1)*dx+(p.y-s.y1)*dy)/l2)),qx=s.x1+dx*u,qy=s.y1+dy*u,d=Math.hypot(p.x-qx,p.y-qy);if(!b||d<b.d)b={d,t:s.t,k:s.k,u,x:qx,y:qy}});return b};
+ const onMv=ev=>{if(!mv&&Math.hypot(ev.clientX-x0,ev.clientY-y0)<4)return;mv=true;ev.preventDefault();const b=near(at(ev));if(!b)return;best=b;grp.forEach(n=>n.setAttribute('transform','translate('+(b.x-cx0)+','+(b.y-cy0)+')'))};
+ const onUp=()=>{window.removeEventListener('pointermove',onMv);window.removeEventListener('pointerup',onUp);window.removeEventListener('pointercancel',onUp);if(mv&&best){ZVO[z]=Object.assign(ZVO[z]||{},{t:best.t,k:best.k,u:+best.u.toFixed(5)});DRG=true;setTimeout(()=>{DRG=false},80);drawDesign()}};
  window.addEventListener('pointermove',onMv,{passive:false});window.addEventListener('pointerup',onUp);window.addEventListener('pointercancel',onUp)});
 // drag a custom fitting along the pump line, main line or a lateral of its zone; it snaps to the nearest line and keeps its place when the layout is resized
 // touch: stop the page from scrolling when a finger starts on a fitting (touch-action does not work on inner SVG elements)
@@ -891,7 +900,7 @@ const RES_KEY=/^(pump|lat\d*|feed|sec\d+)$/;
 const packRes=R=>{const o={};Object.keys(R).forEach(k=>{if(RES_KEY.test(k)){const e=R[k];o[k]={pt:e.pt,ds:e.ds,v:e.v,hf:e.hf,tot:e.tot,cls:e.cls,qh:e.qh,Ln:e.Ln}}});return o};
 $('bSave').onclick=()=>{const inputs={zn:$('zn').value};SAVE_IN.forEach(i=>inputs[i]=$(i).value);const results=packRes(RES),zres={};
   Object.keys(ZR).forEach(z=>{if(+z!==CURZ)zres[z]=packRes(ZR[z])});
-  dlFile(fname('.json'),'application/json',JSON.stringify({app:'pipe-sizing',rev:20,cr:CR,bom:{p:BP,x:BX,fo:FOV,fl:FLP,ac:ACC},saved:new Date().toISOString(),inputs,results,zres},null,1))};
+  dlFile(fname('.json'),'application/json',JSON.stringify({app:'pipe-sizing',rev:20,cr:CR,bom:{p:BP,x:BX,fo:FOV,fl:FLP,ac:ACC,zv:ZVO},saved:new Date().toISOString(),inputs,results,zres},null,1))};
 $('bLoad').onclick=()=>$('fLoad').click();
 $('fLoad').onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const msg=$('prjMsg');
  if(f.size>2e6){msg.textContent=t('loadBad');return}
@@ -906,7 +915,7 @@ $('fLoad').onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f)return
    if(['ds','v','hf','tot','qh','Ln'].every(z=>r[z]!==null)&&(r.pt==='n'||PTN[r.pt]))out[k]=r});return out};
   if(o.zres&&typeof o.zres==='object')Object.keys(o.zres).forEach(z=>{if(/^\d{1,3}$/.test(z))ZR[+z]=parseRes(o.zres[z])});
   ZR[Math.max(0,(parseInt(o.inputs.zn,10)||1)-1)]=parseRes(o.results);
-  if(o.bom){BP=o.bom.p&&typeof o.bom.p==='object'?o.bom.p:{};BX=Array.isArray(o.bom.x)?o.bom.x.slice(0,100).map(x=>({n:String(x.n||''),u:String(x.u||''),q:+x.q||0,p:+x.p||0})):[];FOV=o.bom.fo&&typeof o.bom.fo==='object'?o.bom.fo:{};FLP=o.bom.fl&&typeof o.bom.fl==='object'?o.bom.fl:{};ACC=Array.isArray(o.bom.ac)?o.bom.ac.slice(0,200).map(a=>({lb:String(a.lb||''),q:+a.q||0,z:+a.z||0,j:Number.isFinite(+a.j)?+a.j:-1,w:['j','l','s'].includes(a.w)?a.w:'j',m:[0,1,2].includes(+a.m)?+a.m:0,ov:a.ov&&typeof a.ov==='object'?Object.fromEntries(Object.entries(a.ov).filter(([k,v])=>v&&['l','m','p'].includes(v.t)&&Number.isFinite(+v.u)&&Number.isFinite(+v.k)).map(([k,v])=>[k,{t:v.t,k:+v.k,u:Math.max(0,Math.min(1,+v.u))}])):null})):[]}
+  if(o.bom){BP=o.bom.p&&typeof o.bom.p==='object'?o.bom.p:{};BX=Array.isArray(o.bom.x)?o.bom.x.slice(0,100).map(x=>({n:String(x.n||''),u:String(x.u||''),q:+x.q||0,p:+x.p||0})):[];FOV=o.bom.fo&&typeof o.bom.fo==='object'?o.bom.fo:{};FLP=o.bom.fl&&typeof o.bom.fl==='object'?o.bom.fl:{};ACC=Array.isArray(o.bom.ac)?o.bom.ac.slice(0,200).map(a=>({lb:String(a.lb||''),q:+a.q||0,z:+a.z||0,j:Number.isFinite(+a.j)?+a.j:-1,w:['j','l','s'].includes(a.w)?a.w:'j',m:[0,1,2].includes(+a.m)?+a.m:0,ov:a.ov&&typeof a.ov==='object'?Object.fromEntries(Object.entries(a.ov).filter(([k,v])=>v&&['l','m','p'].includes(v.t)&&Number.isFinite(+v.u)&&Number.isFinite(+v.k)).map(([k,v])=>[k,{t:v.t,k:+v.k,u:Math.max(0,Math.min(1,+v.u))}])):null})):[]};ZVO=o.bom.zv&&typeof o.bom.zv==='object'?Object.fromEntries(Object.entries(o.bom.zv).filter(([k,v])=>v&&typeof v==='object').map(([k,v])=>[k,{...(v.nm?{nm:String(v.nm).slice(0,30)}:{}),...(['p','m'].includes(v.t)&&Number.isFinite(+v.k)&&Number.isFinite(+v.u)?{t:v.t,k:+v.k,u:Math.max(0,Math.min(1,+v.u))}:{})}])):{}
   if(Array.isArray(o.cr))CR=o.cr.slice(0,300).map(r=>({n:Math.max(1,Math.floor(+r.n)||1),off:Math.max(0,+r.off||0),pos:+r.pos||0,zone:Math.max(1,Math.floor(+r.zone)||1),dir:r.dir==='y'?'y':'x'}));cTable();
   SEL=null;ZNONE=false;drawDesign();const zn=String(o.inputs.zn||'');if([...$('zn').options].some(x=>x.value===zn))$('zn').value=zn;
   drawDesign();updateLoc();run();msg.textContent=t('loadOk')+f.name}catch(err){msg.textContent=t('loadBad')}};
