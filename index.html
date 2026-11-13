@@ -105,7 +105,7 @@ input[readonly]{opacity:.7}
 </dialog>
 <div id="rptP" class="rp"></div>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.41</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.42</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="tabs"><button id="tD" type="button" class="on" data-t="tabD"></button><button id="tC" type="button" data-t="tabC"></button><button id="tS" type="button" data-t="tabS"></button><span style="margin-left:auto;display:inline-flex;gap:6px;align-items:center"><span id="hSt" style="font-size:11px;color:var(--mut)"></span><button id="hU" type="button" title="Undo (Ctrl+Z)" style="padding:4px 10px">↶</button><button id="hR" type="button" title="Redo (Ctrl+Y)" style="padding:4px 10px">↷</button></span></div>
@@ -237,7 +237,7 @@ input[readonly]{opacity:.7}
 </div>
 
 <!-- ===== CALCULATION FIELD (all pipe sizing) ===== -->
-<div class="grid hide" id="pgScale"><div style="grid-column:1/-1"><div class="note" id="scN"></div><label id="sczL"></label> <input id="scz" type="number" min=".5" max="20" step=".5" value="1" style="width:70px"> <label><input type="checkbox" id="scn" checked> <span id="scnL"></span></label><div style="overflow:auto;border:1px solid #8886;border-radius:8px;margin-top:6px;background:var(--card)"><svg id="scg" xmlns="http://www.w3.org/2000/svg" style="display:block"></svg></div></div></div>
+<div class="grid hide" id="pgScale"><div style="grid-column:1/-1"><div class="note" id="scN"></div><label id="sczL"></label> <input id="scz" type="number" min=".5" max="20" step=".5" value="1" style="width:70px"> <label><input type="checkbox" id="scn" checked> <span id="scnL"></span></label> <label><input type="checkbox" id="scd" checked> <span id="scdL"></span></label><div style="overflow:auto;border:1px solid #8886;border-radius:8px;margin-top:6px;background:var(--card)"><svg id="scg" xmlns="http://www.w3.org/2000/svg" style="display:block"></svg></div></div></div>
 <!-- ===== CUSTOM ORCHARD ===== -->
 <div class="grid hide" id="pgCustom">
  <div class="card wide">
@@ -437,8 +437,9 @@ function drawDesign(){
  if(CURZ!==zi){if(CURZ!==null&&CURZ>=0)ZR[CURZ]=Object.assign({},RES);Object.keys(RES).forEach(k=>delete RES[k]);Object.assign(RES,ZR[zi]||{});CURZ=zi}
  // pipe lines of zone z. Main sections that carry the same flow are merged into one (first section runs from the start of the main to the first lateral of the zone)
  // main sections of zone z: p1->p2 in row positions, flow q, c = branches (2 = symmetric above/below)
- const segs0=z=>{const rs_=zst(z),re_=zst(z+1),o=[];
-  if(!myz(z)){let l=null;for(let i=gb(z)+1;i<re_;i++){const q=SQ(Math.max(i,rs_),re_);if(l&&Math.abs(l.q-q)<=1e-9*Math.max(1,q))l.p2=i;else o.push(l={p1:i-1,p2:i,q,c:1})}return o}
+ const ldY=z=>CM&&isY[zst(z)]?Math.max(0,+CRs[zst(z)].pos||0):0,
+ segs0=z=>{const rs_=zst(z),re_=zst(z+1),o=[];
+  if(!myz(z)){let l=null;for(let i=(isY[rs_]?rs_:gb(z))+1;i<re_;i++){const q=SQ(Math.max(i,rs_),re_);if(l&&Math.abs(l.q-q)<=1e-9*Math.max(1,q))l.p2=i;else o.push(l={p1:i-1,p2:i,q,c:1})}return o}
   const e=eZ(z),up=[],dn=[];
   for(let p=e;p<re_-1;){const f=Math.floor(p+1e-9),r=f+1;up.push({p1:p,p2:r,q:SQ(f+1,re_),c:1,dir:1});p=r}
   for(let p=e;p>rs_;){const f=Math.ceil(p-1e-9),r=f-1;dn.push({p1:p,p2:r,q:SQ(rs_,f),c:1,dir:-1});p=r}
@@ -450,9 +451,9 @@ function drawDesign(){
   m.forEach(g_=>{const s_=g_.s;if((!MX||isY[g_.rows[0]])&&ROFF[g_.rows[0]]>=0)E.push({c:g_.rows.length,q:g_.n*u1,l:g_.off+(g_.n-1)*td+LT,rows:g_.rows,d:g_.n+' '+t('coN')+(g_.off?' ('+(g_.off>0?'+':'')+pn(g_.off)+' m)':'')});
    else if(s_.ln>0&&s_.rn>0&&Math.abs(s_.ln-s_.rn)<1e-9&&Math.abs(s_.ll-s_.rl)<1e-9)E.push({c:g_.rows.length*2,q:s_.ln*u1,l:s_.ll+LT,rows:g_.rows,d:pn(s_.ln)+' '+t('coN')});
    else{if(s_.ln>0)E.push({c:g_.rows.length,q:s_.ln*u1,l:s_.ll+LT,rows:g_.rows,d:t('sideL')+' '+pn(s_.ln)+' '+t('coN')});if(s_.rn>0)E.push({c:g_.rows.length,q:s_.rn*u1,l:s_.rl+LT,rows:g_.rows,d:t('sideR')+' '+pn(s_.rn)+' '+t('coN')})}});return E};
- const zlen=z=>{const S_=segs(z),e=eZ(z);let m=0;for(let j=zst(z);j<zst(z+1);j++)m=Math.max(m,S_.filter(s_=>onPath(s_,j,e)).reduce((a,s_)=>a+Len(s_.p1,s_.p2),0)+Math.max(...latE(z).filter(x=>x.rows.includes(j)).map(x=>x.l)));return(myz(z)?Len(Em,e):0)+bz(z)+m};
+ const zlen=z=>{const S_=segs(z),e=eZ(z);let m=0;for(let j=zst(z);j<zst(z+1);j++)m=Math.max(m,S_.filter(s_=>onPath(s_,j,e)).reduce((a,s_)=>a+Len(s_.p1,s_.p2),0)+Math.max(...latE(z).filter(x=>x.rows.includes(j)).map(x=>x.l)));return(myz(z)?Len(Em,e):0)+bz(z)+ldY(z)+m};
  const zLines=z=>{const rs_=zst(z),re_=zst(z+1),o=[],ad=(k,n,c,qq,ll,a,b)=>{const x={k,n,c,q:qq,l:ll,a,b};o.push(x);return x};
-  ad('pump',t('lnPump'),1,WM==='a'?SQ(0,nr):SQ(rs_,re_),pm+(myz(z)?Len(Em,eZ(z)):0)+bz(z));
+  ad('pump',isY[rs_]?t('coPass'):t('lnPump'),1,WM==='a'?SQ(0,nr):SQ(rs_,re_),pm+(myz(z)?Len(Em,eZ(z)):0)+bz(z)+ldY(z));
   segs(z).forEach((g_,n)=>ad(g_.k,t('lnSec')+' '+(n+1)+' ('+t('rowL')+' '+(g_.p1+1)+'→'+(g_.p2+1)+')'+(g_.c>1?' ×2':''),g_.c,g_.q,Len(g_.p1,g_.p2),g_.p1,g_.p2));
   latE(z).forEach((e_,i,A)=>{const x=ad(A.length===1?'lat':'lat'+(i+1),t('lnLat')+(A.length>1?' – '+e_.d:''),e_.c,e_.q,e_.l);x.rows=e_.rows});
   if(fd>0){let nn=0;for(let j=rs_;j<re_;j++)nn+=RN[j]*ns;ad('feed',t('lnFeed'),nn,fq*fu,fd)}return o};
@@ -773,7 +774,7 @@ function cRender(){const ts=+$('td').value||0,ns=Math.max(1,Math.floor(cnv('ns')
  const zs=[...new Set(CR.map(r=>r.zone||1))].sort((a,b)=>a-b);let rows='',Qs=[];
  zs.forEach(z=>{const R_=CR.map((r,i)=>({...r,i})).filter(r=>(r.zone||1)===z).sort((a,b)=>a.pos-b.pos),qs=R_.map(r=>r.n*ql),Qz=qs.reduce((a,b)=>a+b,0);Qs.push(Qz);
   const row=(n,q,l,l2)=>`<tr><td style="text-align:left">Z${z} · ${n}</td><td>${l2}</td><td>${pn_(q)}</td><td>${pn_(q*1000/60)}</td><td>${pn_(l)}</td></tr>`;
-  {const p0g=R_[0].dir==='y'?py0:px0;rows+=row(t('coPass'),Qz,R_[0].pos-p0g,1)}
+  {const p0g=R_[0].dir==='y'?py0:px0;rows+=row(t('coPass'),Qz,(R_[0].dir==='y'?Math.max(0,R_[0].pos):R_[0].pos-p0g),1)}
   for(let k=0;k<R_.length-1;k++)rows+=row(t('coMain')+' '+(k+1)+' ('+t('rowL')+' '+(R_[k].i+1)+'→'+(R_[k+1].i+1)+')',qs.slice(k+1).reduce((a,b)=>a+b,0),R_[k+1].pos-R_[k].pos,1);
   const gp={};R_.forEach(r=>{const key=r.n+'|'+r.off;(gp[key]=gp[key]||{n:r.n,off:r.off,c:0}).c++});
   Object.values(gp).forEach(x=>rows+=row(t('coLat')+' – '+x.n+' '+t('coN'),x.n*ql,x.off+(x.n-1)*ts,x.c))});
@@ -802,7 +803,7 @@ $('dsg').addEventListener('pointerdown',e=>{const gl=e.target.closest&&e.target.
 
 // ---- scale plan: every tree, row, pipe line, valve and fitting at true scale (same metres on both axes)
 function drawScale(){const sv=$('scg'),D=SCD;if(!sv||!D)return;const {nr,RN,ROFF,RP,td,Z,zs,MX,FX,FY,MY,xm,pm,Yp,Em,LT,prim,n1,zOf,isY,PS,CM}=D,g1=id=>Math.max(0,+$(id).value||0),zg=g1('zg'),hg=g1('hg');
- $('sczL').textContent=T2('Zoom ×','ซูม ×');$('scnL').textContent=T2('Fitting names','ชื่อข้อต่อ');$('scN').textContent=T2('Same arrangement as the Design drawing, drawn at true scale in metres (same scale on both axes): trees, rows, pump line, header, a main line for each zone, laterals, zone valves and fittings. Zone main spacing and header offset are set in Design inputs. Use Zoom and scroll for detail.','การจัดวางเหมือนแบบ Design แต่วาดตามมาตราส่วนจริงเป็นเมตร (มาตราส่วนเท่ากันสองแกน): ต้นไม้ แถว ท่อปั๊ม ท่อรวม ท่อเมนแต่ละโซน ท่อแขนง วาล์วโซน และข้อต่อ ตั้งระยะห่างท่อเมนและท่อรวมในช่องกรอกของ Design ใช้ซูมและเลื่อนเพื่อดูรายละเอียด');
+ $('sczL').textContent=T2('Zoom ×','ซูม ×');$('scnL').textContent=T2('Fitting names','ชื่อข้อต่อ');$('scdL').textContent=T2('Dimensions','ขนาด (ม.)');$('scN').textContent=T2('Same arrangement as the Design drawing, drawn at true scale in metres (same scale on both axes): trees, rows, pump line, header, a main line for each zone, laterals, zone valves and fittings. Zone main spacing and header offset are set in Design inputs. Use Zoom and scroll for detail.','การจัดวางเหมือนแบบ Design แต่วาดตามมาตราส่วนจริงเป็นเมตร (มาตราส่วนเท่ากันสองแกน): ต้นไม้ แถว ท่อปั๊ม ท่อรวม ท่อเมนแต่ละโซน ท่อแขนง วาล์วโซน และข้อต่อ ตั้งระยะห่างท่อเมนและท่อรวมในช่องกรอกของ Design ใช้ซูมและเลื่อนเพื่อดูรายละเอียด');
  const xl=PS.filter((_,j)=>!isY[j]),mn0=CM&&xl.length?Math.min(...xl):0,yF=hg>0?-hg/2:0,
   // feeder of each zone that has rows along Y: just before its first tree (instead of the bottom of the plan), so the lead-in is drawn as part of the zone main
   gapF=Math.max(1,Math.min(5,td/2)),yFz=Array.from({length:Z},(_,z)=>{let m=null;for(let j=zs[z];j<zs[z+1];j++)if(isY[j])m=m==null?ROFF[j]:Math.min(m,ROFF[j]);return m==null?yF:Math.max(yF,m-gapF)}),
@@ -811,7 +812,7 @@ function drawScale(){const sv=$('scg'),D=SCD;if(!sv||!D)return;const {nr,RN,ROFF
  SG['p|0']={x1:pX,y1:pY,x2:mxm,y2:hy};if(Z>1)SG['p|1']={x1:mxm,y1:hy,x2:Math.min(mxm-(Z-1)*zg,zx(Z-1)),y2:hy};
  for(let z=0;z<Z;z++){xs.push(zx(z));const R=[];let fx=null;for(let j=zs[z];j<zs[z+1];j++){R.push(ry[j]);if(isY[j])fx=Math.max(fx==null?-1e9:fx,PS[j])}SG['m|'+z]={x1:zx(z),y1:Math.min(hy,...R),x2:zx(z),y2:Math.max(hy,...R)};if(fx!=null)FD.push({x1:zx(z),x2:fx,y1:yFz[z],y2:yFz[z]})}
  for(let j=0;j<nr;j++){const c=zx(zOf[j]),a=ROFF[j],b=a+(RN[j]-1)*td;if(isY[j]){const x=PS[j],e=b+LT;xs.push(x);ys.push(e);SG['l|'+j]={x1:x,y1:Math.min(yF,a)-(a<yF?LT:0),x2:x,y2:e}}else{xs.push(a,b+LT);ys.push(ry[j]);SG['l|'+j]={x1:Math.min(a,c)-(a<c?LT:0),y1:ry[j],x2:Math.max(b,c)+(b>c?LT:0),y2:ry[j]}}}
- const x0=Math.min(...xs)-4,x1=Math.max(...xs)+4,y0=Math.min(...ys)-4,y1=Math.max(...ys)+4,zm=Math.max(.5,+$('scz').value||1),S=Math.min(40,900*zm/Math.max(1,x1-x0)),W=Math.round((x1-x0)*S),H=Math.round((y1-y0)*S+30),X=x=>((FX?x1+x0-x:x)-x0)*S,Y=y=>(FY?y-y0:y1-y)*S,f1=v=>v.toFixed(1);
+ let x0=Math.min(...xs)-4,x1=Math.max(...xs)+4,y0=Math.min(...ys)-4,y1=Math.max(...ys)+4;const zm=Math.max(.5,+$('scz').value||1),pd_=$('scd').checked?44/Math.min(40,900*zm/Math.max(1,x1-x0)):0;x0-=pd_;x1+=pd_;y0-=pd_;y1+=pd_;const S=Math.min(40,900*zm/Math.max(1,x1-x0)),W=Math.round((x1-x0)*S),H=Math.round((y1-y0)*S+30),X=x=>((FX?x1+x0-x:x)-x0)*S,Y=y=>(FY?y-y0:y1-y)*S,f1=v=>v.toFixed(1);
  const prj=(p,z,noL)=>{let b=null;Object.values(SNP||{}).forEach(q=>{if(q.t==='l'&&noL)return;if(z!=null&&q.z!==-1&&q.z!==z)return;const dx=q.x2-q.x1,dy=q.y2-q.y1,l2=dx*dx+dy*dy,u=Math.max(0,Math.min(1,((p[0]-q.x1)*dx+(p[1]-q.y1)*dy)/l2)),d=Math.hypot(p[0]-q.x1-dx*u,p[1]-q.y1-dy*u);if(!b||d<b.d)b={d,t:q.t,k:q.k,u}});if(!b)return null;const g=SG[b.t+'|'+b.k];if(!g)return null;let py_=g.y1+(g.y2-g.y1)*b.u;if(b.t==='l'&&isY[+b.k])py_=Math.max(py_,yFz[zOf[+b.k]]);return [g.x1+(g.x2-g.x1)*b.u,py_]};
  const ln=(g,c,w,da)=>`<line x1='${f1(X(g.x1))}' x2='${f1(X(g.x2))}' y1='${f1(Y(g.y1))}' y2='${f1(Y(g.y2))}' stroke='${c}' stroke-width='${w}'${da?` stroke-dasharray='${da}'`:''}/>`,tr=Math.max(1.5,Math.min(6,td*S*.3));let o='';
  for(let j=0;j<nr;j++){const g_=SG['l|'+j];o+=ln(isY[j]?Object.assign({},g_,{y1:Math.max(g_.y1,yFz[zOf[j]])}):g_,isY[j]?'#a855f7':'var(--lo)',1.2)}
@@ -826,10 +827,25 @@ function drawScale(){const sv=$('scg'),D=SCD;if(!sv||!D)return;const {nr,RN,ROFF
  if(sn){const PL=[],OB=MK.map(m=>({x0:m.cx-5,y0:m.cy-5,w:10,h:10})),ov=(a,b)=>Math.max(0,Math.min(a.x0+a.w,b.x0+b.w)-Math.max(a.x0,b.x0))*Math.max(0,Math.min(a.y0+a.h,b.y0+b.h)-Math.max(a.y0,b.y0)),hl_=';paint-order:stroke;stroke:var(--card);stroke-width:3px;stroke-linejoin:round';
   MK.sort((a,b)=>a.cy-b.cy||a.cx-b.cx).forEach(m=>{let b=null;for(let k=0;k<=10&&!(b&&b.c===0);k++){const d=k*10,C=[[m.cx+7,m.cy+3+d,'start'],[m.cx+7,m.cy+3-d,'start'],[m.cx-7,m.cy+3+d,'end'],[m.cx-7,m.cy+3-d,'end']];for(const c of C){const r={x0:c[2]==='end'?c[0]-m.w:c[0],y0:c[1]-8,w:m.w,h:10};let cs=0;OB.forEach(q=>cs+=ov(r,q));PL.forEach(q=>cs+=ov(r,q));if(!b||cs+k*.5<b.c+b.k*.5)b={c:cs,k,x:c[0],y:c[1],an:c[2],r};if(cs===0&&k===0)break}}
    PL.push(b.r);if(b.k>0)o+=`<line x1='${m.cx}' y1='${m.cy}' x2='${b.x}' y2='${b.y-3}' stroke='var(--mut)' stroke-width='.6' opacity='.7'/>`;o+=`<text x='${b.x}' y='${b.y}' text-anchor='${b.an}' style='fill:var(--mut);font-size:8px;font-weight:700${hl_}'>${m.lb}</text>`})}
+ if($('scd').checked){const sx=FX?-1:1,sy=FY?-1:1,DM=[],hl_=';paint-order:stroke;stroke:var(--card);stroke-width:3px;stroke-linejoin:round',
+  dm=(a,b,v,ox,oy)=>{if(!(v>1e-9))return;const ax=X(a[0]),ay=Y(a[1]),bx=X(b[0]),by=Y(b[1]),L=Math.hypot(bx-ax,by-ay);if(L<10)return;
+   const x1_=ax+ox,y1_=ay+oy,x2_=bx+ox,y2_=by+oy,dx=(bx-ax)/L,dy=(by-ay)/L,nx=-dy*3.5,ny=dx*3.5,vt=Math.abs(dy)>Math.abs(dx),mx=(x1_+x2_)/2,my=(y1_+y2_)/2;
+   DM.push(`<g stroke='#0ea5e9' fill='none' stroke-width='.8'><line x1='${f1(ax)}' y1='${f1(ay)}' x2='${f1(x1_)}' y2='${f1(y1_)}' stroke-dasharray='2 2' opacity='.55'/><line x1='${f1(bx)}' y1='${f1(by)}' x2='${f1(x2_)}' y2='${f1(y2_)}' stroke-dasharray='2 2' opacity='.55'/><line x1='${f1(x1_)}' y1='${f1(y1_)}' x2='${f1(x2_)}' y2='${f1(y2_)}'/><line x1='${f1(x1_-nx)}' y1='${f1(y1_-ny)}' x2='${f1(x1_+nx)}' y2='${f1(y1_+ny)}' stroke-width='1.4'/><line x1='${f1(x2_-nx)}' y1='${f1(y2_-ny)}' x2='${f1(x2_+nx)}' y2='${f1(y2_+ny)}' stroke-width='1.4'/></g><text x='${f1(mx)}' y='${f1(my+(!vt&&L<34?11:-3))}' text-anchor='middle'${vt?` transform='rotate(-90 ${f1(mx)} ${f1(my)})'`:''} style='fill:#0284c7;font-size:9px;font-weight:700${hl_}'>${pn(v)} m</text>`)};
+  const j0=(()=>{for(let j=0;j<nr;j++)if(!isY[j])return j;return -1})();let bx0=1e9,bx1=-1e9,by0=1e9,by1=-1e9;
+  for(let j=0;j<nr;j++){const e=ROFF[j]+(RN[j]-1)*td;if(isY[j]){bx0=Math.min(bx0,PS[j]);bx1=Math.max(bx1,PS[j]);by0=Math.min(by0,ROFF[j]);by1=Math.max(by1,e)}else{bx0=Math.min(bx0,ROFF[j]);bx1=Math.max(bx1,e);by0=Math.min(by0,ry[j]);by1=Math.max(by1,ry[j])}}
+  if(bx1>bx0)dm([bx0,by1],[bx1,by1],bx1-bx0,0,-34*sy);if(by1>by0)dm([bx1,by0],[bx1,by1],by1-by0,34*sx,0);
+  if(j0>=0){const a=ROFF[j0],c=zx(zOf[j0]),yy=ry[j0];if(a>c+1e-9&&!MX)dm([c,yy],[a,yy],a-c,0,13*sy);if(RN[j0]>1&&td>0)dm([a,yy],[a+td,yy],td,0,13*sy);if(LT>0)dm([a+(RN[j0]-1)*td,yy],[a+(RN[j0]-1)*td+LT,yy],LT,0,13*sy);
+   const j1=(()=>{for(let j=j0+1;j<nr;j++)if(!isY[j])return j;return -1})();if(j1>=0)dm([bx1+LT,yy],[bx1+LT,ry[j1]],ry[j1]-yy,14*sx,0)}
+  if(pm>0){const hor=Math.abs(pX-mxm)>Math.abs(pY-hy);dm([pX,pY],[mxm,hy],Math.hypot(mxm-pX,hy-pY),hor?0:-18*sx,hor?18*sy:0)}
+  if(Z>1&&zg>0)dm([zx(0),hy],[zx(1),hy],zg,0,16*sy);
+  for(let z=0;z<Z;z++){const ys_=[];for(let j=zs[z];j<zs[z+1];j++)if(isY[j])ys_.push(j);if(!ys_.length)continue;const j=ys_[0],e=ROFF[j]+(RN[j]-1)*td+LT;
+   dm([zx(z),yFz[z]],[PS[j],yFz[z]],PS[j]-zx(z),0,13*sy);if(ROFF[j]>0)dm([PS[j],0],[PS[j],ROFF[j]],ROFF[j],-13*sx,0);
+   if(ys_.length>1){const k=ys_[1];dm([PS[j],e],[PS[k],ROFF[k]+(RN[k]-1)*td+LT],Math.abs(PS[k]-PS[j]),0,-13*sy)}}
+  o+=DM.join('')}
  {const nc=[1,2,5,10,20,50,100,200,500].filter(n=>n*S<=W*.3).pop()||1,bx=10,by=H-12;o+=`<line x1='${bx}' x2='${bx+nc*S}' y1='${by}' y2='${by}' stroke='var(--tx)' stroke-width='2'/><line x1='${bx}' x2='${bx}' y1='${by-4}' y2='${by+4}' stroke='var(--tx)'/><line x1='${bx+nc*S}' x2='${bx+nc*S}' y1='${by-4}' y2='${by+4}' stroke='var(--tx)'/><text x='${bx+nc*S+6}' y='${by+4}' style='fill:var(--tx);font-size:11px'>${nc} m</text>`}
  sv.setAttribute('width',W);sv.setAttribute('height',H);sv.setAttribute('viewBox','0 0 '+W+' '+H);sv.innerHTML=o}
 ['lt','zg','hg'].forEach(i=>$(i).addEventListener('input',()=>drawDesign()));
-$('scz').oninput=$('scn').onchange=()=>drawScale();
+$('scz').oninput=$('scn').onchange=$('scd').onchange=()=>drawScale();
 
 // ---- auto save (this browser), undo, redo
 const H={u:[],r:[],cur:null,ck:null,t:null};
