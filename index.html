@@ -105,7 +105,7 @@ input[readonly]{opacity:.7}
 </dialog>
 <div id="rptP" class="rp"></div>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.40</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.41</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="tabs"><button id="tD" type="button" class="on" data-t="tabD"></button><button id="tC" type="button" data-t="tabC"></button><button id="tS" type="button" data-t="tabS"></button><span style="margin-left:auto;display:inline-flex;gap:6px;align-items:center"><span id="hSt" style="font-size:11px;color:var(--mut)"></span><button id="hU" type="button" title="Undo (Ctrl+Z)" style="padding:4px 10px">↶</button><button id="hR" type="button" title="Redo (Ctrl+Y)" style="padding:4px 10px">↷</button></span></div>
@@ -131,7 +131,6 @@ input[readonly]{opacity:.7}
         <label><span data-t="rdist"></span><input id="rd" type="number" step="any" min="0" value="8"></label>
         <label><span data-t="tdist"></span><input id="td" type="number" step="any" min="0" value="8"></label>
       </div>
-      <div class="row"><label><span data-t="ltL"></span><input id="lt" type="number" step="any" min="0" value="0"></label></div>
       <div class="row"><label><span data-t="zgL"></span><input id="zg" type="number" step="any" min="0" value="2"></label><label><span data-t="hgL"></span><input id="hg" type="number" step="any" min="0" value="4"></label></div>
       <div class="row">
         <label><span data-t="zrL"></span><input id="zr" type="number" step="1" min="1"></label>
@@ -157,8 +156,9 @@ input[readonly]{opacity:.7}
     </div>
     <div class="grp"><h3 data-t="grp3"></h3>
       <label><span data-t="pmL"></span><input id="pm" type="number" step="any" min="0"></label>
-      <label><span data-t="fdL"></span><input id="fd" type="number" step="any" min="0"></label>
       <label><span data-t="loL"></span><input id="lo" type="number" step="any" min="0" placeholder="0"></label>
+      <label><span data-t="ltL"></span><input id="lt" type="number" step="any" min="0" value="0"></label>
+      <label><span data-t="fdL"></span><input id="fd" type="number" step="any" min="0"></label>
     </div>
     <div class="grp"><h3 data-t="grp4"></h3>
       <label><span data-t="fitL"></span><input id="fit" type="number" step="any" min="0" value="20" placeholder="20"></label>
@@ -432,7 +432,7 @@ function drawDesign(){
   prim=z=>zst(z)<n1,myz=z=>MY&&prim(z),gb=z=>prim(z)?0:n1,BND=0,bz=z=>prim(z)?0:BND,eZ=z=>myz(z)?Math.max(zst(z),Math.min(zst(z+1)-1,Em)):gb(z),
   qr=RN.map(n=>n*ns*fq*fu),SQ=(a,b)=>{let o=0;for(let j=a;j<b;j++)o+=qr[j];return o},
   Yp=p=>{const j=Math.max(0,Math.min(nr-1,Math.floor(p+1e-9))),k=Math.min(nr-1,j+1);return RP[j]+(k===j?0:(RP[k]-RP[j])*(p-j))},Len=(a,b)=>Math.abs(Yp(b)-Yp(a));
- $('allzW').style.display=WM==='a'?'':'none';$('zr').placeholder='1';['nr','nt','rd','td','lo','zr'].forEach(i=>{$(i).disabled=CM});if(CM){$('nr').value=nr;$('nt').value=nt;$('td').value=td;$('rd').value=rd;$('zr').value=Z}
+ $('allzW').style.display=WM==='a'?'':'none';$('zr').placeholder='1';['nr','nt','zr'].forEach(i=>{$(i).disabled=CM});if(CM){$('nr').value=nr;$('nt').value=nt;$('td').value=td;$('rd').value=rd;$('zr').value=Z}
  // results are kept per zone: switching zone stores the current zone's results and loads the other zone's
  if(CURZ!==zi){if(CURZ!==null&&CURZ>=0)ZR[CURZ]=Object.assign({},RES);Object.keys(RES).forEach(k=>delete RES[k]);Object.assign(RES,ZR[zi]||{});CURZ=zi}
  // pipe lines of zone z. Main sections that carry the same flow are merged into one (first section runs from the start of the main to the first lateral of the zone)
@@ -702,7 +702,7 @@ $('bKml').onclick=()=>{
  k+='</Document></kml>';
  const u=URL.createObjectURL(new Blob([k],{type:'application/vnd.google-earth.kml+xml'})),l=document.createElement('a');
  l.href=u;l.download='pipe-layout.kml';document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)};
-function applySrc(){const c=$('lsrc').value==='c';$('cCard').classList.toggle('hide',!c);['nr','nt','lo','zr','ax','ay'].forEach(i=>{const l=$(i).closest('label');if(l)l.style.display=c?'none':''});if(c){if(!CR.length&&+$('nr').value>0&&+$('nt').value>0)cImp();else cRender()}}
+function applySrc(){const c=$('lsrc').value==='c';$('cCard').classList.toggle('hide',!c);['nr','nt','zr','ax','ay'].forEach(i=>{const l=$(i).closest('label');if(l)l.style.display=c?'none':''});if(c){if(!CR.length&&+$('nr').value>0&&+$('nt').value>0)cImp();else cRender()}}
 function showTab(k){const m={d:['pgDesign','tD'],c:['pgCalc','tC'],s:['pgScale','tS']};for(const x in m){$(m[x][0]).classList.toggle('hide',x!==k);$(m[x][1]).classList.toggle('on',x===k)}$('bSet').classList.toggle('hide',k!=='c');if(k==='d')applySrc();if(k==='s'||k==='d')drawDesign()}
 {const cc=$('pgCustom').firstElementChild;cc.id='cCard';cc.classList.add('hide');$('pgDesign').prepend(cc);$('lsrc').addEventListener('change',()=>{applySrc();drawDesign()})}
 $('tD').onclick=()=>showTab('d');$('tC').onclick=()=>showTab('c');$('tS').onclick=()=>showTab('s');
@@ -742,17 +742,19 @@ $('cRows').addEventListener('input',e=>{const r=e.target.dataset.r;if(r==null)re
 $('cRows').addEventListener('click',e=>{const d=e.target.dataset.del;if(d==null)return;CR.splice(+d,1);cTable();cRender()});
 function cImp(){const nr=Math.max(1,Math.floor(+$('nr').value||0)),nt=Math.max(1,Math.floor(+$('nt').value||0)),td=+$('td').value||0,rd=+$('rd').value||0,Z=Math.min(nr,Math.max(1,Math.floor(+$('zr').value)||1)),zb=Math.floor(nr/Z),zx=nr%Z,zst=j=>j*zb+Math.min(j,zx);
  
- CR=Array.from({length:nr},(_,i)=>{let z=0;while(zst(z+1)<=i)z++;return{n:nt,off:0,pos:i*rd,zone:z+1,dir:'x'}});cTable();cRender();$('cMsg').textContent=t('syImp')+nr+' × '+nt+', '+Z+' zone'}
+ CR=Array.from({length:nr},(_,i)=>{let z=0;while(zst(z+1)<=i)z++;return{n:nt,off:($('pmx').value==='m'||$('pmx').value==='c')?0:(+$('lo').value||0),pos:i*rd,zone:z+1,dir:'x'}});cTable();cRender();$('cMsg').textContent=t('syImp')+nr+' × '+nt+', '+Z+' zone'}
 function cExp(){const m=$('cMsg'),R_=CR.slice().sort((a,b)=>a.pos-b.pos),nr=R_.length;if(!nr)return;if(R_.some(r=>r.dir==='y')){m.textContent=t('syNo')+t('syDir');return}
  const dp=nr>1?R_[1].pos-R_[0].pos:+$('rd').value||0,uni=R_.every(r=>r.n===R_[0].n&&Math.abs(r.off-R_[0].off)<1e-9)&&R_.every((r,i)=>Math.abs(r.pos-R_[0].pos-i*dp)<1e-6);
  if(!uni){m.textContent=t('syNo')+t('syUni');return}
  const zs=[...new Set(R_.map(r=>r.zone))].sort((a,b)=>a-b),Z=zs.length,sz=zs.map(z=>R_.filter(r=>r.zone===z).length),zb=Math.floor(nr/Z),zx=nr%Z,seq=R_.every((r,i)=>i===0||r.zone>=R_[i-1].zone),even=sz.every((c,j)=>c===zb+(j<zx?1:0));
  if(!seq||!even){m.textContent=t('syNo')+t('syZn');return}
- const ts=+$('td').value||0;$('nr').value=nr;$('nt').value=R_[0].n;$('rd').value=dp||$('rd').value;$('td').value=ts||$('td').value;$('zr').value=Z;$('ax').value=(R_[0].n*(+$('td').value)).toPrecision(6)*1;$('ay').value=+(nr*(+$('rd').value)).toPrecision(6);
+ const ts=+$('td').value||0;$('nr').value=nr;$('nt').value=R_[0].n;$('lo').value=R_[0].off;$('rd').value=dp||$('rd').value;$('td').value=ts||$('td').value;$('zr').value=Z;$('ax').value=(R_[0].n*(+$('td').value)).toPrecision(6)*1;$('ay').value=+(nr*(+$('rd').value)).toPrecision(6);
  drawDesign();m.textContent=t('syOk')+nr+' × '+R_[0].n+', '+Z+' zone'}
 $('cImp').onclick=cImp;$('cExp').onclick=cExp;
-$('cAdd').onclick=()=>{const l=CR[CR.length-1]||{n:1,off:0,pos:-(+$('rd').value||0),zone:1,dir:'x'};CR.push({n:l.n,off:l.off,pos:l.pos+(+$('rd').value||0),zone:l.zone,dir:l.dir==='y'?'y':'x'});cTable();cRender()};
+$('cAdd').onclick=()=>{const l=CR[CR.length-1]||{n:1,off:+$('lo').value||0,pos:-(+$('rd').value||0),zone:1,dir:'x'};CR.push({n:l.n,off:l.off,pos:l.pos+(+$('rd').value||0),zone:l.zone,dir:l.dir==='y'?'y':'x'});cTable();cRender()};
 ['td','rd'].forEach(i=>$(i).addEventListener('input',()=>{if($('lsrc').value==='c')cRender()}));
+let LO0=0;$('lo').addEventListener('focus',()=>{LO0=+$('lo').value||0});
+$('lo').addEventListener('input',()=>{if($('lsrc').value!=='c')return;const n=+$('lo').value||0;CR.forEach(r=>{if(Math.abs((+r.off||0)-LO0)<1e-9)r.off=n});LO0=n;cTable();cRender()});
 function cRender(){const ts=+$('td').value||0,ns=Math.max(1,Math.floor(cnv('ns'))),ql=ns*cnv('fq')*(+$('dfu').value||1),pn_=x=>+(+x).toPrecision(4);
  if(!CR.length){$('cSvg').innerHTML='';$('cSum').innerHTML='';$('cPump').textContent='';if($('lsrc').value==='c')drawDesign();return}
  const W=700,H=420,M=44,gx=CR.filter(r=>r.dir!=='y'),gy=CR.filter(r=>r.dir==='y'),mn=a=>a.length?Math.min(...a.map(r=>r.pos)):0,px0=mn(gx),py0=mn(gy),
