@@ -105,7 +105,7 @@ input[readonly]{opacity:.7}
 </dialog>
 <div id="rptP" class="rp"></div>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.43</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.44</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="tabs"><button id="tD" type="button" class="on" data-t="tabD"></button><button id="tC" type="button" data-t="tabC"></button><button id="tS" type="button" data-t="tabS"></button><span style="margin-left:auto;display:inline-flex;gap:6px;align-items:center"><span id="hSt" style="font-size:11px;color:var(--mut)"></span><button id="hU" type="button" title="Undo (Ctrl+Z)" style="padding:4px 10px">↶</button><button id="hR" type="button" title="Redo (Ctrl+Y)" style="padding:4px 10px">↷</button></span></div>
@@ -243,7 +243,7 @@ input[readonly]{opacity:.7}
  <div class="card wide">
   <h2 data-t="coH"></h2>
   <div class="note" data-t="coNote"></div>
-  <div style="display:flex;gap:8px;margin:8px 0;flex-wrap:wrap"><button class="useb" id="cImp" type="button" style="width:auto;padding:7px 14px;margin:0;background:#64748b" data-t="syIn"></button><button class="useb" id="cExp" type="button" style="width:auto;padding:7px 14px;margin:0;background:#64748b" data-t="syOut"></button><button class="useb" id="cAdd" type="button" style="width:auto;padding:7px 14px;margin:0;background:var(--ok)" data-t="coAdd"></button></div>
+  <div style="display:flex;gap:8px;margin:8px 0;flex-wrap:wrap"><button class="useb" id="cImp" type="button" style="width:auto;padding:7px 14px;margin:0;background:#64748b" data-t="syIn"></button><button class="useb" id="cExp" type="button" style="width:auto;padding:7px 14px;margin:0;background:#64748b" data-t="syOut"></button><button class="useb" id="cAdd" type="button" style="width:auto;padding:7px 14px;margin:0;background:var(--ok)" data-t="coAdd"></button><button class="useb" id="cArr" type="button" style="width:auto;padding:7px 14px;margin:0;background:#0ea5e9">➕ Add array</button></div>
   <div class="note" id="cMsg" style="font-weight:700"></div>
   <div class="sc mh"><table id="cRows"></table></div>
  </div>
@@ -421,7 +421,8 @@ function drawDesign(){
   gaps=CM?CRs.slice(1).map((r,i)=>(r.dir==='y')!==(CRs[i].dir==='y')?null:r.pos-CRs[i].pos).filter(x=>x!=null&&x>0):[],
   rd=CM?(gaps.length?Math.max(0,Math.min(...gaps)):0):Math.max(0,g1('rd')),
   RP=CM?(()=>{const a=[0],gp=rd||6,Fy=zn=>{const f=CRs.filter(r=>r.zone===zn&&r.dir==='y').map(r=>+r.off||0);return f.length?Math.min(...f):0};for(let i=1;i<nr;i++){const p=CRs[i-1],c=CRs[i],xy=p.dir!=='y'&&c.dir==='y'&&p.zone===c.zone;a.push(a[i-1]+((p.dir==='y')===(c.dir==='y')?Math.max(0,c.pos-p.pos):xy?Math.max(0,Fy(c.zone)-a[i-1])+Math.max(0,+c.pos||0):gp))}return a})():Array.from({length:nr},(_,j)=>j*rd);
- const trees=RN.reduce((a,b)=>a+b,0),spr=trees*ns,q=spr*fq*fu,wm0=Math.max(...RN.map((n,j)=>ROFF[j]+(n-1)*td)),wmP=Math.max(0,...RN.map((n,j)=>isY[j]?0:ROFF[j]+(n-1)*td)),Lh=RP[nr-1]+wm0,area=(wm0-ox+td)*(RP[nr-1]+rd);
+ const NSj=RN.map((_,j)=>CM&&+CRs[j].ns>0?Math.floor(+CRs[j].ns):ns),FQj=RN.map((_,j)=>CM&&+CRs[j].fq>0?+CRs[j].fq:fq),U1=j=>NSj[j]*FQj[j]*fu;
+ const trees=RN.reduce((a,b)=>a+b,0),spr=RN.reduce((a,n,j)=>a+n*NSj[j],0),q=RN.reduce((a,n,j)=>a+n*U1(j),0),wm0=Math.max(...RN.map((n,j)=>ROFF[j]+(n-1)*td)),wmP=Math.max(0,...RN.map((n,j)=>isY[j]?0:ROFF[j]+(n-1)*td)),Lh=RP[nr-1]+wm0,area=(wm0-ox+td)*(RP[nr-1]+rd);
  const e0=$('ez0').value.trim(),e1=$('ez1').value.trim(),e1v=e1!==''&&isFinite(+e1)?+e1:0,e2=$('ez2').value.trim(),e2v=e2!==''&&isFinite(+e2)?+e2:0,auto=(e1!==''&&isFinite(+e1))||(e2!==''&&isFinite(+e2)),ql0=nt*ns*fq*fu,
   dz=e1v+e2v,
   pm=Math.max(0,g1('pm'))+MPL.reduce((a,m)=>a+(m.h==='p'&&m.k===0?m.len:0),0),ZSa=CM?(()=>{const a=[0];for(let j=1;j<nr;j++)if(CRs[j].zone!==CRs[j-1].zone)a.push(j);a.push(nr);return a})():null,Z=CM?ZSa.length-1:Math.min(nr,Math.max(1,Math.floor(g1('zr'))||1)),zb=Math.floor(nr/Z),zx=nr%Z,zst=j=>CM?ZSa[j]:j*zb+Math.min(j,zx),
@@ -430,7 +431,7 @@ function drawDesign(){
   xm=$('pmx').value==='c'?Math.max(ox,Math.min(wmP,((Math.floor(+$('pxk').value)||1)-.5)*td+ox)):(ox+wmP)/2,u1=ns*fq*fu,
   SIDE=RN.map((n,j)=>{if((!MX||isY[j])&&ROFF[j]>=0)return{ln:0,ll:0,rn:n,rl:ROFF[j]+(n-1)*td};const xc=MX&&!isY[j]?xm:0;let l=0,r=0,c=0;for(let i=0;i<n;i++){const x=ROFF[j]+i*td;if(x<xc-1e-6)l++;else if(x>xc+1e-6)r++;else c++}const x0=ROFF[j],x1=ROFF[j]+(n-1)*td;return{ln:l+c/2,ll:l+c>0?Math.max(0,xc-x0):0,rn:r+c/2,rl:r+c>0?Math.max(0,x1-xc):0}}),
   prim=z=>zst(z)<n1,myz=z=>MY&&prim(z),gb=z=>prim(z)?0:n1,BND=0,bz=z=>prim(z)?0:BND,eZ=z=>myz(z)?Math.max(zst(z),Math.min(zst(z+1)-1,Em)):gb(z),
-  qr=RN.map(n=>n*ns*fq*fu),SQ=(a,b)=>{let o=0;for(let j=a;j<b;j++)o+=qr[j];return o},
+  qr=RN.map((n,j)=>n*U1(j)),SQ=(a,b)=>{let o=0;for(let j=a;j<b;j++)o+=qr[j];return o},
   Yp=p=>{const j=Math.max(0,Math.min(nr-1,Math.floor(p+1e-9))),k=Math.min(nr-1,j+1);return RP[j]+(k===j?0:(RP[k]-RP[j])*(p-j))},Len=(a,b)=>Math.abs(Yp(b)-Yp(a));
  const mlSec=(z,p1,p2)=>{let v=0;const a_=zst(z),b_=zst(z+1);MPL.forEach(m=>{if(m.h!=='m'||m.z!==z)return;const f=Math.min(Math.max(+m.f||0,a_),b_-1-1e-6);if(f>=p1-1e-9&&f<p2-1e-9)v+=m.len});return v},
   mlLat=j=>MPL.reduce((a,m)=>a+(m.h==='l'&&m.j===j?m.len:0),0),
@@ -452,16 +453,16 @@ function drawDesign(){
   return sym?up.map(s_=>Object.assign({},s_,{c:2})):up.concat(dn)};
  const segs=z=>segs0(z).map((s_,n)=>(s_.k='sec'+(myz(z)?n+1:s_.p2),s_));
  const onPath=(s_,j,e)=>s_.dir===-1?s_.p2>=j:(s_.c===2&&j<e?s_.p2<=2*e-j:s_.p2<=j);
- const latE=z=>{const m=new Map(),E=[];for(let j=zst(z);j<zst(z+1);j++){const s_=SIDE[j],k=RN[j]+'|'+ROFF[j]+'|'+s_.ln+'|'+s_.ll+'|'+s_.rn+'|'+s_.rl+'|'+mlLat(j);if(!m.has(k))m.set(k,{n:RN[j],off:ROFF[j],s:s_,ml:mlLat(j),rows:[]});m.get(k).rows.push(j)}
-  m.forEach(g_=>{const s_=g_.s;if((!MX||isY[g_.rows[0]])&&ROFF[g_.rows[0]]>=0)E.push({c:g_.rows.length,q:g_.n*u1,l:Math.max(0,g_.off+(g_.n-1)*td+LT-(isY[g_.rows[0]]?FFz(z):0))+g_.ml,rows:g_.rows,d:g_.n+' '+t('coN')+(g_.off?' ('+(g_.off>0?'+':'')+pn(g_.off)+' m)':'')+(g_.ml?' + PVC '+pn(g_.ml)+' m':'')});
-   else if(s_.ln>0&&s_.rn>0&&Math.abs(s_.ln-s_.rn)<1e-9&&Math.abs(s_.ll-s_.rl)<1e-9)E.push({c:g_.rows.length*2,q:s_.ln*u1,l:s_.ll+LT+g_.ml,rows:g_.rows,d:pn(s_.ln)+' '+t('coN')+(g_.ml?' + PVC '+pn(g_.ml)+' m':'')});
-   else{if(s_.ln>0)E.push({c:g_.rows.length,q:s_.ln*u1,l:s_.ll+LT+g_.ml,rows:g_.rows,d:t('sideL')+' '+pn(s_.ln)+' '+t('coN')+(g_.ml?' + PVC '+pn(g_.ml)+' m':'')});if(s_.rn>0)E.push({c:g_.rows.length,q:s_.rn*u1,l:s_.rl+LT+g_.ml,rows:g_.rows,d:t('sideR')+' '+pn(s_.rn)+' '+t('coN')+(g_.ml?' + PVC '+pn(g_.ml)+' m':'')})}});return E};
+ const latE=z=>{const m=new Map(),E=[];for(let j=zst(z);j<zst(z+1);j++){const s_=SIDE[j],k=RN[j]+'|'+U1(j)+'|'+ROFF[j]+'|'+s_.ln+'|'+s_.ll+'|'+s_.rn+'|'+s_.rl+'|'+mlLat(j);if(!m.has(k))m.set(k,{n:RN[j],off:ROFF[j],s:s_,ml:mlLat(j),rows:[]});m.get(k).rows.push(j)}
+  m.forEach(g_=>{const s_=g_.s;if((!MX||isY[g_.rows[0]])&&ROFF[g_.rows[0]]>=0)E.push({c:g_.rows.length,q:g_.n*U1(g_.rows[0]),l:Math.max(0,g_.off+(g_.n-1)*td+LT-(isY[g_.rows[0]]?FFz(z):0))+g_.ml,rows:g_.rows,d:g_.n+' '+t('coN')+(g_.off?' ('+(g_.off>0?'+':'')+pn(g_.off)+' m)':'')+(g_.ml?' + PVC '+pn(g_.ml)+' m':'')});
+   else if(s_.ln>0&&s_.rn>0&&Math.abs(s_.ln-s_.rn)<1e-9&&Math.abs(s_.ll-s_.rl)<1e-9)E.push({c:g_.rows.length*2,q:s_.ln*U1(g_.rows[0]),l:s_.ll+LT+g_.ml,rows:g_.rows,d:pn(s_.ln)+' '+t('coN')+(g_.ml?' + PVC '+pn(g_.ml)+' m':'')});
+   else{if(s_.ln>0)E.push({c:g_.rows.length,q:s_.ln*U1(g_.rows[0]),l:s_.ll+LT+g_.ml,rows:g_.rows,d:t('sideL')+' '+pn(s_.ln)+' '+t('coN')+(g_.ml?' + PVC '+pn(g_.ml)+' m':'')});if(s_.rn>0)E.push({c:g_.rows.length,q:s_.rn*U1(g_.rows[0]),l:s_.rl+LT+g_.ml,rows:g_.rows,d:t('sideR')+' '+pn(s_.rn)+' '+t('coN')+(g_.ml?' + PVC '+pn(g_.ml)+' m':'')})}});return E};
  const zlen=z=>{const S_=segs(z),e=eZ(z);let m=0;for(let j=zst(z);j<zst(z+1);j++)m=Math.max(m,S_.filter(s_=>onPath(s_,j,e)).reduce((a,s_)=>a+Len(s_.p1,s_.p2)+mlSec(z,s_.p1,s_.p2),0)+Math.max(...latE(z).filter(x=>x.rows.includes(j)).map(x=>x.l)));return(myz(z)?Len(Em,e):0)+bz(z)+ldY(z)+mlHdr(z)+m};
  const zLines=z=>{const rs_=zst(z),re_=zst(z+1),o=[],ad=(k,n,c,qq,ll,a,b)=>{const x={k,n,c,q:qq,l:ll,a,b};o.push(x);return x};
   ad('pump',(isY[rs_]?t('coPass'):t('lnPump'))+(mlP0+mlHdr(z)>0?' + PVC '+pn(mlP0+mlHdr(z))+' m':''),1,WM==='a'?SQ(0,nr):SQ(rs_,re_),pm+(myz(z)?Len(Em,eZ(z)):0)+bz(z)+ldY(z)+mlHdr(z));
   segs(z).forEach((g_,n)=>ad(g_.k,t('lnSec')+' '+(n+1)+' ('+t('rowL')+' '+(g_.p1+1)+'→'+(g_.p2+1)+')'+(g_.c>1?' ×2':'')+(mlSec(z,g_.p1,g_.p2)>0?' + PVC '+pn(mlSec(z,g_.p1,g_.p2))+' m':''),g_.c,g_.q,Len(g_.p1,g_.p2)+mlSec(z,g_.p1,g_.p2),g_.p1,g_.p2));
   latE(z).forEach((e_,i,A)=>{const x=ad(A.length===1?'lat':'lat'+(i+1),t('lnLat')+(A.length>1?' – '+e_.d:''),e_.c,e_.q,e_.l);x.rows=e_.rows});
-  if(fd>0){let nn=0;for(let j=rs_;j<re_;j++)nn+=RN[j]*ns;ad('feed',t('lnFeed'),nn,fq*fu,fd)}return o};
+  if(fd>0){let nn=0;for(let j=rs_;j<re_;j++)nn+=RN[j]*NSj[j];ad('feed',t('lnFeed'),nn,SQ(rs_,re_)/Math.max(1,nn),fd)}return o};
  const zhf=(z,Ls_,R)=>{const xp=Ls_.find(x=>x.k==='pump'),xf=Ls_.find(x=>x.k==='feed'),lats=Ls_.filter(x=>isLat(x.k)),ss=segs(z),e=eZ(z),pu=R.pump,fe=R.feed,
   ok=!!(lats.length&&lats.every(x=>R[x.k])&&(!xp||xp.l<=0||pu)&&(!xf||fe)&&ss.every(s_=>R[s_.k])),
   st=ok&&(lats.some(x=>isBad(R[x.k],x))||(xp&&isBad(pu,xp))||(xf&&isBad(fe,xf))||ss.some(s_=>isBad(R[s_.k],Ls_.find(x=>x.k===s_.k))));
@@ -533,7 +534,7 @@ function drawDesign(){
  g+=`<polyline points='${px},${py} ${MY&&Z>1?xa:mx},${hy} ${xa},${hy} ${xa},${ty(re-1)} ${xr(re-1)},${ty(re-1)}' fill='none' stroke='var(--hi)' stroke-width='2' stroke-dasharray='6 4'/>`;
  let rip='',slab='';
  {const Qz=SQ(rs,re),Qr=ALL?SQ(0,nr):Qz,Qp=Qr,mh=MY&&Z>1?xa:mx,fl=(x1,y1,x2,y2,qq)=>`<line class='fl' x1='${x1}' y1='${y1}' x2='${x2}' y2='${y2}' style='animation-duration:${Math.max(.45,Math.min(2.6,.5*Qr/Math.max(qq,1e-9))).toFixed(2)}s'/>`,
-  lat=j=>{const s_=SIDE[j];return(s_.rn>0?fl(xa,ty(j),Math.max(xr(j),xa),ty(j),s_.rn*u1):'')+(s_.ln>0?fl(xa,ty(j),tx(0,j),ty(j),s_.ln*u1):'')},pu=()=>fl(px,py,mh,hy,Qp),hd=()=>MY&&Z>1?'':(xa<mx?fl(mx,hy,xa,hy,Qz):''),vm=()=>hy!==ty(eZ(zi))?fl(xa,hy,xa,ty(eZ(zi)),Qz):'',
+  lat=j=>{const s_=SIDE[j];return(s_.rn>0?fl(xa,ty(j),Math.max(xr(j),xa),ty(j),s_.rn*U1(j)):'')+(s_.ln>0?fl(xa,ty(j),tx(0,j),ty(j),s_.ln*U1(j)):'')},pu=()=>fl(px,py,mh,hy,Qp),hd=()=>MY&&Z>1?'':(xa<mx?fl(mx,hy,xa,hy,Qz):''),vm=()=>hy!==ty(eZ(zi))?fl(xa,hy,xa,ty(eZ(zi)),Qz):'',
   ms2=f=>{let o='';const e=eZ(zi);segs(zi).forEach((s_,n)=>{if(n<f)return;o+=fl(xa,ty(s_.p1),xa,ty(s_.p2),s_.q);if(s_.c>1)o+=fl(xa,ty(2*e-s_.p1),xa,ty(2*e-s_.p2),s_.q)});return o},
   lats=a=>{let o='';for(let j=a;j<re;j++)o+=lat(j);return o},K=SEL;let sim='',rows=[];
   if(!ZNX&&LINES.some(x=>x.k===K)){
@@ -548,7 +549,7 @@ function drawDesign(){
    {let cx=MY&&Z>1?px:mx;const zs_=Array.from({length:Z},(_,z)=>({x:zmx(z),q:SQ(zst(z),zst(z+1))})).sort((a,b)=>Math.abs(a.x-cx)-Math.abs(b.x-cx));zs_.forEach((o,i)=>{const rem=zs_.slice(i).reduce((s,v)=>s+v.q,0);if(Math.abs(o.x-cx)>.01){sim+=fl(cx,hy,o.x,hy,rem);cx=o.x}})}
    for(let z=0;z<Z;z++){const xz=zmx(z),e=eZ(z),Qz_=SQ(zst(z),zst(z+1));if(hy!==ty(e))sim+=fl(xz,hy,xz,ty(e),Qz_);
     segs(z).forEach(s_=>{sim+=fl(xz,ty(s_.p1),xz,ty(s_.p2),s_.q);if(s_.c>1)sim+=fl(xz,ty(2*e-s_.p1),xz,ty(2*e-s_.p2),s_.q)});
-    for(let j=zst(z);j<zst(z+1);j++){const s_=SIDE[j];if(s_.rn>0)sim+=fl(xz,ty(j),Math.max(xr(j),xz),ty(j),s_.rn*u1);if(s_.ln>0)sim+=fl(xz,ty(j),tx(0,j),ty(j),s_.ln*u1)}}}
+    for(let j=zst(z);j<zst(z+1);j++){const s_=SIDE[j];if(s_.rn>0)sim+=fl(xz,ty(j),Math.max(xr(j),xz),ty(j),s_.rn*U1(j));if(s_.ln>0)sim+=fl(xz,ty(j),tx(0,j),ty(j),s_.ln*U1(j))}}}
   g+=sim;
   const lab=(nt>1?dx:99)>=44&&(nr>1?dy:99)>=30,un=$('dfu').selectedOptions[0].text,k2=Math.min(ns,8),rr2=tr+sr+1,many=rows.length*nt*k2>800;
   rows.forEach(j=>{for(let i=0;i<RN[j];i++){const cx=tx(i,j),cy=ty(j);
@@ -721,7 +722,7 @@ $('bAL').onclick=()=>{const X=+$('ax').value,Y=+$('ay').value,td=+$('td').value,
 // ---- custom orchard (separate model)
 let CR=[];
 const cnv=id=>+$(id).value||0,ZC=['#16a34a','#2563eb','#f59e0b','#db2777','#7c3aed','#0891b2','#ea580c','#65a30d'];
-function cTable(){$('cRows').innerHTML=`<thead><tr><th>${t('coRow')}</th><th>${t('coN')}</th><th>${t('coOff')}</th><th>${t('coPos')}</th><th>${t('coZ')}</th><th>${t('coDirC')}</th><th></th></tr></thead><tbody>`+CR.map((r,i)=>`<tr><td>${i+1}</td>`+['n','off','pos','zone'].map(k=>`<td><input type="number" step="any"${k==='off'||k==='pos'?'':' min="0"'} data-r="${i}" data-k="${k}" value="${r[k]}" style="width:80px"></td>`).join('')+`<td><select data-r="${i}" data-k="dir"><option value="x"${r.dir!=='y'?' selected':''}>X</option><option value="y"${r.dir==='y'?' selected':''}>Y</option></select></td><td><button type="button" data-del="${i}">✕</button></td></tr>`).join('')+'</tbody>'}
+function cTable(){$('cRows').innerHTML=`<thead><tr><th>${t('coRow')}</th><th>${t('coN')}</th><th>${t('coOff')}</th><th>${t('coPos')}</th><th>${t('coZ')}</th><th>${t('coDirC')}</th><th>${T2('Spr./tree','หัว/ต้น')}</th><th>${T2('Flow/spr.','ไหล/หัว')}</th><th></th></tr></thead><tbody>`+CR.map((r,i)=>`<tr><td>${i+1}</td>`+['n','off','pos','zone'].map(k=>`<td><input type="number" step="any"${k==='off'||k==='pos'?'':' min="0"'} data-r="${i}" data-k="${k}" value="${r[k]}" style="width:80px"></td>`).join('')+`<td><select data-r="${i}" data-k="dir"><option value="x"${r.dir!=='y'?' selected':''}>X</option><option value="y"${r.dir==='y'?' selected':''}>Y</option></select></td>${['ns','fq'].map(k=>`<td><input type="number" step="any" min="0" data-r="${i}" data-k="${k}" value="${r[k]||''}" placeholder="=" style="width:70px"></td>`).join('')}<td><button type="button" data-del="${i}">✕</button></td></tr>`).join('')+'</tbody>'}
 function bomPr(r){return r.xi!=null?(+BX[r.xi].p||0):(+BP[r.pk]||0)}
 function bomQ(r){return r.xi!=null?(+BX[r.xi].q||0):r.q}
 const bmo=x=>(+x).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -761,7 +762,13 @@ function cExp(){const m=$('cMsg'),R_=CR.slice().sort((a,b)=>a.pos-b.pos),nr=R_.l
  const ts=+$('td').value||0;$('nr').value=nr;$('nt').value=R_[0].n;$('lo').value=R_[0].off;$('rd').value=dp||$('rd').value;$('td').value=ts||$('td').value;$('zr').value=Z;$('ax').value=(R_[0].n*(+$('td').value)).toPrecision(6)*1;$('ay').value=+(nr*(+$('rd').value)).toPrecision(6);
  drawDesign();m.textContent=t('syOk')+nr+' × '+R_[0].n+', '+Z+' zone'}
 $('cImp').onclick=cImp;$('cExp').onclick=cExp;
-$('cAdd').onclick=()=>{const l=CR[CR.length-1]||{n:1,off:+$('lo').value||0,pos:-(+$('rd').value||0),zone:1,dir:'x'};CR.push({n:l.n,off:l.off,pos:l.pos+(+$('rd').value||0),zone:l.zone,dir:l.dir==='y'?'y':'x'});cTable();cRender()};
+$('cAdd').onclick=()=>{const l=CR[CR.length-1]||{n:1,off:+$('lo').value||0,pos:-(+$('rd').value||0),zone:1,dir:'x'};CR.push({n:l.n,off:l.off,pos:l.pos+(+$('rd').value||0),zone:l.zone,dir:l.dir==='y'?'y':'x',ns:l.ns,fq:l.fq});cTable();cRender()};
+$('cArr').onclick=()=>{const cl=CR[CR.length-1]||{},dl=(k,v)=>`<label>${k}<input id="${v[0]}" type="number" step="any" min="${v[2]??0}" value="${v[1]}"></label>`;
+ const d=ovl('accEd',950,`<h3 style="margin:0 0 8px">${T2('Add array (rows × trees)','เพิ่มอาร์เรย์ (แถว × ต้น)')}</h3><div class="row">${dl(T2('Rows','จำนวนแถว'),['arN',1,1])}${dl(T2('Trees per row','ต้นต่อแถว'),['arT',cl.n||+$('nt').value||5,1])}</div><div class="row"><label>${T2('Direction','ทิศทาง')}<select id="arD"><option value="x">X</option><option value="y"${cl.dir==='y'?' selected':''}>Y</option></select></label>${dl(T2('Zone','โซน'),['arZ',cl.zone||1,1])}</div><div class="row">${dl(T2('Row spacing (m)','ระยะห่างแถว (ม.)'),['arS',+$('rd').value||8])}${dl(T2('Start offset (m)','ระยะเริ่มต้น (ม.)'),['arO',cl.off??(+$('lo').value||0),-1e9])}</div><div class="row">${dl(T2('Sprinklers per tree (0 = global)','หัวต่อต้น (0 = ค่าหลัก)'),['arP',0])}${dl(T2('Flow per sprinkler (0 = global)','ไหลต่อหัว (0 = ค่าหลัก)'),['arF',0])}</div><label><input type="checkbox" id="arC" checked> ${T2('Continue after the previous row (new main section)','ต่อจากแถวก่อนหน้า (ท่อเมนช่วงใหม่)')}</label>${dl(T2('Start position when not continuing (m)','ตำแหน่งเริ่มเมื่อไม่ต่อ (ม.)'),['arX',0,-1e9])}<div style="display:flex;gap:8px;margin-top:10px"><button class="useb" id="arOk" type="button" style="width:auto;padding:7px 14px;margin:0">${T2('Add','เพิ่ม')}</button><button class="useb" id="arX2" type="button" style="width:auto;padding:7px 14px;margin:0;background:#64748b">${T2('Close','ปิด')}</button></div>`),v=i=>+d.querySelector('#'+i).value||0;
+ d.querySelector('#arX2').onclick=()=>d.remove();
+ d.querySelector('#arOk').onclick=()=>{if($('lsrc').value!=='c'){$('lsrc').value='c';applySrc()}const dir=d.querySelector('#arD').value,sp=Math.max(0,v('arS')),same=CR.filter(r=>(r.dir==='y')===(dir==='y')),la=same[same.length-1],p0=d.querySelector('#arC').checked?(la?la.pos+sp:0):v('arX');
+  for(let i=0;i<Math.max(1,Math.floor(v('arN')));i++)CR.push({n:Math.max(1,Math.floor(v('arT'))),off:v('arO'),pos:p0+i*sp,zone:Math.max(1,Math.floor(v('arZ'))),dir,ns:Math.max(0,Math.floor(v('arP'))),fq:Math.max(0,v('arF'))});
+  d.remove();cTable();cRender()}};
 ['td','rd'].forEach(i=>$(i).addEventListener('input',()=>{if($('lsrc').value==='c')cRender()}));
 let LO0=0;$('lo').addEventListener('focus',()=>{LO0=+$('lo').value||0});
 $('lo').addEventListener('input',()=>{if($('lsrc').value!=='c')return;const n=+$('lo').value||0;CR.forEach(r=>{if(Math.abs((+r.off||0)-LO0)<1e-9)r.off=n});LO0=n;cTable();cRender()});
@@ -781,7 +788,7 @@ function cRender(){const ts=+$('td').value||0,ns=Math.max(1,Math.floor(cnv('ns')
  if(gx.length&&gy.length)g+=`<polyline points="${pcx},${B0+12} ${pcx},${B0+26} ${ox2},${B0+26} ${ox2},${B0}" fill="none" stroke="var(--hi)" stroke-dasharray="5 3" stroke-width="2"/><text x="${(pcx+ox2)/2}" y="${B0+38}" text-anchor="middle" style="fill:var(--hi);font-size:10px;font-weight:700">${t('bendL')}</text>`;
  $('cSvg').innerHTML=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W}px;background:var(--card)">${g}</svg>`;
  const zs=[...new Set(CR.map(r=>r.zone||1))].sort((a,b)=>a-b);let rows='',Qs=[];
- zs.forEach(z=>{const R_=CR.map((r,i)=>({...r,i})).filter(r=>(r.zone||1)===z).sort((a,b)=>((a.dir==='y')-(b.dir==='y'))||a.pos-b.pos),qs=R_.map(r=>r.n*ql),Qz=qs.reduce((a,b)=>a+b,0);Qs.push(Qz);
+ zs.forEach(z=>{const R_=CR.map((r,i)=>({...r,i})).filter(r=>(r.zone||1)===z).sort((a,b)=>((a.dir==='y')-(b.dir==='y'))||a.pos-b.pos),qs=R_.map(r=>r.n*(r.ns>0?Math.floor(r.ns):ns)*(r.fq>0?r.fq:cnv('fq'))*(+$('dfu').value||1)),Qz=qs.reduce((a,b)=>a+b,0);Qs.push(Qz);
   const row=(n,q,l,l2)=>`<tr><td style="text-align:left">Z${z} · ${n}</td><td>${l2}</td><td>${pn_(q)}</td><td>${pn_(q*1000/60)}</td><td>${pn_(l)}</td></tr>`,
    yO=R_.filter(r=>r.dir==='y').map(r=>+r.off||0),F_=yO.length?Math.min(...yO):0,xL=R_.filter(r=>r.dir!=='y').map(r=>r.pos-px0),Fe=yO.length?Math.max(F_,xL.length?Math.max(...xL):0):0;
   rows+=row(t('coPass'),Qz,R_[0].dir==='y'?Math.max(0,R_[0].pos)+F_:R_[0].pos-px0,1);
