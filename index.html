@@ -105,7 +105,7 @@ input[readonly]{opacity:.7}
 </dialog>
 <div id="rptP" class="rp"></div>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.47</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.48</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="tabs"><button id="tD" type="button" class="on" data-t="tabD"></button><button id="tC" type="button" data-t="tabC"></button><button id="tS" type="button" data-t="tabS"></button><span style="margin-left:auto;display:inline-flex;gap:6px;align-items:center"><span id="hSt" style="font-size:11px;color:var(--mut)"></span><button id="hU" type="button" title="Undo (Ctrl+Z)" style="padding:4px 10px">↶</button><button id="hR" type="button" title="Redo (Ctrl+Y)" style="padding:4px 10px">↷</button></span></div>
@@ -238,7 +238,7 @@ input[readonly]{opacity:.7}
 </div>
 
 <!-- ===== CALCULATION FIELD (all pipe sizing) ===== -->
-<div class="grid hide" id="pgScale"><div style="grid-column:1/-1"><div class="note" id="scN"></div><label id="sczL"></label> <input id="scz" type="number" min=".5" max="20" step=".5" value="1" style="width:70px"> <label><input type="checkbox" id="scn" checked> <span id="scnL"></span></label> <label><input type="checkbox" id="scd" checked> <span id="scdL"></span></label><div style="overflow:auto;border:1px solid #8886;border-radius:8px;margin-top:6px;background:var(--card)"><svg id="scg" xmlns="http://www.w3.org/2000/svg" style="display:block"></svg></div></div></div>
+<div class="grid hide" id="pgScale"><div style="grid-column:1/-1"><div class="note" id="scN"></div><label id="sczL"></label> <input id="scz" type="number" min=".5" max="20" step=".5" value="1" style="width:70px"> <label><input type="checkbox" id="scn" checked> <span id="scnL"></span></label> <label><input type="checkbox" id="scd" checked> <span id="scdL"></span></label><button class="useb" id="scDxf" type="button" style="width:auto;padding:5px 12px;margin:0 0 0 8px">⬇ DXF</button><div style="overflow:auto;border:1px solid #8886;border-radius:8px;margin-top:6px;background:var(--card)"><svg id="scg" xmlns="http://www.w3.org/2000/svg" style="display:block"></svg></div></div></div>
 <!-- ===== CUSTOM ORCHARD ===== -->
 <div class="grid hide" id="pgCustom">
  <div class="card wide">
@@ -858,7 +858,7 @@ function drawScale(){const sv=$('scg'),D=SCD;if(!sv||!D)return;const {nr,RN,ROFF
  SG['p|0']={x1:pX,y1:pY,x2:mxm,y2:hy};if(Z>1)SG['p|1']={x1:mxm,y1:hy,x2:Math.min(mxm-(Z-1)*zg,zx(Z-1)),y2:hy};
  for(let z=0;z<Z;z++){xs.push(zx(z));const R=[];let fx=null,fn=null;for(let j=zs[z];j<zs[z+1];j++){R.push(ry[j]);if(isY[j]){fx=Math.max(fx==null?-1e9:fx,PS[j]);fn=Math.min(fn==null?1e9:fn,PS[j])}}SG['m|'+z]={x1:zx(z),y1:Math.min(hy,...R),x2:zx(z),y2:Math.max(hy,...R)};if(fx!=null)FD.push({x1:Math.min(zx(z),fn),x2:Math.max(zx(z),fx),y1:yFz[z],y2:yFz[z]})}
  for(let j=0;j<nr;j++){const c=zx(zOf[j]),a=ROFF[j],b=a+(RN[j]-1)*td;if(isY[j]){const x=PS[j],e=b+LT;xs.push(x);ys.push(e);SG['l|'+j]={x1:x,y1:Math.min(yF,a)-(a<yF?LT:0),x2:x,y2:e}}else{xs.push(a,b+LT);ys.push(ry[j]);SG['l|'+j]={x1:Math.min(a,c)-(a<c?LT:0),y1:ry[j],x2:Math.max(b,c)+(b>c?LT:0),y2:ry[j]}}}
- let x0=Math.min(...xs)-4,x1=Math.max(...xs)+4,y0=Math.min(...ys)-4,y1=Math.max(...ys)+4;const zm=Math.max(.5,+$('scz').value||1),pd_=$('scd').checked?44/Math.min(40,900*zm/Math.max(1,x1-x0)):0;x0-=pd_;x1+=pd_;y0-=pd_;y1+=pd_;const S=Math.min(40,900*zm/Math.max(1,x1-x0)),W=Math.round((x1-x0)*S),H=Math.round((y1-y0)*S+30),X=x=>((FX?x1+x0-x:x)-x0)*S,Y=y=>(FY?y-y0:y1-y)*S,f1=v=>v.toFixed(1);
+ let x0=Math.min(...xs)-4,x1=Math.max(...xs)+4,y0=Math.min(...ys)-4,y1=Math.max(...ys)+4;const zm=Math.max(.5,+$('scz').value||1),pd_=$('scd').checked?44/Math.min(40,900*zm/Math.max(1,x1-x0)):0;x0-=pd_;x1+=pd_;y0-=pd_;y1+=pd_;const S=Math.min(40,900*zm/Math.max(1,x1-x0)),W=Math.round((x1-x0)*S),H=Math.round((y1-y0)*S+30),X=x=>((FX?x1+x0-x:x)-x0)*S,Y=y=>(FY?y-y0:y1-y)*S,f1=v=>v.toFixed(1);D.S=S;
  const prj=(p,z,noL)=>{let b=null;Object.values(SNP||{}).forEach(q=>{if(q.t==='l'&&noL)return;if(z!=null&&q.z!==-1&&q.z!==z)return;const dx=q.x2-q.x1,dy=q.y2-q.y1,l2=dx*dx+dy*dy,u=Math.max(0,Math.min(1,((p[0]-q.x1)*dx+(p[1]-q.y1)*dy)/l2)),d=Math.hypot(p[0]-q.x1-dx*u,p[1]-q.y1-dy*u);if(!b||d<b.d)b={d,t:q.t,k:q.k,u}});if(!b)return null;const g=SG[b.t+'|'+b.k];if(!g)return null;let py_=g.y1+(g.y2-g.y1)*b.u;if(b.t==='l'&&isY[+b.k])py_=Math.max(py_,yFz[zOf[+b.k]]);return [g.x1+(g.x2-g.x1)*b.u,py_]};
  const ln=(g,c,w,da)=>`<line x1='${f1(X(g.x1))}' x2='${f1(X(g.x2))}' y1='${f1(Y(g.y1))}' y2='${f1(Y(g.y2))}' stroke='${c}' stroke-width='${w}'${da?` stroke-dasharray='${da}'`:''}/>`,tr=Math.max(1.5,Math.min(6,td*S*.3));let o='';
  for(let j=0;j<nr;j++){const g_=SG['l|'+j];o+=ln(isY[j]?Object.assign({},g_,{y1:Math.max(g_.y1,yFz[zOf[j]])}):g_,isY[j]?'#a855f7':'var(--lo)',1.2)}
@@ -892,6 +892,27 @@ function drawScale(){const sv=$('scg'),D=SCD;if(!sv||!D)return;const {nr,RN,ROFF
  sv.setAttribute('width',W);sv.setAttribute('height',H);sv.setAttribute('viewBox','0 0 '+W+' '+H);sv.innerHTML=o}
 ['lt','zg','hg'].forEach(i=>$(i).addEventListener('input',()=>drawDesign()));
 $('scz').oninput=$('scn').onchange=$('scd').onchange=()=>drawScale();
+
+// ---- export the Scale plan as an ASCII DXF (R12, units = metres, Y up); layers: MAIN_LINES, LATERALS, LATERALS_Y, TREES, PUMP, FITTINGS, DIMENSIONS, TEXT
+function scDxf(){drawScale();const sv=$('scg'),D=SCD;if(!sv||!D||!D.S||!sv.firstChild)return;const S=D.S,Hp=+sv.getAttribute('height')||0,N=v=>(+v).toFixed(4),out=[],used={};
+ const ia=(e,n)=>{for(let p=e;p&&p!==sv.parentNode;p=p.parentNode){const v=p.getAttribute&&p.getAttribute(n);if(v!=null&&v!=='')return v}return null},
+ ops=e=>{const r=[],re=/(translate|rotate)\(([^)]*)\)/g,t=e.getAttribute&&e.getAttribute('transform')||'';let m;while((m=re.exec(t)))r.push({n:m[1],a:m[2].split(/[\s,]+/).filter(x=>x!=='').map(Number)});return r},
+ chain=e=>{const c=[];for(let p=e;p&&p!==sv.parentNode;p=p.parentNode)c.push(...ops(p).reverse());return c},
+ pt=(ch,x,y)=>{ch.forEach(o=>{if(o.n==='translate'){x+=o.a[0]||0;y+=o.a[1]||0}else{const a=(o.a[0]||0)*Math.PI/180,cx=o.a[1]||0,cy=o.a[2]||0,dx=x-cx,dy=y-cy;x=cx+dx*Math.cos(a)-dy*Math.sin(a);y=cy+dx*Math.sin(a)+dy*Math.cos(a)}});return[x/S,(Hp-y)/S]},
+ LC={MAIN_LINES:5,LATERALS:4,LATERALS_Y:6,TREES:3,PUMP:1,FITTINGS:30,DIMENSIONS:8,TEXT:7,OTHER:7},
+ ly=e=>{const st=ia(e,'stroke')||'',fl=ia(e,'fill')||'',g=e.tagName;let n='OTHER';if(g==='text')n=/0284c7|0ea5e9/.test(e.getAttribute('style')||'')?'DIMENSIONS':'TEXT';else if(g==='circle')n='TREES';else if(g==='rect')n=/--hi/.test(fl)?'PUMP':/f59e0b/i.test(fl)?'FITTINGS':'OTHER';else n=/--ac/.test(st)?'MAIN_LINES':/--lo/.test(st)?'LATERALS':/a855f7/i.test(st)?'LATERALS_Y':/0ea5e9/i.test(st)?'DIMENSIONS':'OTHER';used[n]=1;return n},
+ ln=(L,a,b,dash)=>out.push('0','LINE','8',L,...(dash?['6','DASHED']:[]),'10',N(a[0]),'20',N(a[1]),'30','0','11',N(b[0]),'21',N(b[1]),'31','0'),
+ tx=s=>String(s).replace(/[^\x20-\x7e]/g,c=>'\\U+'+c.charCodeAt(0).toString(16).toUpperCase().padStart(4,'0'));
+ sv.querySelectorAll('line,circle,rect,text').forEach(e=>{if(e.closest('defs,marker'))return;const g=e.tagName,fl=ia(e,'fill')||'',ch=chain(e),A=n=>+e.getAttribute(n)||0;
+  if(g==='line')ln(ly(e),pt(ch,A('x1'),A('y1')),pt(ch,A('x2'),A('y2')),!!ia(e,'stroke-dasharray'));
+  else if(g==='circle'){if(/transparent|none/.test(fl))return;const c=pt(ch,A('cx'),A('cy'));out.push('0','CIRCLE','8',ly(e),'10',N(c[0]),'20',N(c[1]),'30','0','40',N(A('r')/S))}
+  else if(g==='rect'){const x=A('x'),y=A('y'),w=A('width'),h=A('height'),P=[pt(ch,x,y),pt(ch,x+w,y),pt(ch,x+w,y+h),pt(ch,x,y+h)],L=ly(e);for(let i=0;i<4;i++)ln(L,P[i],P[(i+1)%4],false)}
+  else if(g==='text'){const t=e.textContent.trim();if(!t)return;const st=e.getAttribute('style')||'',fs=+((/font-size:([\d.]+)px/.exec(st)||[])[1]||10),an=e.getAttribute('text-anchor')||'start',ang=-chain(e).filter(o=>o.n==='rotate').reduce((a,o)=>a+(o.a[0]||0),0),p=pt(ch,A('x'),A('y')),J=an==='middle'?1:an==='end'?2:0;
+   out.push('0','TEXT','8',ly(e),'10',N(p[0]),'20',N(p[1]),'30','0','40',N(fs/S),'1',tx(t),'50',N(ang),'72',String(J),...(J?['11',N(p[0]),'21',N(p[1]),'31','0']:[]))}});
+ const lay=Object.keys(LC).filter(k=>used[k]);
+ const hdr=['0','SECTION','2','HEADER','9','$ACADVER','1','AC1009','0','ENDSEC','0','SECTION','2','TABLES','0','TABLE','2','LTYPE','70','2','0','LTYPE','2','CONTINUOUS','70','0','3','Solid line','72','65','73','0','40','0','0','LTYPE','2','DASHED','70','0','3','Dashed','72','65','73','2','40','0.8','49','0.5','49','-0.3','0','ENDTAB','0','TABLE','2','LAYER','70',String(lay.length),...lay.flatMap(k=>['0','LAYER','2',k,'70','0','62',String(LC[k]),'6','CONTINUOUS']),'0','ENDTAB','0','TABLE','2','STYLE','70','1','0','STYLE','2','STANDARD','70','0','40','0','41','1','50','0','71','0','42','0.2','3','txt','4','','0','ENDTAB','0','ENDSEC','0','SECTION','2','ENTITIES'];
+ dlFile(fname('.dxf'),'application/dxf',hdr.concat(out,['0','ENDSEC','0','EOF']).join('\r\n')+'\r\n')}
+$('scDxf').onclick=scDxf;
 
 // ---- auto save (this browser), undo, redo
 const H={u:[],r:[],cur:null,ck:null,t:null};
@@ -1070,6 +1091,7 @@ function rptHTML(){
   zb.push({zt:$('zn').selectedOptions[0].text,rows:LINES.map(x=>{const e=RES[x.k],bad=isBad(e,x);return `<tr><td class="l">${esc(x.n)}</td><td>${x.c}</td><td>${pn(x.q)}</td><td>${pn(x.q*1000/60)}</td><td>${pn(x.l)}</td>`+(e?`<td>${esc(ptName(e.pt))}</td><td>${e.ds}${t('inch')}</td><td>${fmt(e.v)}</td><td>${fmt(e.hf)}</td><td>${fmt(e.tot)}</td><td>${cl[e.cls]||''}${bad?' ⚠':''}</td>`:'<td colspan="6">-</td>')+'</tr>'}).join(''),
    hf:PUMP&&PUMP.hf!=null?fmt(PUMP.hf):'-',pmT:$('pmT').innerHTML,pmN:$('pmN').textContent,plan:$('dsg').outerHTML.replace(' id="dsg"','').replace(/ style="[^"]*"/,' style="min-width:560px"')})}
  RPTA=false;$('allz').checked=ac0;$('zn').value=z0;SEL=sel;drawDesign();
+ let scp='';try{drawScale();const sv=$('scg');if(sv&&SCD&&sv.firstChild){const o=sv.outerHTML,h=/^<svg[^>]*>/.exec(o)[0];scp=h.replace(/ id="scg"/,'').replace(/ (width|height|style)="[^"]*"/g,'').replace('<svg','<svg style="width:100%;height:auto;max-height:680px"')+o.slice(h.length)}}catch(e){}
  const kv=(a,b,c)=>`<tr><td class="l">${a}</td><td>${b}</td>${c!==undefined?`<td>${c}</td>`:''}</tr>`,P=PUMP,
   zz=Math.max(1,Math.floor(+g('zr'))||1),
   inp=[[t('nr'),v('nr')],[t('ntr'),v('nt')],[t('rdist'),v('rd')],[t('tdist'),v('td')],[t('nsp'),v('ns')],[t('fq'),v('fq')+' '+esc($('dfu').selectedOptions[0].text)],[t('spL'),v('sp')],[t('pmL'),v('pm')],[t('zrL'),String(zz)],[t('pmxL'),esc($('pmx').selectedOptions[0].text)],[t('pmyL'),esc($('pmy').selectedOptions[0].text)],[t('fdL'),v('fd')],[t('fitL'),v('fit')],[t('ez0s'),v('ez0')],[t('ez1s'),v('ez1')],[t('ez2s'),v('ez2')]],
@@ -1079,6 +1101,7 @@ function rptHTML(){
 <div class="two pg"><div><h3>${t('dsh')}</h3><table>${inp.map(r=>kv(r[0],r[1])).join('')}</table></div><div><h3>${t('dsum')}</h3><table>${kp.map(r=>kv(r[0],r[1])).join('')}</table></div></div>
 ${zb.map(b=>`<div class="pg"><h3>${t('lsum')} – ${esc(b.zt)}</h3><table><thead><tr><th>${t('thLn')}</th><th>${t('thQty')}</th><th>${t('xl')}</th><th>${t('thLpm')}</th><th>${t('thLen')}</th><th>${t('thPt')}</th><th>${t('thSz')}</th><th>${t('thVv')}</th><th>${t('thHf')}</th><th>${t('thTh')}</th><th>${t('status')}</th></tr></thead><tbody>${b.rows}
 <tr class="tot"><td class="l" colspan="9">${t('lnHf2')}</td><td>${b.hf}</td><td></td></tr></tbody></table><h3>${t('pumpH')} – ${esc(b.zt)}</h3><table>${b.pmT}</table>${b.pmN?`<div class="note">${esc(b.pmN)}</div>`:''}</div><div class="pg"><h3>${t('drh')} – ${esc(b.zt)}</h3>${b.plan}</div>`).join('')}
+${scp?`<div class="pg"><h3>${T2('Scale plan','แปลนตามมาตราส่วน')}</h3>${scp}<div class="note">${T2('Drawn at true scale (same scale on both axes).','วาดตามมาตราส่วนจริง (มาตราส่วนเท่ากันทั้งสองแกน)')}</div></div>`:''}
 <div class="pg"><table>${kv(t('lnTot'),pn(TOTLEN)+' m')}</table><h3>${t('pumpH')}</h3><table>${$('pzT').innerHTML}</table><div class="note">${esc($('pzN').textContent)}</div></div>
 <div class="pg"><h3>${t('bomH')}</h3>${bomHTML()}<div class="note">${t('bomDisc')}</div></div>
 <div class="pg"><h3>${t('prof')}</h3>${prof}</div>
