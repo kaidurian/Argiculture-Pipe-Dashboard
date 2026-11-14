@@ -105,7 +105,7 @@ input[readonly]{opacity:.7}
 </dialog>
 <div id="rptP" class="rp"></div>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.44</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.45</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="tabs"><button id="tD" type="button" class="on" data-t="tabD"></button><button id="tC" type="button" data-t="tabC"></button><button id="tS" type="button" data-t="tabS"></button><span style="margin-left:auto;display:inline-flex;gap:6px;align-items:center"><span id="hSt" style="font-size:11px;color:var(--mut)"></span><button id="hU" type="button" title="Undo (Ctrl+Z)" style="padding:4px 10px">↶</button><button id="hR" type="button" title="Redo (Ctrl+Y)" style="padding:4px 10px">↷</button></span></div>
@@ -412,7 +412,7 @@ let ZNONE=false,VF={x:false,y:false,W:800,H:0};const toD=p=>({x:VF.x?VF.W-p.x:p.
 let ZVO={},ZVL=[],ZVP={},SCD=null,FOV={},FLP={},ACC=[],MPL=[],FLG=[],DCX=null,SNP=null,DRG=false;
 const isLat=k=>/^lat\d*$/.test(k);
 function drawDesign(){
- const CM=$('lsrc').value==='c'&&CR.length>0,CRs=CM?CR.slice().sort((a,b)=>(a.zone-b.zone)||((a.dir==='y')-(b.dir==='y'))||a.pos-b.pos):[];
+ const CM=$('lsrc').value==='c'&&CR.length>0,CRs=CM?CR.map(r=>r.dir==='y'?Object.assign({},r,{pos:Math.abs(+r.pos||0)}):r).sort((a,b)=>(a.zone-b.zone)||((a.dir==='y')-(b.dir==='y'))||a.pos-b.pos):[];
  const en=L=='en',g1=id=>+$(id).value||0,
   nr=CM?CRs.length:Math.max(1,Math.floor(g1('nr'))),nt=CM?Math.max(1,...CRs.map(r=>Math.max(1,Math.floor(r.n)||1))):Math.max(1,Math.floor(g1('nt'))),ns=Math.max(1,Math.floor(g1('ns'))),
   fq=g1('fq'),td=Math.max(0,g1('td')),fu=+$('dfu').value||1,LT=Math.max(0,g1('lt')),fd=Math.max(0,g1('fd')),
@@ -720,7 +720,7 @@ $('tD').onclick=()=>showTab('d');$('tC').onclick=()=>showTab('c');$('tS').onclic
 $('bAL').onclick=()=>{const X=+$('ax').value,Y=+$('ay').value,td=+$('td').value,rd=+$('rd').value;if(!(X>0&&Y>0&&td>0&&rd>0))return;$('nt').value=Math.max(1,Math.floor(X/td));$('nr').value=Math.max(1,Math.floor(Y/rd));drawDesign()};
 ['ax','ay','wm'].forEach(i=>$(i).addEventListener('input',()=>{drawDesign()}));
 // ---- custom orchard (separate model)
-let CR=[];
+let CR=[];const pp=r=>r.dir==='y'?Math.abs(+r.pos||0):(+r.pos||0);
 const cnv=id=>+$(id).value||0,ZC=['#16a34a','#2563eb','#f59e0b','#db2777','#7c3aed','#0891b2','#ea580c','#65a30d'];
 function cTable(){$('cRows').innerHTML=`<thead><tr><th>${t('coRow')}</th><th>${t('coN')}</th><th>${t('coOff')}</th><th>${t('coPos')}</th><th>${t('coZ')}</th><th>${t('coDirC')}</th><th>${T2('Spr./tree','หัว/ต้น')}</th><th>${T2('Flow/spr.','ไหล/หัว')}</th><th></th></tr></thead><tbody>`+CR.map((r,i)=>`<tr><td>${i+1}</td>`+['n','off','pos','zone'].map(k=>`<td><input type="number" step="any"${k==='off'||k==='pos'?'':' min="0"'} data-r="${i}" data-k="${k}" value="${r[k]}" style="width:80px"></td>`).join('')+`<td><select data-r="${i}" data-k="dir"><option value="x"${r.dir!=='y'?' selected':''}>X</option><option value="y"${r.dir==='y'?' selected':''}>Y</option></select></td>${['ns','fq'].map(k=>`<td><input type="number" step="any" min="0" data-r="${i}" data-k="${k}" value="${r[k]||''}" placeholder="=" style="width:70px"></td>`).join('')}<td><button type="button" data-del="${i}">✕</button></td></tr>`).join('')+'</tbody>'}
 function bomPr(r){return r.xi!=null?(+BX[r.xi].p||0):(+BP[r.pk]||0)}
@@ -774,25 +774,25 @@ let LO0=0;$('lo').addEventListener('focus',()=>{LO0=+$('lo').value||0});
 $('lo').addEventListener('input',()=>{if($('lsrc').value!=='c')return;const n=+$('lo').value||0;CR.forEach(r=>{if(Math.abs((+r.off||0)-LO0)<1e-9)r.off=n});LO0=n;cTable();cRender()});
 function cRender(){const ts=+$('td').value||0,ns=Math.max(1,Math.floor(cnv('ns'))),ql=ns*cnv('fq')*(+$('dfu').value||1),pn_=x=>+(+x).toPrecision(4);
  if(!CR.length){$('cSvg').innerHTML='';$('cSum').innerHTML='';$('cPump').textContent='';if($('lsrc').value==='c')drawDesign();return}
- const W=700,H=420,M=44,gx=CR.filter(r=>r.dir!=='y'),gy=CR.filter(r=>r.dir==='y'),mn=a=>a.length?Math.min(...a.map(r=>r.pos)):0,px0=mn(gx),py0=mn(gy),
-  e1={a:Math.max(1,...gx.map(r=>r.off+(r.n-1)*ts)),b:Math.max(1,...gx.map(r=>r.pos-px0))},e2={a:Math.max(1,...gy.map(r=>r.off+(r.n-1)*ts)),b:Math.max(1,...gy.map(r=>r.pos-py0))},
+ const W=700,H=420,M=44,gx=CR.filter(r=>r.dir!=='y'),gy=CR.filter(r=>r.dir==='y'),mn=a=>a.length?Math.min(...a.map(r=>pp(r))):0,px0=mn(gx),py0=mn(gy),
+  e1={a:Math.max(1,...gx.map(r=>r.off+(r.n-1)*ts)),b:Math.max(1,...gx.map(r=>pp(r)-px0))},e2={a:Math.max(1,...gy.map(r=>r.off+(r.n-1)*ts)),b:Math.max(1,...gy.map(r=>pp(r)-py0))},
   gapm=Math.max(ts,6),Wm=(gx.length?e1.a:0)+(gx.length&&gy.length?gapm:0)+(gy.length?e2.b:0),Hm=Math.max(gx.length?e1.b:0,gy.length?e2.a:0,1),
   sc=Math.min((W-2*M-30)/Math.max(Wm,1),(H-2*M)/Hm),ox1=M+30,ox2=ox1+(gx.length?e1.a+gapm:0)*sc,B0=H-M;let g='';
  const grp=(rows,o,ox,p0,eb)=>{let h='';const P=(a,b)=>[ox+(o==='x'?a:b)*sc,B0-(o==='x'?b:a)*sc],m0=P(0,0),m1=P(0,eb);
   h+=`<line x1="${m0[0]}" y1="${m0[1]}" x2="${m1[0]}" y2="${m1[1]}" stroke="var(--ac)" stroke-width="3"/>`;
-  rows.forEach(r=>{const i=CR.indexOf(r),c=ZC[((r.zone||1)-1)%ZC.length],a=P(0,r.pos-p0),b=P(r.off+(r.n-1)*ts,r.pos-p0);
+  rows.forEach(r=>{const i=CR.indexOf(r),c=ZC[((r.zone||1)-1)%ZC.length],a=P(0,pp(r)-p0),b=P(r.off+(r.n-1)*ts,pp(r)-p0);
    h+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${c}" stroke-width="1.6"/><text x="${a[0]+(o==='x'?-6:0)}" y="${a[1]+(o==='x'?-6:14)}" text-anchor="${o==='x'?'end':'middle'}" style="fill:${c};font-size:10px;font-weight:700">R${i+1}·Z${r.zone}</text>`;
-   for(let k=0;k<r.n;k++){const p=P(r.off+k*ts,r.pos-p0);h+=`<circle cx="${p[0]}" cy="${p[1]}" r="${Math.max(2.5,Math.min(8,ts*sc*.3))}" fill="${c}" fill-opacity=".35" stroke="${c}"/>`}});return h};
+   for(let k=0;k<r.n;k++){const p=P(r.off+k*ts,pp(r)-p0);h+=`<circle cx="${p[0]}" cy="${p[1]}" r="${Math.max(2.5,Math.min(8,ts*sc*.3))}" fill="${c}" fill-opacity=".35" stroke="${c}"/>`}});return h};
  if(gx.length)g+=grp(gx,'x',ox1,px0,e1.b);if(gy.length)g+=grp(gy,'y',ox2,py0,e2.b);
  const pcx=gx.length?ox1-24:ox2,pcy=gx.length?B0:B0+24;g+=`<circle cx="${pcx}" cy="${pcy}" r="12" fill="var(--ok)"/><text x="${pcx}" y="${pcy+4}" text-anchor="middle" style="fill:#fff;font-size:11px;font-weight:700">P</text>`;
  if(gx.length&&gy.length)g+=`<polyline points="${pcx},${B0+12} ${pcx},${B0+26} ${ox2},${B0+26} ${ox2},${B0}" fill="none" stroke="var(--hi)" stroke-dasharray="5 3" stroke-width="2"/><text x="${(pcx+ox2)/2}" y="${B0+38}" text-anchor="middle" style="fill:var(--hi);font-size:10px;font-weight:700">${t('bendL')}</text>`;
  $('cSvg').innerHTML=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W}px;background:var(--card)">${g}</svg>`;
  const zs=[...new Set(CR.map(r=>r.zone||1))].sort((a,b)=>a-b);let rows='',Qs=[];
- zs.forEach(z=>{const R_=CR.map((r,i)=>({...r,i})).filter(r=>(r.zone||1)===z).sort((a,b)=>((a.dir==='y')-(b.dir==='y'))||a.pos-b.pos),qs=R_.map(r=>r.n*(r.ns>0?Math.floor(r.ns):ns)*(r.fq>0?r.fq:cnv('fq'))*(+$('dfu').value||1)),Qz=qs.reduce((a,b)=>a+b,0);Qs.push(Qz);
+ zs.forEach(z=>{const R_=CR.map((r,i)=>({...r,i})).filter(r=>(r.zone||1)===z).sort((a,b)=>((a.dir==='y')-(b.dir==='y'))||pp(a)-pp(b)),qs=R_.map(r=>r.n*(r.ns>0?Math.floor(r.ns):ns)*(r.fq>0?r.fq:cnv('fq'))*(+$('dfu').value||1)),Qz=qs.reduce((a,b)=>a+b,0);Qs.push(Qz);
   const row=(n,q,l,l2)=>`<tr><td style="text-align:left">Z${z} · ${n}</td><td>${l2}</td><td>${pn_(q)}</td><td>${pn_(q*1000/60)}</td><td>${pn_(l)}</td></tr>`,
-   yO=R_.filter(r=>r.dir==='y').map(r=>+r.off||0),F_=yO.length?Math.min(...yO):0,xL=R_.filter(r=>r.dir!=='y').map(r=>r.pos-px0),Fe=yO.length?Math.max(F_,xL.length?Math.max(...xL):0):0;
+   yO=R_.filter(r=>r.dir==='y').map(r=>+r.off||0),F_=yO.length?Math.min(...yO):0,xL=R_.filter(r=>r.dir!=='y').map(r=>pp(r)-px0),Fe=yO.length?Math.max(F_,xL.length?Math.max(...xL):0):0;
   rows+=row(t('coPass'),Qz,R_[0].dir==='y'?Math.max(0,R_[0].pos)+F_:R_[0].pos-px0,1);
-  for(let k=0;k<R_.length-1;k++){const a=R_[k],b=R_[k+1],len=(a.dir!=='y'&&b.dir==='y')?Math.max(0,F_-(a.pos-px0))+Math.max(0,b.pos):Math.abs(b.pos-a.pos);rows+=row(t('coMain')+' '+(k+1)+' ('+t('rowL')+' '+(a.i+1)+'→'+(b.i+1)+')',qs.slice(k+1).reduce((x,y)=>x+y,0),len,1)}
+  for(let k=0;k<R_.length-1;k++){const a=R_[k],b=R_[k+1],len=(a.dir!=='y'&&b.dir==='y')?Math.max(0,F_-(pp(a)-px0))+Math.max(0,pp(b)):Math.abs(pp(b)-pp(a));rows+=row(t('coMain')+' '+(k+1)+' ('+t('rowL')+' '+(a.i+1)+'→'+(b.i+1)+')',qs.slice(k+1).reduce((x,y)=>x+y,0),len,1)}
   const gp={};R_.forEach(r=>{const key=(r.dir==='y'?'y':'x')+'|'+r.n+'|'+r.off;(gp[key]=gp[key]||{n:r.n,off:r.off,y:r.dir==='y',c:0}).c++});
   Object.values(gp).forEach(x=>rows+=row(t('coLat')+' – '+x.n+' '+t('coN')+(x.y?' (Y)':''),x.n*ql,Math.max(0,x.off+(x.n-1)*ts-(x.y?Fe:0)),x.c))});
  $('cSum').innerHTML=`<thead><tr><th style="text-align:left">${t('coLine')}</th><th>${t('coQty')}</th><th>${t('coQ')}</th><th>L/min</th><th>${t('coLen')}</th></tr></thead><tbody>${rows}</tbody>`;
@@ -1018,7 +1018,7 @@ function applyJSON(txt,fn){const msg=$('prjMsg');try{const o=JSON.parse(txt);if(
   if(o.zres&&typeof o.zres==='object')Object.keys(o.zres).forEach(z=>{if(/^\d{1,3}$/.test(z))ZR[+z]=parseRes(o.zres[z])});
   ZR[Math.max(0,(parseInt(o.inputs.zn,10)||1)-1)]=parseRes(o.results);
   if(o.bom){BP=o.bom.p&&typeof o.bom.p==='object'?o.bom.p:{};BX=Array.isArray(o.bom.x)?o.bom.x.slice(0,100).map(x=>({n:String(x.n||''),u:String(x.u||''),q:+x.q||0,p:+x.p||0})):[];FOV=o.bom.fo&&typeof o.bom.fo==='object'?o.bom.fo:{};FLP=o.bom.fl&&typeof o.bom.fl==='object'?o.bom.fl:{};ACC=Array.isArray(o.bom.ac)?o.bom.ac.slice(0,200).map(a=>({lb:String(a.lb||''),q:+a.q||0,z:+a.z||0,j:Number.isFinite(+a.j)?+a.j:-1,w:['j','l','s'].includes(a.w)?a.w:'j',m:[0,1,2].includes(+a.m)?+a.m:0,ov:a.ov&&typeof a.ov==='object'?Object.fromEntries(Object.entries(a.ov).filter(([k,v])=>v&&['l','m','p'].includes(v.t)&&Number.isFinite(+v.u)&&Number.isFinite(+v.k)).map(([k,v])=>[k,{t:v.t,k:+v.k,u:Math.max(0,Math.min(1,+v.u))}])):null})):[]};MPL=Array.isArray(o.bom.pl)?o.bom.pl.slice(0,100).filter(m=>m&&['p','m','l'].includes(m.h)&&m.ov&&['l','m','p'].includes(m.ov.t)&&Number.isFinite(+m.ov.k)&&Number.isFinite(+m.ov.u)).map(m=>({lb:String(m.lb||'PVC').slice(0,40),z:+m.z||0,h:m.h,k:+m.k||0,j:+m.j||0,f:+m.f||0,dir:['u','d','l','r'].includes(m.dir)?m.dir:'u',len:Math.max(0,+m.len||0),ov:{t:m.ov.t,k:+m.ov.k,u:Math.max(0,Math.min(1,+m.ov.u))}})):[];ZVO=o.bom.zv&&typeof o.bom.zv==='object'?Object.fromEntries(Object.entries(o.bom.zv).filter(([k,v])=>v&&typeof v==='object').map(([k,v])=>[k,{...(v.nm?{nm:String(v.nm).slice(0,30)}:{}),...(['p','m'].includes(v.t)&&Number.isFinite(+v.k)&&Number.isFinite(+v.u)?{t:v.t,k:+v.k,u:Math.max(0,Math.min(1,+v.u))}:{})}])):{}
-  if(Array.isArray(o.cr))CR=o.cr.slice(0,300).map(r=>({n:Math.max(1,Math.floor(+r.n)||1),off:Number.isFinite(+r.off)?+r.off:0,pos:Number.isFinite(+r.pos)?+r.pos:0,zone:Math.max(1,Math.floor(+r.zone)||1),dir:r.dir==='y'?'y':'x'}));cTable();
+  if(Array.isArray(o.cr))CR=o.cr.slice(0,300).map(r=>({n:Math.max(1,Math.floor(+r.n)||1),off:Number.isFinite(+r.off)?+r.off:0,pos:Number.isFinite(+r.pos)?+r.pos:0,zone:Math.max(1,Math.floor(+r.zone)||1),dir:r.dir==='y'?'y':'x',ns:Math.max(0,Math.floor(+r.ns)||0),fq:Math.max(0,+r.fq||0)}));cTable();
   SEL=null;ZNONE=false;applySrc();drawDesign();const zn=String(o.inputs.zn||'');if([...$('zn').options].some(x=>x.value===zn))$('zn').value=zn;
   drawDesign();updateLoc();run();msg.textContent=fn?t('loadOk')+fn:''}catch(err){msg.textContent=t('loadBad')}}
 $('fLoad').onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const msg=$('prjMsg');
