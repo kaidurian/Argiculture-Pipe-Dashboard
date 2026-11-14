@@ -105,7 +105,7 @@ input[readonly]{opacity:.7}
 </dialog>
 <div id="rptP" class="rp"></div>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.45</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.45.1</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="tabs"><button id="tD" type="button" class="on" data-t="tabD"></button><button id="tC" type="button" data-t="tabC"></button><button id="tS" type="button" data-t="tabS"></button><span style="margin-left:auto;display:inline-flex;gap:6px;align-items:center"><span id="hSt" style="font-size:11px;color:var(--mut)"></span><button id="hU" type="button" title="Undo (Ctrl+Z)" style="padding:4px 10px">↶</button><button id="hR" type="button" title="Redo (Ctrl+Y)" style="padding:4px 10px">↷</button></span></div>
@@ -412,7 +412,7 @@ let ZNONE=false,VF={x:false,y:false,W:800,H:0};const toD=p=>({x:VF.x?VF.W-p.x:p.
 let ZVO={},ZVL=[],ZVP={},SCD=null,FOV={},FLP={},ACC=[],MPL=[],FLG=[],DCX=null,SNP=null,DRG=false;
 const isLat=k=>/^lat\d*$/.test(k);
 function drawDesign(){
- const CM=$('lsrc').value==='c'&&CR.length>0,CRs=CM?CR.map(r=>r.dir==='y'?Object.assign({},r,{pos:Math.abs(+r.pos||0)}):r).sort((a,b)=>(a.zone-b.zone)||((a.dir==='y')-(b.dir==='y'))||a.pos-b.pos):[];
+ const CM=$('lsrc').value==='c'&&CR.length>0,CRs=CM?CR.map(r=>r.dir==='y'?Object.assign({},r,{pos:Math.abs(+r.pos||0),rp:+r.pos||0}):r).sort((a,b)=>(a.zone-b.zone)||((a.dir==='y')-(b.dir==='y'))||a.pos-b.pos):[];
  const en=L=='en',g1=id=>+$(id).value||0,
   nr=CM?CRs.length:Math.max(1,Math.floor(g1('nr'))),nt=CM?Math.max(1,...CRs.map(r=>Math.max(1,Math.floor(r.n)||1))):Math.max(1,Math.floor(g1('nt'))),ns=Math.max(1,Math.floor(g1('ns'))),
   fq=g1('fq'),td=Math.max(0,g1('td')),fu=+$('dfu').value||1,LT=Math.max(0,g1('lt')),fd=Math.max(0,g1('fd')),
@@ -575,7 +575,7 @@ function drawDesign(){
  sg('p',0,-1,px,py,mx,hy);if(Z>1)sg('p',1,-1,mx,hy,Math.min(mx-extra,zmx(Z-1)),hy);
  for(let z=0;z<Z;z++){const xz_=zmx(z);sg('m',z,z,xz_,Math.max(hy,ty(zst(z))),xz_,Math.min(hy,ty(zst(z+1)-1)))}
  for(let j=0;j<nr;j++){const xz_=zmx(zOf[j]);sg('l',j,zOf[j],Math.min(tx(0,j),xz_),ty(j),Math.max(xr(j),xz_),ty(j))}
- SNP=SNAPS;ZVP={};SCD={nr,RN,ROFF,RP,td,Z,zs:Array.from({length:Z+1},(_,z)=>zst(z)),MX,FX,FY,MY,xm,pm,Yp,Em,LT,n1,zOf,isY,CM,PS:CM?CRs.map(r=>r.pos):RP,prim:Array.from({length:Z},(_,z)=>prim(z))};
+ SNP=SNAPS;ZVP={};SCD={nr,RN,ROFF,RP,td,Z,zs:Array.from({length:Z+1},(_,z)=>zst(z)),MX,FX,FY,MY,xm,pm,Yp,Em,LT,n1,zOf,isY,CM,PS:CM?CRs.map(r=>r.dir==='y'?r.rp:r.pos):RP,prim:Array.from({length:Z},(_,z)=>prim(z))};
   ZVL.splice(0).forEach(v=>{const o=ZVO[v.z]||{};let x=v.xz,y=v.vyz;if(o.t){const q=snapPos(o);if(q){x=q[0];y=q[1]}}ZVP[v.z]=[x,y];const at_=`data-z='${v.z}' data-zv='1' style='cursor:grab;touch-action:none'`;g+=`<circle cx='${x}' cy='${y}' r='${v.vr}' fill='${v.op?'var(--ac)':'var(--card)'}' stroke='${v.op?'var(--tx)':'var(--hi)'}' stroke-width='1.4' ${at_}/><circle cx='${x}' cy='${y}' r='${v.vr+4}' fill='transparent' ${at_}><title>${en?'Zone ':'โซน '}${v.z+1}${o.nm?' – '+esc(o.nm):''} (${en?'drag to move; click the active zone valve to set size / name':'ลากเพื่อย้าย คลิกวาล์วของโซนที่เลือกเพื่อตั้งขนาด/ชื่อ'})</title></circle>`;if(o.nm)g+=`<text x='${x+v.vr+5}' y='${y+3}' style='fill:var(--mut);font-size:8px;font-weight:700'>${esc(o.nm)}</text>`});
  const FL=[],NSZ=en?'size not set':'ยังไม่ระบุขนาด',sz=(x,y)=>x==null?NSZ:(y==null||x===y?x+'"':x+'"×'+y+'"');
  {const mk=(id,f,s,q,x,y,z,lx,ly,an,ex)=>{return;const o=FOV[id]||{};FL.push(Object.assign({id,f,s,q:o.q!=null?+o.q:q,x,y,z,lx,ly,an,del:!!o.del,lb:o.lb||t('f'+f)+' '+s,ov:!!(o.lb||o.q!=null)},ex))};
@@ -827,7 +827,7 @@ function drawScale(){const sv=$('scg'),D=SCD;if(!sv||!D)return;const {nr,RN,ROFF
   ry=PS.map((p,j)=>isY[j]?yFz[zOf[j]]:(CM?p-mn0:RP[j])),Yr=p=>{const j=Math.max(0,Math.min(nr-1,Math.floor(p+1e-9))),k=Math.min(nr-1,j+1);return ry[j]+(k===j?0:(ry[k]-ry[j])*(p-j))};
  const mxm=MX?xm:0,zx=z=>(MX&&!prim[z]?0:mxm)-z*zg,hy=MY?Yr(Em):(Z>1?-hg:Yr(0)),pX=MY?mxm-pm:mxm,pY=MY?hy:hy-pm,SG={},xs=[pX,mxm,0],ys=[pY,hy,0],FD=[];
  SG['p|0']={x1:pX,y1:pY,x2:mxm,y2:hy};if(Z>1)SG['p|1']={x1:mxm,y1:hy,x2:Math.min(mxm-(Z-1)*zg,zx(Z-1)),y2:hy};
- for(let z=0;z<Z;z++){xs.push(zx(z));const R=[];let fx=null;for(let j=zs[z];j<zs[z+1];j++){R.push(ry[j]);if(isY[j])fx=Math.max(fx==null?-1e9:fx,PS[j])}SG['m|'+z]={x1:zx(z),y1:Math.min(hy,...R),x2:zx(z),y2:Math.max(hy,...R)};if(fx!=null)FD.push({x1:zx(z),x2:fx,y1:yFz[z],y2:yFz[z]})}
+ for(let z=0;z<Z;z++){xs.push(zx(z));const R=[];let fx=null,fn=null;for(let j=zs[z];j<zs[z+1];j++){R.push(ry[j]);if(isY[j]){fx=Math.max(fx==null?-1e9:fx,PS[j]);fn=Math.min(fn==null?1e9:fn,PS[j])}}SG['m|'+z]={x1:zx(z),y1:Math.min(hy,...R),x2:zx(z),y2:Math.max(hy,...R)};if(fx!=null)FD.push({x1:Math.min(zx(z),fn),x2:Math.max(zx(z),fx),y1:yFz[z],y2:yFz[z]})}
  for(let j=0;j<nr;j++){const c=zx(zOf[j]),a=ROFF[j],b=a+(RN[j]-1)*td;if(isY[j]){const x=PS[j],e=b+LT;xs.push(x);ys.push(e);SG['l|'+j]={x1:x,y1:Math.min(yF,a)-(a<yF?LT:0),x2:x,y2:e}}else{xs.push(a,b+LT);ys.push(ry[j]);SG['l|'+j]={x1:Math.min(a,c)-(a<c?LT:0),y1:ry[j],x2:Math.max(b,c)+(b>c?LT:0),y2:ry[j]}}}
  let x0=Math.min(...xs)-4,x1=Math.max(...xs)+4,y0=Math.min(...ys)-4,y1=Math.max(...ys)+4;const zm=Math.max(.5,+$('scz').value||1),pd_=$('scd').checked?44/Math.min(40,900*zm/Math.max(1,x1-x0)):0;x0-=pd_;x1+=pd_;y0-=pd_;y1+=pd_;const S=Math.min(40,900*zm/Math.max(1,x1-x0)),W=Math.round((x1-x0)*S),H=Math.round((y1-y0)*S+30),X=x=>((FX?x1+x0-x:x)-x0)*S,Y=y=>(FY?y-y0:y1-y)*S,f1=v=>v.toFixed(1);
  const prj=(p,z,noL)=>{let b=null;Object.values(SNP||{}).forEach(q=>{if(q.t==='l'&&noL)return;if(z!=null&&q.z!==-1&&q.z!==z)return;const dx=q.x2-q.x1,dy=q.y2-q.y1,l2=dx*dx+dy*dy,u=Math.max(0,Math.min(1,((p[0]-q.x1)*dx+(p[1]-q.y1)*dy)/l2)),d=Math.hypot(p[0]-q.x1-dx*u,p[1]-q.y1-dy*u);if(!b||d<b.d)b={d,t:q.t,k:q.k,u}});if(!b)return null;const g=SG[b.t+'|'+b.k];if(!g)return null;let py_=g.y1+(g.y2-g.y1)*b.u;if(b.t==='l'&&isY[+b.k])py_=Math.max(py_,yFz[zOf[+b.k]]);return [g.x1+(g.x2-g.x1)*b.u,py_]};
@@ -856,7 +856,7 @@ function drawScale(){const sv=$('scg'),D=SCD;if(!sv||!D)return;const {nr,RN,ROFF
   if(pm>0){const hor=Math.abs(pX-mxm)>Math.abs(pY-hy);dm([pX,pY],[mxm,hy],Math.hypot(mxm-pX,hy-pY),hor?0:-18*sx,hor?18*sy:0)}
   if(Z>1&&zg>0)dm([zx(0),hy],[zx(1),hy],zg,0,16*sy);
   for(let z=0;z<Z;z++){const ys_=[];for(let j=zs[z];j<zs[z+1];j++)if(isY[j])ys_.push(j);if(!ys_.length)continue;const j=ys_[0],e=ROFF[j]+(RN[j]-1)*td+LT;
-   dm([zx(z),yFz[z]],[PS[j],yFz[z]],PS[j]-zx(z),0,13*sy);if(ROFF[j]>0)dm([PS[j],0],[PS[j],ROFF[j]],ROFF[j],-13*sx,0);
+   dm([zx(z),yFz[z]],[PS[j],yFz[z]],Math.abs(PS[j]-zx(z)),0,13*sy);if(ROFF[j]>0)dm([PS[j],0],[PS[j],ROFF[j]],ROFF[j],-13*sx,0);
    if(ys_.length>1){const k=ys_[1];dm([PS[j],e],[PS[k],ROFF[k]+(RN[k]-1)*td+LT],Math.abs(PS[k]-PS[j]),0,-13*sy)}}
   o+=DM.join('')}
  {const nc=[1,2,5,10,20,50,100,200,500].filter(n=>n*S<=W*.3).pop()||1,bx=10,by=H-12;o+=`<line x1='${bx}' x2='${bx+nc*S}' y1='${by}' y2='${by}' stroke='var(--tx)' stroke-width='2'/><line x1='${bx}' x2='${bx}' y1='${by-4}' y2='${by+4}' stroke='var(--tx)'/><line x1='${bx+nc*S}' x2='${bx+nc*S}' y1='${by-4}' y2='${by+4}' stroke='var(--tx)'/><text x='${bx+nc*S+6}' y='${by+4}' style='fill:var(--tx);font-size:11px'>${nc} m</text>`}
