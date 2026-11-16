@@ -105,7 +105,7 @@ input[readonly]{opacity:.7}
 </dialog>
 <div id="rptP" class="rp"></div>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.54</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.55</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="tabs"><button id="tD" type="button" class="on" data-t="tabD"></button><button id="tC" type="button" data-t="tabC"></button><button id="tS" type="button" data-t="tabS"></button><span style="margin-left:auto;display:inline-flex;gap:6px;align-items:center"><span id="hSt" style="font-size:11px;color:var(--mut)"></span><button id="hU" type="button" title="Undo (Ctrl+Z)" style="padding:4px 10px">↶</button><button id="hR" type="button" title="Redo (Ctrl+Y)" style="padding:4px 10px">↷</button></span></div>
@@ -139,6 +139,7 @@ input[readonly]{opacity:.7}
       <div class="row">
         <label><span data-t="pmxL"></span><select id="pmx"><option value="s" data-t="pmxA"></option><option value="r" data-t="pmxR"></option><option value="m" data-t="pmxB"></option><option value="c" data-t="pmxC"></option></select></label>
         <label><span data-t="pmyL"></span><select id="pmy"><option value="s" data-t="pmyA"></option><option value="t" data-t="pmyT"></option><option value="m" data-t="pmyB"></option><option value="c" data-t="pmyC"></option></select></label>
+<label><span id="pndL"></span><select id="pnd"></select></label>
       </div>
       <div class="row"><label><span data-t="pxkL"></span><input id="pxk" type="number" min="1" step="1" placeholder="5"></label><label><span data-t="pykL"></span><input id="pyk" type="number" min="1" step="1" placeholder="3"></label></div>
       <div class="row"><label><span data-t="lsrcL"></span><select id="lsrc"><option value="g" data-t="lsrcG"></option><option value="c" data-t="lsrcC"></option></select></label></div>
@@ -219,6 +220,7 @@ input[readonly]{opacity:.7}
     <h2 data-t="drh"></h2>
     <label id="allzW" style="display:none;margin:0 0 6px;font-weight:600"><input type="checkbox" id="allz" checked> <span data-t="allzL"></span></label>
     <div style="margin:0 0 6px;display:flex;align-items:center;gap:14px;flex-wrap:wrap"><button class="useb" id="accAdd" type="button" style="width:auto;padding:6px 12px;margin:0"></button><label style="margin:0;font-weight:600"><input type="checkbox" id="fitAll" checked> <span id="fitAllT"></span></label><label style="margin:0;font-weight:600"><span id="dzL"></span> <select id="dzk" style="width:auto"><option value="a">Auto</option><option value="1">×1</option><option value="1.5">×1.5</option><option value="2">×2</option><option value="3">×3</option><option value="4">×4</option></select></label></div>
+    <label style="display:flex;gap:6px;align-items:center;margin:0 0 6px;font-weight:600"><input type="checkbox" id="afit" checked><span id="afitL"></span></label>
     <div id="fitPalW" style="margin:0 0 8px"><div class="note" id="fitPalN" style="margin:0 0 4px"></div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 6px"><span id="fitPalL" style="font-weight:600"></span><input id="fitSz" type="text" style="width:120px;margin:0"></div><div id="fitPal" style="display:flex;flex-wrap:wrap;gap:5px"></div></div>
     <div class="sc"><svg id="dsg" viewBox="0 0 800 460" width="100%" style="min-width:560px"></svg></div>
     <div class="note" id="dsgN"></div>
@@ -436,7 +438,7 @@ function drawDesign(){
   dz=e1v+e2v,
   pm=Math.max(0,g1('pm'))+MPL.reduce((a,m)=>a+(m.h==='p'&&m.k===0?m.len:0),0),ZSa=CM?(()=>{const a=[0];for(let j=1;j<nr;j++)if(CRs[j].zone!==CRs[j-1].zone)a.push(j);a.push(nr);return a})():null,Z=CM?ZSa.length-1:Math.min(nr,Math.max(1,Math.floor(g1('zr'))||1)),zb=Math.floor(nr/Z),zx=nr%Z,zst=j=>CM?ZSa[j]:j*zb+Math.min(j,zx),
   zi=Math.max(0,Math.min(Z-1,Math.floor(+$('zn').value||1)-1)),rs=zst(zi),re=zst(zi+1),cnt=re-rs,ZNX=ZNONE&&!RPTA&&Z>1,zA=z=>!ZNX&&(ALL||z===zi),act=j=>!ZNX&&(ALL||(j>=rs&&j<re)),
-  WM=$('wm').value,ALL=!ZNX&&WM==='a'&&$('allz').checked,MX=$('pmx').value==='m'||$('pmx').value==='c',MY=$('pmy').value==='m'||$('pmy').value==='c',FX=$('pmx').value==='r',FY=$('pmy').value==='t',Em=$('pmy').value==='c'&&n1>1?Math.min(n1-1.5,Math.max(.5,(Math.floor(+$('pyk').value)||1)-.5)):(SPL&&$('pmy').value==='m'?ivyAll((Math.min(...RP)+Math.max(...RP))/2):(n1-1)/2),
+  WM=$('wm').value,ALL=!ZNX&&WM==='a'&&$('allz').checked,MX=$('pmx').value==='m'||$('pmx').value==='c',MY=$('pmy').value==='m'||$('pmy').value==='c',PONV=$('pnd').value!=='a'&&!MX,FX=$('pmx').value==='r',FY=$('pmy').value==='t',Em=$('pmy').value==='c'&&n1>1?Math.min(n1-1.5,Math.max(.5,(Math.floor(+$('pyk').value)||1)-.5)):(SPL&&$('pmy').value==='m'?ivyAll((Math.min(...RP)+Math.max(...RP))/2):(n1-1)/2),
   xm=$('pmx').value==='c'?Math.max(ox,Math.min(wmP,((Math.floor(+$('pxk').value)||1)-.5)*td+ox)):(ox+wmP)/2,u1=ns*fq*fu,
   SIDE=RN.map((n,j)=>{if((!MX||isY[j])&&ROFF[j]>=0)return{ln:0,ll:0,rn:n,rl:ROFF[j]+(n-1)*td};const xc=MX&&!isY[j]?xm:0;let l=0,r=0,c=0;for(let i=0;i<n;i++){const x=ROFF[j]+i*td;if(x<xc-1e-6)l++;else if(x>xc+1e-6)r++;else c++}const x0=ROFF[j],x1=ROFF[j]+(n-1)*td;return{ln:l+c/2,ll:l+c>0?Math.max(0,xc-x0):0,rn:r+c/2,rl:r+c>0?Math.max(0,x1-xc):0}}),
   prim=z=>zst(z)<n1,myz=z=>MY&&prim(z),gb=z=>prim(z)?0:n1,BND=0,bz=z=>prim(z)?0:BND,eZ=z=>myz(z)?(SPL?ivy(Yp(Em),zst(z),zst(z+1)-1):Math.max(zst(z),Math.min(zst(z+1)-1,Em))):gb(z),
@@ -514,7 +516,7 @@ function drawDesign(){
   $('lsT').innerHTML=(Ls.length?`<thead><tr><th style='text-align:left'>${t('thLn')}</th><th>${t('thQty')}</th><th>${t('xl')}</th><th>${t('thLpm')}</th><th>${t('thLen')}</th><th>${t('thPt')}</th><th>${t('thSz')}</th><th>${t('thVv')}</th><th>${t('thHf')}</th><th>${t('thTh')}</th><th>${t('status')}</th><th></th><th></th></tr></thead>`:'')+'<tbody>'+r.join('')+'</tbody>';
   const tv=$('tgt').value;$('tgt').innerHTML=Ls.map(x=>`<option value='${x.k}'>${x.n}</option>`).join('');if(tv&&Ls.some(x=>x.k===tv))$('tgt').value=tv}
  if(nr>100||nt>100){$('dsg').innerHTML='<text x="20" y="40" style="font-size:13px;fill:var(--hi)">'+t('tooBig')+'</text>';$('dpf').innerHTML='';BOMD=null;renderBom();return}
- const gap=Z>1?Math.max(1.5,Math.min(16,110/(Z-1))):0,extra=(Z-1)*gap,ml=180+extra+(MY?30:0),mr=70,mt=40,mb=Z>1?150:(pp>0?140:110),wm=wm0-ox,hm=Math.max(...RP),
+ const gap=Z>1?Math.max(1.5,Math.min(16,110/(Z-1))):0,extra=(Z-1)*gap,ml=180+extra+(MY?30:0),mr=70,mt=40+(PONV&&pp>0&&$('pnd').value==='u'?70:0),mb=(Z>1?150:(pp>0?140:110))+(PONV&&pp>0&&$('pnd').value==='d'?70:0),wm=wm0-ox,hm=Math.max(...RP),
   // drawing size: the canvas is enlarged (and the SVG widened by the same factor, so text stays the same size) until trees and rows are far enough apart for the fitting names; the person can also pick a fixed size
   sc1=Math.min(wm>0?(800-ml-mr)/wm:1e9,hm>0?380/hm:1e9),dzs=$('dzk').value,KA=sc1<1e8?Math.min(3,Math.max(1,Math.ceil(Math.max(nt>1&&td>0?84/(td*sc1):1,nr>1&&hm>0&&rd>0?44/(rd*sc1):1)*2)/2)):1,KK=dzs&&dzs!=='a'&&+dzs>0?+dzs:KA,W=Math.round(800*KK),aw=W-ml-mr,ah=Math.round(380*KK);
  let sc=Math.min(wm>0?aw/wm:1e9,hm>0?ah/hm:1e9);if(sc>1e8)sc=20;
@@ -522,7 +524,7 @@ function drawDesign(){
  const dmin=Math.min(nt>1?dx:99,nr>1?dy:99),tr=Math.max(2.5,Math.min(9,dmin*0.3)),sr=Math.max(1.3,tr*0.3);
  const tx=(i,j)=>X0+((j==null?0:ROFF[j])+i*td-ox)*sc,ty=p=>YB-Yp(p)*sc,xr=j=>tx(RN[j]-1,j),mx=MX?X0+(xm-ox)*sc:ml-40-ox*sc,xl=X0+wm*sc,yt=ty(nr-1),py=MY?ty(Em):YB+(pp>0?66:(Z>1?62:36)),hy=MY?ty(Em):(Z>1?YB+30:ty(0)),px=MY?ml-110-extra:mx;
  const zmx=z=>(MX&&!prim(z)?ml-40:mx)-z*gap,xa=zmx(zi),zOf=[];for(let z=0;z<Z;z++)for(let j=zst(z);j<zst(z+1);j++)zOf[j]=z;
- const ts='fill:var(--tx);font-size:11px;font-weight:700',PDX=MY?px-60:px+95;
+ const ts='fill:var(--tx);font-size:11px;font-weight:700',PDX=PONV?px:(MY?px-60:px+95);
  let g=`<defs><marker id='ad' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='6' markerHeight='6' orient='auto-start-reverse'><path d='M0,0L10,5L0,10z' fill='var(--tx)'/></marker></defs><g id='planG'${FX||FY?` transform='translate(${FX?W:0},${FY?H0:0}) scale(${FX?-1:1},${FY?-1:1})'`:''}><!--HIT-->`;
 
  {const HC='#f59e0b',hs=`stroke='${HC}' stroke-opacity='.55' stroke-width='11' stroke-linecap='round' stroke-linejoin='round' fill='none'`,hseg=(i,j)=>`<line x1='${xa}' x2='${xa}' y1='${ty(i)}' y2='${ty(j)}' ${hs}/>`,lx0=MX?tx(0):xa;
@@ -589,7 +591,7 @@ function drawDesign(){
  SNP=SNAPS;ZVP={};SCD={nr,RN,ROFF,RP,td,Z,zs:Array.from({length:Z+1},(_,z)=>zst(z)),MX,FX,FY,MY,xm,pm,Yp,Em,LT,n1,zOf,isY,CM,PS:CM?CRs.map(r=>r.dir==='y'?r.rp:r.pos):RP,prim:Array.from({length:Z},(_,z)=>prim(z))};
   ZVL.splice(0).forEach(v=>{const o=ZVO[v.z]||{};let x=v.xz,y=v.vyz;if(o.t){const q=snapPos(o);if(q){x=q[0];y=q[1]}}ZVP[v.z]=[x,y];const at_=`data-z='${v.z}' data-zv='1' style='cursor:grab;touch-action:none'`;g+=`<circle cx='${x}' cy='${y}' r='${v.vr}' fill='${v.op?'var(--ac)':'var(--card)'}' stroke='${v.op?'var(--tx)':'var(--hi)'}' stroke-width='1.4' ${at_}/><circle cx='${x}' cy='${y}' r='${v.vr+4}' fill='transparent' ${at_}><title>${en?'Zone ':'โซน '}${v.z+1}${o.nm?' – '+esc(o.nm):''} (${en?'drag to move; click the active zone valve to set size / name':'ลากเพื่อย้าย คลิกวาล์วของโซนที่เลือกเพื่อตั้งขนาด/ชื่อ'})</title></circle>`;if(o.nm)g+=`<text x='${x+v.vr+5}' y='${y+3}' style='fill:var(--mut);font-size:8px;font-weight:700'>${esc(o.nm)}</text>`});
  const FL=[],NSZ=en?'size not set':'ยังไม่ระบุขนาด',sz=(x,y)=>x==null?NSZ:(y==null||x===y?x+'"':x+'"×'+y+'"');
- {const mk=(id,f,s,q,x,y,z,lx,ly,an,ex)=>{return;const o=FOV[id]||{};FL.push(Object.assign({id,f,s,q:o.q!=null?+o.q:q,x,y,z,lx,ly,an,del:!!o.del,lb:o.lb||t('f'+f)+' '+s,ov:!!(o.lb||o.q!=null)},ex))};
+ {const mk=(id,f,s,q,x,y,z,lx,ly,an,ex)=>{if(!$('afit').checked)return;const o=FOV[id]||{};FL.push(Object.assign({id,f,s,q:o.q!=null?+o.q:q,x,y,z,lx,ly,an,del:!!o.del,lb:o.lb||t('f'+f)+' '+s,ov:!!(o.lb||o.q!=null)},ex))};
   for(let z=0;z<Z;z++){const R_=z===zi?RES:(ZR[z]||{}),Sg=segs(z),e=eZ(z),a_=zst(z),b_=zst(z+1),xz=zmx(z),ds=k=>R_[k]?R_[k].ds:null,lt=zLines(z).filter(x=>isLat(x.k)),dp=ds('pump');
    for(let j=a_;j<b_;j++){const s_=SIDE[j],nb=(s_.ln>0?1:0)+(s_.rn>0?1:0);if(!nb)continue;const P=Sg.filter(x=>onPath(x,j,e)),m=P.length?P[P.length-1]:null,lx=lt.find(x=>x.rows&&x.rows.includes(j)),end=j===b_-1||(myz(z)&&e>a_+1e-9&&j===a_),dm=m?ds(m.k):null;
     mk('T|'+z+'|'+j,end?(nb===2?'Tee':'Elb'):(nb===2?'Cross':'Tee'),sz(dm!=null?dm:dp,lx?ds(lx.k):null),1,xz,ty(j),z,xz+7,ty(j)+11,'start',{j})}
@@ -619,12 +621,12 @@ function drawDesign(){
   {const xp_=LINES.find(x=>x.k==='pump');if(xp_&&MY){const e=RES.pump,sty=`${rl}${e&&isBad(e,xp_)?';opacity:.55':''}`,t1=bl('pump'),t2=pn(xp_.l)+' m',w1=Math.max(t1.length*6,t2.length*6)+4,ob=obsOf(g);let by=43,bk=1e9;[43,-34,74,-62].forEach(d=>{const r={x0:px-w1/2,y0:py+d-10,w:w1,h:24},k=ob.reduce((c,o)=>c+ovl(r,o),0)+(Math.abs(d)>50?5:0);if(k<bk){bk=k;by=d}});
    g+=`<text x='${px}' y='${py+by}' text-anchor='middle' data-k='pump' style='${sty}'>${t1}</text><text x='${px}' y='${py+by+12}' text-anchor='middle' data-k='pump' style='${sty}'>${t2}</text>`}else if(pm>0)g+=lblL('pump',py,hy,18,pm)}
 
-  {const xo_=LINES.find(x=>x.k==='pond');if(xo_){const e=RES.pond,bd=e&&isBad(e,xo_),sty=`${rl}${bd?';opacity:.55':''}`,rx=MY?22:24,ry=15,sg=MY?-1:1,xa_=px+sg*14,xb_=PDX-sg*rx,t1=bl('pond'),t2=pn(xo_.l)+' m',w1=Math.max(t1.length*6,t2.length*6)+4;
-   g+=(SEL==='pond'?`<line x1='${xb_}' x2='${xa_}' y1='${py}' y2='${py}' stroke='#f59e0b' stroke-opacity='.55' stroke-width='11' stroke-linecap='round'/>`:'')+`<line x1='${xb_}' x2='${xa_}' y1='${py}' y2='${py}' stroke='var(--ac)' stroke-width='3' opacity='${bd?.55:1}'/><line data-k='pond' x1='${xb_}' x2='${xa_}' y1='${py}' y2='${py}' stroke='transparent' stroke-width='14' stroke-linecap='round' style='cursor:pointer'/><ellipse cx='${PDX}' cy='${py}' rx='${rx}' ry='${ry}' fill='#38bdf8' fill-opacity='.3' stroke='#0284c7' stroke-width='1.6'/><text x='${PDX}' y='${py+4}' text-anchor='middle' style='${ts};fill:#0284c7'>${T2('Pond','บ่อน้ำ')}</text>`;
+  {const xo_=LINES.find(x=>x.k==='pond');if(xo_){const e=RES.pond,bd=e&&isBad(e,xo_),sty=`${rl}${bd?';opacity:.55':''}`,rx=MY?22:24,ry=15,sg=MY?-1:1,PYc=PONV?py+($('pnd').value==='u'?-58:58):py,xa_=px+sg*14,xb_=PDX-sg*rx,A1=PONV?px:xb_,A2=PONV?px:xa_,B1=PONV?PYc+(PYc<py?ry:-ry):py,B2=PONV?py+(PYc<py?-14:14):py,t1=bl('pond'),t2=pn(xo_.l)+' m',w1=Math.max(t1.length*6,t2.length*6)+4;
+   g+=(SEL==='pond'?`<line x1='${A1}' x2='${A2}' y1='${B1}' y2='${B2}' stroke='#f59e0b' stroke-opacity='.55' stroke-width='11' stroke-linecap='round'/>`:'')+`<line x1='${A1}' x2='${A2}' y1='${B1}' y2='${B2}' stroke='var(--ac)' stroke-width='3' opacity='${bd?.55:1}'/><line data-k='pond' x1='${A1}' x2='${A2}' y1='${B1}' y2='${B2}' stroke='transparent' stroke-width='14' stroke-linecap='round' style='cursor:pointer'/><ellipse cx='${PDX}' cy='${PYc}' rx='${rx}' ry='${ry}' fill='#38bdf8' fill-opacity='.3' stroke='#0284c7' stroke-width='1.6'/><text x='${PDX}' y='${PYc+4}' text-anchor='middle' style='${ts};fill:#0284c7'>${T2('Pond','บ่อน้ำ')}</text>`;
    let lx,by;
-   if(!MY){lx=PDX+rx+6;by=-2}   // pump below the orchard: label to the right of the pond, in the free area
+   if(!MY||PONV){lx=PDX+rx+6;by=-2}   // pump below the orchard: label to the right of the pond, in the free area
    else{const ob=obsOf(g).concat([{x0:px-15,y0:py-15,w:30,h:30},{x0:PDX-rx,y0:py-ry,w:2*rx,h:2*ry}]);lx=Math.max(4,PDX-rx);by=ry+16;let bk=1e9;[ry+16,-ry-18].forEach(d=>{const r={x0:lx,y0:py+d-10,w:w1,h:24},k=ob.reduce((c,o)=>c+ovl(r,o),0);if(k<bk){bk=k;by=d}})}
-   g+=`<text x='${lx}' y='${py+by}' text-anchor='start' data-k='pond' style='${sty}'>${t1}</text><text x='${lx}' y='${py+by+12}' text-anchor='start' data-k='pond' style='${sty}'>${t2}</text>`}}
+   g+=`<text x='${lx}' y='${PYc+by}' text-anchor='start' data-k='pond' style='${sty}'>${t1}</text><text x='${lx}' y='${PYc+by+12}' text-anchor='start' data-k='pond' style='${sty}'>${t2}</text>`}}
   if(Z>1)for(let z=0;z<Z;z++){if(z===zi||!ZR[z])continue;const R_=ZR[z],xz=zmx(z),fs=Math.max(5,Math.min(8,gap-1.5));
    zLines(z).forEach(x=>{const e=R_[x.k];if(!e||isBad(e,x))return;
     if(/^sec\d+$/.test(x.k))g+=`<text transform='translate(${xz-1.5},${(ty(x.a)+ty(x.b))/2}) rotate(-90)' text-anchor='middle' style='fill:var(--ac);font-size:${fs}px;font-weight:700;opacity:.75${hl}'>${zc(e)}</text>`;
@@ -639,7 +641,7 @@ function drawDesign(){
     if(/rotate/.test(tf))OBS.push({x0:x-fs_,y0:an==='end'?y-w_:an==='middle'?y-w_/2:y,w:fs_+2,h:w_});else OBS.push({x0:an==='end'?x-w_:an==='middle'?x-w_/2:x,y0:y-fs_,w:w_,h:fs_+2})});
    FL.forEach(f=>OBS.push({x0:f.x-7,y0:f.y-7,w:14,h:14}));
    for(let z=0;z<Z;z++){const xz_=zmx(z),ya_=Math.min(hy,ty(zst(z)),ty(zst(z+1)-1)),yb_=Math.max(hy,ty(zst(z)),ty(zst(z+1)-1));OBS.push({x0:xz_-1.5,y0:ya_,w:3,h:yb_-ya_})}
-   if(pp>0)OBS.push(MY?{x0:PDX-24,y0:py-16,w:px-14-PDX+24,h:32}:{x0:px+12,y0:py-16,w:PDX+26-px-12,h:32});OBS.push({x0:Math.min(mx,mx-extra)-1.5,y0:hy-1.5,w:Math.abs(extra)+3,h:3},{x0:Math.min(px,mx),y0:Math.min(py,hy)-1.5,w:Math.abs(mx-px),h:Math.abs(hy-py)+3});
+   if(pp>0)OBS.push(PONV?{x0:px-26,y0:Math.min(py,py+($('pnd').value==='u'?-58:58))-16,w:52,h:74}:MY?{x0:PDX-24,y0:py-16,w:px-14-PDX+24,h:32}:{x0:px+12,y0:py-16,w:PDX+26-px-12,h:32});OBS.push({x0:Math.min(mx,mx-extra)-1.5,y0:hy-1.5,w:Math.abs(extra)+3,h:3},{x0:Math.min(px,mx),y0:Math.min(py,hy)-1.5,w:Math.abs(mx-px),h:Math.abs(hy-py)+3});
    // trees and laterals are obstacles too, so a name sits between rows instead of on top of a line or a tree
    for(let j=0;j<nr;j++){const a_=Math.min(tx(0,j),zmx(zOf[j])),b_=Math.max(xr(j),zmx(zOf[j]));OBS.push({x0:a_,y0:ty(j)-1.5,w:b_-a_,h:3});if(nr*nt<=600)for(let i=0;i<RN[j];i++)OBS.push({x0:tx(i,j)-tr,y0:ty(j)-tr,w:2*tr,h:2*tr})}
    const ov=(a,b,pd)=>Math.max(0,Math.min(a.x0+a.w+pd,b.x0+b.w)-Math.max(a.x0-pd,b.x0))*Math.max(0,Math.min(a.y0+a.h+pd,b.y0+b.h)-Math.max(a.y0-pd,b.y0)),
@@ -1132,10 +1134,16 @@ const sizeZone=(types,C,vm)=>{for(const x of LINES.slice().sort((a,b)=>(a.k==='p
  if(x.k==='pond'&&RES.pump){p=RES.pump.pt;const rw=orows(x.q,C,K(p)),ix=rw.findIndex(q=>q[0]==RES.pump.ds);r=rw[ix>=0?Math.min(ix+1,rw.length-1):rw.length-1]}
  else{for(const q of types){const o=orows(x.q,C,K(q)).find(a=>st(a[2])[0]==='ok');if(o){p=q;r=o;break}}if(!r)r=pick(orows(x.q,C,K(types[0])),vm)}
  RES[x.k]={pt:p,ds:r[0],v:r[2],hf:r[3],tot:r[3]*x.l/100,cls:st(r[2])[0],qh:x.q,Ln:x.l}}};
-const evalC=(g,types,C,vm)=>{$('zr').value=g.zr;$('pmx').value=g.pmx;$('pmy').value=g.pmy;Object.keys(ZR).forEach(k=>delete ZR[k]);Object.keys(RES).forEach(k=>delete RES[k]);CURZ=null;
+let CRB=null;const splitCR=(src,N,M0,ts)=>{ts=+ts||0;const xr=src.filter(r=>r.dir!=='y'),yr=src.filter(r=>r.dir==='y');if(!xr.length||!(ts>0))return null;if(N*M0<2)return src.map(r=>({...r}));
+ const P=[...new Set(xr.map(r=>+(+r.pos||0).toFixed(6)))].sort((a,b)=>a-b),M=Math.min(M0,P.length),bs=Math.floor(P.length/M),ex=P.length%M,gOf=[];for(let g=0;g<M;g++){const c=bs+(g<ex?1:0);for(let q=0;q<c;q++)gOf.push(g)}
+ const out=[];xr.forEach(r=>{const g=gOf[P.indexOf(+(+r.pos||0).toFixed(6))],n=Math.max(1,Math.floor(r.n)||1),b=Math.floor(n/N),e=n%N;for(let k=0;k<N;k++){const st=k*b+Math.min(k,e),c=b+(k<e?1:0);if(c>0)out.push({n:c,off:(+r.off||0)+st*ts,pos:r.pos,zone:g*N+k+1,dir:'x',ns:r.ns,fq:r.fq})}});
+ const zl=[...new Set(out.map(r=>r.zone))].sort((a,b)=>a-b);out.forEach(r=>r.zone=zl.indexOf(r.zone)+1);out.sort((a,b)=>a.zone-b.zone);return out.concat(yr.map(r=>({...r})))};
+const evalC=(g,types,C,vm)=>{if(g.sp){const o=splitCR(CRB,g.sp.N,g.sp.M,$('td').value);if(!o)return null;CR.splice(0,CR.length,...o);cRender()}
+ $('zr').value=g.zr;$('pmx').value=g.pmx;$('pmy').value=g.pmy;Object.keys(ZR).forEach(k=>delete ZR[k]);Object.keys(RES).forEach(k=>delete RES[k]);CURZ=null;
  $('zn').value='1';drawDesign();const nz=$('zn').options.length;for(let z=1;z<=nz;z++){$('zn').value=String(z);drawDesign();sizeZone(types,C,vm)}
  $('zn').value='1';drawDesign();const Zs=ZTDH;if(!Zs.length||Zs.some(x=>x.tdz==null))return null;
- return{Q:$('wm').value==='a'?Zs.reduce((a,x)=>a+x.Qzz,0):Math.max(...Zs.map(x=>x.Qzz)),H:Math.max(...Zs.map(x=>x.tdz)),nz}};
+ const ok=Object.values(ZR).concat([RES]).every(R=>Object.keys(R).every(k=>k==='pond'||!R[k]||R[k].cls==='ok'));
+ return{ok,Q:$('wm').value==='a'?Zs.reduce((a,x)=>a+x.Qzz,0):Math.max(...Zs.map(x=>x.Qzz)),H:Math.max(...Zs.map(x=>x.tdz)),nz}};
 const parseC=s=>s.split(/[\n;]+/).map(l=>l.split(/[,\t ]+/).map(Number)).filter(a=>a.length>=3&&a.slice(0,3).every(isFinite)).map(a=>({q:a[0],h:a[1],e:a[2]})).sort((a,b)=>a.q-b.q);
 const itp=(c,q,f)=>{if(c.length<2||q<c[0].q||q>c[c.length-1].q)return null;let i=1;while(c[i].q<q)i++;const a=c[i-1],b=c[i],u=(q-a.q)/((b.q-a.q)||1);return a[f]+(b[f]-a[f])*u};
 const score=(r,c)=>{if(!c)return{P:r.Q*r.H/367};const e=itp(c,r.Q,'e'),h=itp(c,r.Q,'h');if(e==null||h<r.H||!(e>0))return null;return{P:r.Q*r.H/(367*e/100),e,h}};
@@ -1144,28 +1152,30 @@ const $o=id=>document.getElementById(id);let CAND=[];
 $o('optH').textContent=tx('Auto-optimize pump position, zones and pipe type','ปรับอัตโนมัติ: ตำแหน่งปั๊ม จำนวนโซน และชนิดท่อ');
 $o('optML').textContent=tx('Goal','เป้าหมาย');$o('optZL').textContent=tx('Max zones to try','จำนวนโซนสูงสุดที่ลอง');
 $o('optM').innerHTML=`<option value='1'>${tx('Option 1: lowest total head and pump power (Q x TDH)','ตัวเลือก 1: แรงดันรวมและกำลังปั๊มต่ำสุด (Q x TDH)')}</option><option value='2'>${tx('Option 2: best pump efficiency (pump curve table)','ตัวเลือก 2: ประสิทธิภาพปั๊มสูงสุด (ตารางกราฟปั๊ม)')}</option>`;
-$o('optV').innerHTML=[['vz',tx('Auto number of zones','จำนวนโซนอัตโนมัติ')],['vx',tx('Auto pump X','ปั๊ม X อัตโนมัติ')],['vy',tx('Auto pump Y','ปั๊ม Y อัตโนมัติ')],['vt',tx('Auto pipe type','ชนิดท่ออัตโนมัติ')]].map(a=>`<label style='display:flex;gap:6px;align-items:center'><input type='checkbox' id='${a[0]}' checked> ${a[1]}</label>`).join('');
+$o('optV').innerHTML=[['vz',tx('Auto number of zones','จำนวนโซนอัตโนมัติ')],['vx',tx('Auto pump X','ปั๊ม X อัตโนมัติ')],['vy',tx('Auto pump Y','ปั๊ม Y อัตโนมัติ')],['vt',tx('Auto pipe type','ชนิดท่ออัตโนมัติ')],['vk',tx('Only layouts with all pipe status OK','เฉพาะแบบที่สถานะท่อ OK ทั้งหมด')]].map(a=>`<label style='display:flex;gap:6px;align-items:center'><input type='checkbox' id='${a[0]}' checked> ${a[1]}</label>`).join('');
 $o('optCL').textContent=tx('Pump curve table: Q (m3/h), H (m), efficiency (%), one point per line, or load a CSV file','ตารางกราฟปั๊ม: Q (m3/h), H (m), ประสิทธิภาพ (%) หนึ่งจุดต่อบรรทัด หรือโหลดไฟล์ CSV');
 $o('bOpt').textContent=tx('Find the best layout','ค้นหาแบบที่ดีที่สุด');
 const sync=()=>{$o('optCW').style.display=$o('optM').value==='2'?'':'none'};$o('optM').onchange=sync;sync();
 $o('optF').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{$o('optC').value=String(r.result)};r.readAsText(f)};
+$o('pndL').textContent=tx('Pond side (pump X left/right)','ตำแหน่งบ่อน้ำ (ปั๊ม X ซ้าย/ขวา)');$o('pnd').innerHTML=`<option value='a'>${tx('Beside pump','ข้างปั๊ม')}</option><option value='u'>${tx('Above pump','เหนือปั๊ม')}</option><option value='d'>${tx('Below pump','ใต้ปั๊ม')}</option>`;$o('pnd').onchange=()=>drawDesign();
+$o('afitL').textContent=tx('Auto fittings: tees at lateral junctions, elbows at corners, reducers at size changes, end caps (counted in the BOM)','ข้อต่ออัตโนมัติ: สามทางที่จุดแยกท่อย่อย ข้องอที่มุม ข้อลดที่ขนาดท่อเปลี่ยน ปลายปิด (นับใน BOM)');$o('afit').onchange=()=>drawDesign();
 const wait=()=>new Promise(r=>setTimeout(r,0));
 $o('bOpt').onclick=async()=>{const m=$o('optMsg'),b=$o('bOpt'),C=+$('c').value||140,vm=+$('vm').value||1.5;VMIN=$('vl').value===''?1:Math.max(0,+$('vl').value||0);VMAX=vm;
  const cv=$o('optM').value==='2'?parseC($o('optC').value):null;if($o('optM').value==='2'&&(!cv||cv.length<2)){m.textContent=tx('Enter at least 2 pump curve points (Q, H, efficiency).','กรอกจุดกราฟปั๊มอย่างน้อย 2 จุด (Q, H, ประสิทธิภาพ)');return}
- const o0={zr:$('zr').value,pmx:$('pmx').value,pmy:$('pmy').value,zn:$('zn').value,pt:$('pt').value},sv=JSON.parse(JSON.stringify({RES,ZR})),nr=Math.max(1,Math.floor(+$('nr').value||1)),zmax=Math.min(nr,Math.max(1,Math.floor(+$o('optZ').value||1))),
+ const crSv=CR.map(r=>({...r})),cruSv=CRU,o0={zr:$('zr').value,pmx:$('pmx').value,pmy:$('pmy').value,zn:$('zn').value,pt:$('pt').value},sv=JSON.parse(JSON.stringify({RES,ZR})),nr=Math.max(1,Math.floor(+$('nr').value||1)),zmax=Math.min(nr,Math.max(1,Math.floor(+$o('optZ').value||1))),
  zs=$o('vz').checked?Array.from({length:zmax},(_,i)=>i+1):[+o0.zr||1],xs=$o('vx').checked?['s','r','m']:[o0.pmx],ys=$o('vy').checked?['s','t','m']:[o0.pmy],cu=$('lsrc').value==='c',
  base=[o0.pt].concat(['0','1','2','3','4'].filter(v=>v!==o0.pt)),all=['0','1','2','3','4'];b.disabled=true;CAND=[];
- try{let n=0;const tot=zs.length*xs.length*ys.length;
-  for(const zr of zs)for(const pmx of xs)for(const pmy of ys){m.textContent=tx('Searching ','กำลังค้นหา ')+(++n)+'/'+tot;await wait();const g=cu?{zr:o0.zr,pmx:o0.pmx,pmy:o0.pmy}:{zr,pmx,pmy};
-   const r=evalC(g,base,C,vm);if(!r)continue;const s=score(r,cv);if(s)CAND.push({g,types:base,r,s})}
+ try{let n=0;const spl=cu&&$o('vz').checked?(()=>{const a=[];for(let N=1;N<=zmax;N++)for(let M=1;N*M<=zmax;M++)a.push({N,M});return a})():[null],zs2=cu?[o0.zr]:zs,tot=spl.length*zs2.length*xs.length*ys.length;if(cu)CRB=(CRU||CR).map(r=>({...r}));
+  for(const sp of spl)for(const zr of zs2)for(const pmx of xs)for(const pmy of ys){m.textContent=tx('Searching ','กำลังค้นหา ')+(++n)+'/'+tot;await wait();const g={zr,pmx,pmy,sp};
+   const r=evalC(g,base,C,vm);if(!r||($o('vk').checked&&!r.ok))continue;const s=score(r,cv);if(s)CAND.push({g,types:base,r,s})}
   CAND.sort((a,b)=>a.s.P-b.s.P);
-  if($o('vt').checked){const top=CAND.slice(0,3),ex=[];for(const c of top)for(const p of all){m.textContent=tx('Pipe types for top layouts…','ลองชนิดท่อกับแบบที่ดีที่สุด…');await wait();const r=evalC(c.g,[p],C,vm);if(!r)continue;const s=score(r,cv);if(s)ex.push({g:c.g,types:[p],r,s})}CAND=CAND.concat(ex).sort((a,b)=>a.s.P-b.s.P)}
+  if($o('vt').checked){const top=CAND.slice(0,3),ex=[];for(const c of top)for(const p of all){m.textContent=tx('Pipe types for top layouts…','ลองชนิดท่อกับแบบที่ดีที่สุด…');await wait();const r=evalC(c.g,[p],C,vm);if(!r||($o('vk').checked&&!r.ok))continue;const s=score(r,cv);if(s)ex.push({g:c.g,types:[p],r,s})}CAND=CAND.concat(ex).sort((a,b)=>a.s.P-b.s.P)}
   const seen={};CAND=CAND.filter(c=>{const k=JSON.stringify([c.g,c.types]);return seen[k]?0:(seen[k]=1)}).slice(0,10);
-  $o('optT').innerHTML=CAND.length?`<thead><tr><th>#</th><th>${tx('Zones','โซน')}</th><th>X</th><th>Y</th><th>${tx('Pipe type','ชนิดท่อ')}</th><th>Q m3/h</th><th>TDH m</th><th>${cv?tx('Shaft kW','kW เพลา'):tx('Hydraulic kW','kW ไฮดรอลิก')}</th>${cv?'<th>Eff %</th>':''}<th></th></tr></thead><tbody>`+CAND.map((c,i)=>`<tr><td>${i+1}</td><td>${c.r.nz}</td><td>${t({s:'pmxA',r:'pmxR',m:'pmxB'}[c.g.pmx])}</td><td>${t({s:'pmyA',t:'pmyT',m:'pmyB'}[c.g.pmy])}</td><td>${nm(c.types[0])}</td><td>${pn(c.r.Q)}</td><td>${pn(c.r.H)}</td><td>${c.s.P.toFixed(2)}</td>${cv?`<td>${pn(c.s.e)}</td>`:''}<td><button class='lk' type='button' data-i='${i}'>${tx('Apply','ใช้แบบนี้')}</button></td></tr>`).join('')+'</tbody>':'';
+  $o('optT').innerHTML=CAND.length?`<thead><tr><th>#</th><th>${tx('Zones','โซน')}</th><th>X</th><th>Y</th><th>${tx('Pipe type','ชนิดท่อ')}</th><th>Q m3/h</th><th>TDH m</th><th>${cv?tx('Shaft kW','kW เพลา'):tx('Hydraulic kW','kW ไฮดรอลิก')}</th>${cv?'<th>Eff %</th>':''}<th></th></tr></thead><tbody>`+CAND.map((c,i)=>`<tr><td>${i+1}</td><td>${c.r.nz}${c.g.sp&&c.g.sp.N*c.g.sp.M>1?` (X${c.g.sp.N} × Y${c.g.sp.M})`:''}</td><td>${t({s:'pmxA',r:'pmxR',m:'pmxB'}[c.g.pmx])}</td><td>${t({s:'pmyA',t:'pmyT',m:'pmyB'}[c.g.pmy])}</td><td>${nm(c.types[0])}</td><td>${pn(c.r.Q)}</td><td>${pn(c.r.H)}</td><td>${c.s.P.toFixed(2)}</td>${cv?`<td>${pn(c.s.e)}</td>`:''}<td><button class='lk' type='button' data-i='${i}'>${tx('Apply','ใช้แบบนี้')}</button></td></tr>`).join('')+'</tbody>':'';
   m.textContent=CAND.length?tx('Done. Your original sizing and settings were restored. Click Apply to use a layout.','เสร็จแล้ว ระบบคืนค่าและขนาดท่อเดิมของคุณแล้ว กด ใช้แบบนี้ เพื่อใช้แบบที่เลือก'):tx('No valid layout found (check the pump curve range, or whether all pipe lines can be sized).','ไม่พบแบบที่ใช้ได้ (ตรวจช่วงกราฟปั๊ม หรือขนาดท่อ)')}
  catch(e){m.textContent=String(e&&e.message||e)}
- finally{['zr','pmx','pmy'].forEach(k=>$(k).value=o0[k]);Object.keys(ZR).forEach(k=>delete ZR[k]);Object.assign(ZR,sv.ZR);Object.keys(RES).forEach(k=>delete RES[k]);Object.assign(RES,sv.RES);drawDesign();$('zn').value=o0.zn;CURZ=+o0.zn-1;drawDesign();b.disabled=false}};
-$o('optT').onclick=e=>{const bt=e.target.closest('button[data-i]');if(!bt)return;const c=CAND[+bt.dataset.i];if(!c)return;const C=+$('c').value||140,vm=+$('vm').value||1.5;evalC(c.g,c.types,C,vm);if(c.types.length===1)$('pt').value=c.types[0];$('zn').value='1';drawDesign();$o('optMsg').textContent=tx('Applied: ','ใช้แล้ว: ')+c.r.nz+' '+tx('zones, TDH ','โซน, TDH ')+pn(c.r.H)+' m'}})();
+ finally{if(cu){CR.splice(0,CR.length,...crSv);CRU=cruSv;cTable();cRender()}['zr','pmx','pmy'].forEach(k=>$(k).value=o0[k]);Object.keys(ZR).forEach(k=>delete ZR[k]);Object.assign(ZR,sv.ZR);Object.keys(RES).forEach(k=>delete RES[k]);Object.assign(RES,sv.RES);drawDesign();$('zn').value=o0.zn;CURZ=+o0.zn-1;drawDesign();b.disabled=false}};
+$o('optT').onclick=e=>{const bt=e.target.closest('button[data-i]');if(!bt)return;const c=CAND[+bt.dataset.i];if(!c)return;const C=+$('c').value||140,vm=+$('vm').value||1.5;if(c.g.sp&&c.g.sp.N*c.g.sp.M>1){CRU=CRB.map(r=>({...r}));$('cUndo').style.display=''}evalC(c.g,c.types,C,vm);if(c.g.sp)cTable();if(c.types.length===1)$('pt').value=c.types[0];$('zn').value='1';drawDesign();$o('optMsg').textContent=tx('Applied: ','ใช้แล้ว: ')+c.r.nz+' '+tx('zones, TDH ','โซน, TDH ')+pn(c.r.H)+' m'}})();
 // ===== save / load / report =====
 const SAVE_IN=['prj','bcur','pmx','pmy','pxk','pyk','wm','lsrc','ax','ay','nr','nt','rd','td','lo','ns','fq','dfu','sp','pm','pp','zr','fd','bca','fit','lt','zg','hg','dzk','ez0','ez1','ez2','cp','cl','c','vl','vm'];
 const esc=x=>String(x==null?'':x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
