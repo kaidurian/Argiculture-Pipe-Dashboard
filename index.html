@@ -105,7 +105,7 @@ input[readonly]{opacity:.7}
 </dialog>
 <div id="rptP" class="rp"></div>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.53</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.54</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="tabs"><button id="tD" type="button" class="on" data-t="tabD"></button><button id="tC" type="button" data-t="tabC"></button><button id="tS" type="button" data-t="tabS"></button><span style="margin-left:auto;display:inline-flex;gap:6px;align-items:center"><span id="hSt" style="font-size:11px;color:var(--mut)"></span><button id="hU" type="button" title="Undo (Ctrl+Z)" style="padding:4px 10px">↶</button><button id="hR" type="button" title="Redo (Ctrl+Y)" style="padding:4px 10px">↷</button></span></div>
@@ -207,6 +207,12 @@ input[readonly]{opacity:.7}
     <div class="sc mh"><table id="lsT"></table></div>
     <button class="useb" id="bAuto" type="button" style="width:auto;padding:9px 18px" data-t="autoBtn"></button>
     <div class="note" id="autoMsg"></div>
+    <div class="grp" id="optBox"><h3 id="optH"></h3>
+      <div class="row"><label><span id="optML"></span><select id="optM"></select></label><label><span id="optZL"></span><input id="optZ" type="number" min="1" step="1" value="6"></label></div>
+      <div class="row" id="optV"></div>
+      <label id="optCW"><span id="optCL"></span><textarea id="optC" rows="4" style="width:100%" placeholder="Q (m3/h), H (m), Eff (%)&#10;10, 42, 55&#10;20, 38, 68&#10;30, 31, 71"></textarea><input id="optF" type="file" accept=".csv,.txt,text/plain"></label>
+      <button class="useb" id="bOpt" type="button" style="width:auto;padding:9px 18px"></button>
+      <div class="note" id="optMsg"></div><div class="sc mh"><table id="optT"></table></div></div>
     <div class="note" data-t="lsNote"></div>
   </div>
   <div class="card wide">
@@ -409,7 +415,7 @@ const lx0=W-m.r-300;
 g+=`<line x1='${lx0}' x2='${lx0+24}' y1='12' y2='12' stroke='var(--tx)'/><text x='${lx0+29}' y='15'>${en?'Size (inch)':'ขนาดท่อ (นิ้ว)'}</text><line x1='${lx0+130}' x2='${lx0+154}' y1='12' y2='12' stroke='${vc}' stroke-dasharray='5 3'/><text x='${lx0+159}' y='15'>${en?'Velocity (m/s)':'ความเร็ว (ม./วิ)'}</text>`;
 $('ch').innerHTML=g}
 const pn=x=>String(+Number(x).toPrecision(4));
-let ITM={},SCIMG=null;let QT=(()=>{try{const a=JSON.parse(localStorage.getItem('pipeQT')||'[]');return Array.isArray(a)?a:[]}catch(e){return[]}})(),QPICK={},QA='';let LHM=0,BP={},BX=[],BOMD=null,BR=[],RPTA=false,LINES=[],SEL=null,LAST=null,PUMP=null,TOTLEN=0;const isBad=(e,x)=>e&&(Math.abs(e.qh-x.q)>1e-6*Math.max(1,x.q)||Math.abs(e.Ln-x.l)>1e-6*Math.max(1,x.l));const RES={},ZR={};let CURZ=null;const PTN={'0':'PVC 5 (PN 6)','1':'PVC 7 (PN 8)','2':'PVC 8.5 (PN 10)','3':'PVC 10.5 (PN 12.5)','4':'PVC 13.5 (PN 16)'},ptName=v=>v==='n'?t('nom'):(PTN[v]||'');
+let ITM={},SCIMG=null;let QT=(()=>{try{const a=JSON.parse(localStorage.getItem('pipeQT')||'[]');return Array.isArray(a)?a:[]}catch(e){return[]}})(),QPICK={},QA='';let LHM=0,BP={},BX=[],BOMD=null,BR=[],RPTA=false,LINES=[],SEL=null,LAST=null,PUMP=null,TOTLEN=0,ZTDH=[];const isBad=(e,x)=>e&&(Math.abs(e.qh-x.q)>1e-6*Math.max(1,x.q)||Math.abs(e.Ln-x.l)>1e-6*Math.max(1,x.l));const RES={},ZR={};let CURZ=null;const PTN={'0':'PVC 5 (PN 6)','1':'PVC 7 (PN 8)','2':'PVC 8.5 (PN 10)','3':'PVC 10.5 (PN 12.5)','4':'PVC 13.5 (PN 16)'},ptName=v=>v==='n'?t('nom'):(PTN[v]||'');
 let ZNONE=false,VF={x:false,y:false,W:800,H:0};const toD=p=>({x:VF.x?VF.W-p.x:p.x,y:VF.y?VF.H-p.y:p.y});
 let ZVO={},ZVL=[],ZVP={},SCD=null,FOV={},FLP={},ACC=[],MPL=[],FLG=[],DCX=null,SNP=null,DRG=false;
 const isLat=k=>/^lat\d*$/.test(k);
@@ -496,7 +502,7 @@ function drawDesign(){
     {const zr_=[],okG=nr<=100&&nt<=100;let mq=-1,mh=-1,nOk=0;
      for(let z=0;z<Z;z++){const Qzz=SQ(zst(z),zst(z+1)),r_=okG?zhf(z,zLines(z),z===zi?RES:(ZR[z]||{})):{hf:null,st:false},tlz=r_.hf==null?null:r_.hf*(1+fp/100),tdz=tlz==null?null:stat+tlz+spH;
       zr_.push({z,a:zst(z)+1,b:zst(z+1),Qzz,tlz,tdz,st:r_.st});if(Qzz>mq)mq=Qzz;if(tlz!=null){nOk++;if(tlz>mh)mh=tlz}}
-     const same=(x,y)=>Math.abs(x-y)<=1e-9*Math.max(1,Math.abs(y)),isQ=x=>same(x.Qzz,mq),isH=x=>x.tlz!=null&&same(x.tlz,mh),
+     ZTDH=zr_;const same=(x,y)=>Math.abs(x-y)<=1e-9*Math.max(1,Math.abs(y)),isQ=x=>same(x.Qzz,mq),isH=x=>x.tlz!=null&&same(x.tlz,mh),
       cq=x=>'',ch=x=>'',nmz=x=>(en?'Zone ':'โซน ')+(x.z+1)+' ('+t('rowW')+' '+x.a+(x.b>x.a?'-'+x.b:'')+')',
       mxq=zr_.filter(isQ),mxh=zr_.filter(isH),QQ=WM==='a'?zr_.reduce((a,x)=>a+x.Qzz,0):mq;
      $('pzT').innerHTML=`<thead><tr><th style='text-align:left'>${t('pzZ')}</th><th>${t('pzQ')}</th><th>${t('pzL')}</th><th>${t('pzHL')}</th><th>${t('pzTdh')}</th></tr></thead><tbody>`+
@@ -1117,6 +1123,49 @@ $('bBack').onclick=async()=>{clearTimeout(tmr);try{await go()}catch(e){}const k=
 $('bUse').onclick=()=>{const g1=id=>+$(id).value||0,nr=Math.max(1,Math.floor(g1('nr'))),nt=Math.max(1,Math.floor(g1('nt'))),ns=Math.max(1,Math.floor(g1('ns'))),
  q=nr*nt*ns*g1('fq')*(+$('dfu').value||1),Lh=LHM||(nr-1)*g1('rd')+(nt-1)*g1('td');
  $('q').value=+q.toPrecision(6);$('u').selectedIndex=0;$('l').value=+Lh.toPrecision(6);showTab('c');run()};
+// ===== Auto-optimize pump position, zones, pipe type (local Hazen-Williams; tables copied from worker.js) =====
+(()=>{const OPV={0.5:[22,[0,1.5,2.0,2.3,2.6]],0.75:[26,[0,1.5,2.0,2.3,2.6]],1:[34,[0,1.5,2.0,2.4,3.0]],1.25:[42,[1.5,1.8,2.2,2.6,3.1]],1.5:[48,[1.5,1.9,2.3,2.8,3.5]],2:[60,[1.8,2.4,2.9,3.5,4.3]],2.5:[76,[2.2,2.9,3.5,4.4,5.4]],3:[89,[2.6,3.5,4.1,5.2,6.4]],4:[114,[3.2,4.3,5.2,6.5,8.1]],5:[140,[3.9,5.3,6.4,8.0,9.9]],6:[165,[4.6,6.2,7.5,9.4,11.7]],8:[216,[5.4,7.3,8.8,11.1,13.7]],10:[267,[6.7,8.9,10.9,13.6,16.9]],12:[318,[7.9,10.7,12.9,16.2,20.1]],14:[370,[9.2,12.5,15.0,18.9,23.4]],16:[420,[10.4,14.2,17.0,21.5,26.5]],18:[470,[11.6,15.9,19.0,24.0,29.7]],20:[520,[12.9,17.6,21.0,26.6,32.8]],24:[630,[15.5,21.2,25.4,32.0,39.7]]},OS=[0.5,0.75,1,1.25,1.5,2,2.5,3,4,5,6,8,10,12,14,16,18,20,24],OPS=Object.keys(OPV).map(Number).sort((a,b)=>a-b),OPM={};
+const oidm=(s,k)=>{if(k<0)return s*0.0254;if(!OPM[k])OPM[k]=OPS.map(x=>{const e=OPV[x][1][k];return e?[x,(OPV[x][0]-2*e)/(x*25.4)]:null}).filter(Boolean);const p=OPM[k];let r;if(s<=p[0][0])r=p[0][1];else if(s>=p[p.length-1][0])r=p[p.length-1][1];else{let i=1;while(p[i][0]<s)i++;const a=p[i-1],b=p[i],f=Math.log(s/a[0])/Math.log(b[0]/a[0]);r=a[1]+(b[1]-a[1])*f}return s*0.0254*r};
+const K=p=>p==='n'?-1:+p,orows=(qh,C,k)=>OS.map(x=>{const Q=qh/3600,d=oidm(x,k);return[x,d*1000,Q/(Math.PI*d*d/4),10.67*Math.pow(Q,1.852)/(Math.pow(C,1.852)*Math.pow(d,4.87))*100]});
+const tx=(e,th)=>T2(e,th),pick=(rw,vm)=>rw.find(q=>st(q[2])[0]==='ok')||rw.find(q=>q[2]<=vm)||rw[rw.length-1];
+const sizeZone=(types,C,vm)=>{for(const x of LINES.slice().sort((a,b)=>(a.k==='pond')-(b.k==='pond'))){if(!(x.q>0))continue;let p=types[0],r=null;
+ if(x.k==='pond'&&RES.pump){p=RES.pump.pt;const rw=orows(x.q,C,K(p)),ix=rw.findIndex(q=>q[0]==RES.pump.ds);r=rw[ix>=0?Math.min(ix+1,rw.length-1):rw.length-1]}
+ else{for(const q of types){const o=orows(x.q,C,K(q)).find(a=>st(a[2])[0]==='ok');if(o){p=q;r=o;break}}if(!r)r=pick(orows(x.q,C,K(types[0])),vm)}
+ RES[x.k]={pt:p,ds:r[0],v:r[2],hf:r[3],tot:r[3]*x.l/100,cls:st(r[2])[0],qh:x.q,Ln:x.l}}};
+const evalC=(g,types,C,vm)=>{$('zr').value=g.zr;$('pmx').value=g.pmx;$('pmy').value=g.pmy;Object.keys(ZR).forEach(k=>delete ZR[k]);Object.keys(RES).forEach(k=>delete RES[k]);CURZ=null;
+ $('zn').value='1';drawDesign();const nz=$('zn').options.length;for(let z=1;z<=nz;z++){$('zn').value=String(z);drawDesign();sizeZone(types,C,vm)}
+ $('zn').value='1';drawDesign();const Zs=ZTDH;if(!Zs.length||Zs.some(x=>x.tdz==null))return null;
+ return{Q:$('wm').value==='a'?Zs.reduce((a,x)=>a+x.Qzz,0):Math.max(...Zs.map(x=>x.Qzz)),H:Math.max(...Zs.map(x=>x.tdz)),nz}};
+const parseC=s=>s.split(/[\n;]+/).map(l=>l.split(/[,\t ]+/).map(Number)).filter(a=>a.length>=3&&a.slice(0,3).every(isFinite)).map(a=>({q:a[0],h:a[1],e:a[2]})).sort((a,b)=>a.q-b.q);
+const itp=(c,q,f)=>{if(c.length<2||q<c[0].q||q>c[c.length-1].q)return null;let i=1;while(c[i].q<q)i++;const a=c[i-1],b=c[i],u=(q-a.q)/((b.q-a.q)||1);return a[f]+(b[f]-a[f])*u};
+const score=(r,c)=>{if(!c)return{P:r.Q*r.H/367};const e=itp(c,r.Q,'e'),h=itp(c,r.Q,'h');if(e==null||h<r.H||!(e>0))return null;return{P:r.Q*r.H/(367*e/100),e,h}};
+const PN={'n':'Nominal','0':'PVC 5','1':'PVC 7','2':'PVC 8.5','3':'PVC 10.5','4':'PVC 13.5'},nm=v=>PN[v]||v;
+const $o=id=>document.getElementById(id);let CAND=[];
+$o('optH').textContent=tx('Auto-optimize pump position, zones and pipe type','ปรับอัตโนมัติ: ตำแหน่งปั๊ม จำนวนโซน และชนิดท่อ');
+$o('optML').textContent=tx('Goal','เป้าหมาย');$o('optZL').textContent=tx('Max zones to try','จำนวนโซนสูงสุดที่ลอง');
+$o('optM').innerHTML=`<option value='1'>${tx('Option 1: lowest total head and pump power (Q x TDH)','ตัวเลือก 1: แรงดันรวมและกำลังปั๊มต่ำสุด (Q x TDH)')}</option><option value='2'>${tx('Option 2: best pump efficiency (pump curve table)','ตัวเลือก 2: ประสิทธิภาพปั๊มสูงสุด (ตารางกราฟปั๊ม)')}</option>`;
+$o('optV').innerHTML=[['vz',tx('Auto number of zones','จำนวนโซนอัตโนมัติ')],['vx',tx('Auto pump X','ปั๊ม X อัตโนมัติ')],['vy',tx('Auto pump Y','ปั๊ม Y อัตโนมัติ')],['vt',tx('Auto pipe type','ชนิดท่ออัตโนมัติ')]].map(a=>`<label style='display:flex;gap:6px;align-items:center'><input type='checkbox' id='${a[0]}' checked> ${a[1]}</label>`).join('');
+$o('optCL').textContent=tx('Pump curve table: Q (m3/h), H (m), efficiency (%), one point per line, or load a CSV file','ตารางกราฟปั๊ม: Q (m3/h), H (m), ประสิทธิภาพ (%) หนึ่งจุดต่อบรรทัด หรือโหลดไฟล์ CSV');
+$o('bOpt').textContent=tx('Find the best layout','ค้นหาแบบที่ดีที่สุด');
+const sync=()=>{$o('optCW').style.display=$o('optM').value==='2'?'':'none'};$o('optM').onchange=sync;sync();
+$o('optF').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{$o('optC').value=String(r.result)};r.readAsText(f)};
+const wait=()=>new Promise(r=>setTimeout(r,0));
+$o('bOpt').onclick=async()=>{const m=$o('optMsg'),b=$o('bOpt'),C=+$('c').value||140,vm=+$('vm').value||1.5;VMIN=$('vl').value===''?1:Math.max(0,+$('vl').value||0);VMAX=vm;
+ const cv=$o('optM').value==='2'?parseC($o('optC').value):null;if($o('optM').value==='2'&&(!cv||cv.length<2)){m.textContent=tx('Enter at least 2 pump curve points (Q, H, efficiency).','กรอกจุดกราฟปั๊มอย่างน้อย 2 จุด (Q, H, ประสิทธิภาพ)');return}
+ const o0={zr:$('zr').value,pmx:$('pmx').value,pmy:$('pmy').value,zn:$('zn').value,pt:$('pt').value},sv=JSON.parse(JSON.stringify({RES,ZR})),nr=Math.max(1,Math.floor(+$('nr').value||1)),zmax=Math.min(nr,Math.max(1,Math.floor(+$o('optZ').value||1))),
+ zs=$o('vz').checked?Array.from({length:zmax},(_,i)=>i+1):[+o0.zr||1],xs=$o('vx').checked?['s','r','m']:[o0.pmx],ys=$o('vy').checked?['s','t','m']:[o0.pmy],cu=$('lsrc').value==='c',
+ base=[o0.pt].concat(['0','1','2','3','4'].filter(v=>v!==o0.pt)),all=['0','1','2','3','4'];b.disabled=true;CAND=[];
+ try{let n=0;const tot=zs.length*xs.length*ys.length;
+  for(const zr of zs)for(const pmx of xs)for(const pmy of ys){m.textContent=tx('Searching ','กำลังค้นหา ')+(++n)+'/'+tot;await wait();const g=cu?{zr:o0.zr,pmx:o0.pmx,pmy:o0.pmy}:{zr,pmx,pmy};
+   const r=evalC(g,base,C,vm);if(!r)continue;const s=score(r,cv);if(s)CAND.push({g,types:base,r,s})}
+  CAND.sort((a,b)=>a.s.P-b.s.P);
+  if($o('vt').checked){const top=CAND.slice(0,3),ex=[];for(const c of top)for(const p of all){m.textContent=tx('Pipe types for top layouts…','ลองชนิดท่อกับแบบที่ดีที่สุด…');await wait();const r=evalC(c.g,[p],C,vm);if(!r)continue;const s=score(r,cv);if(s)ex.push({g:c.g,types:[p],r,s})}CAND=CAND.concat(ex).sort((a,b)=>a.s.P-b.s.P)}
+  const seen={};CAND=CAND.filter(c=>{const k=JSON.stringify([c.g,c.types]);return seen[k]?0:(seen[k]=1)}).slice(0,10);
+  $o('optT').innerHTML=CAND.length?`<thead><tr><th>#</th><th>${tx('Zones','โซน')}</th><th>X</th><th>Y</th><th>${tx('Pipe type','ชนิดท่อ')}</th><th>Q m3/h</th><th>TDH m</th><th>${cv?tx('Shaft kW','kW เพลา'):tx('Hydraulic kW','kW ไฮดรอลิก')}</th>${cv?'<th>Eff %</th>':''}<th></th></tr></thead><tbody>`+CAND.map((c,i)=>`<tr><td>${i+1}</td><td>${c.r.nz}</td><td>${t({s:'pmxA',r:'pmxR',m:'pmxB'}[c.g.pmx])}</td><td>${t({s:'pmyA',t:'pmyT',m:'pmyB'}[c.g.pmy])}</td><td>${nm(c.types[0])}</td><td>${pn(c.r.Q)}</td><td>${pn(c.r.H)}</td><td>${c.s.P.toFixed(2)}</td>${cv?`<td>${pn(c.s.e)}</td>`:''}<td><button class='lk' type='button' data-i='${i}'>${tx('Apply','ใช้แบบนี้')}</button></td></tr>`).join('')+'</tbody>':'';
+  m.textContent=CAND.length?tx('Done. Your original sizing and settings were restored. Click Apply to use a layout.','เสร็จแล้ว ระบบคืนค่าและขนาดท่อเดิมของคุณแล้ว กด ใช้แบบนี้ เพื่อใช้แบบที่เลือก'):tx('No valid layout found (check the pump curve range, or whether all pipe lines can be sized).','ไม่พบแบบที่ใช้ได้ (ตรวจช่วงกราฟปั๊ม หรือขนาดท่อ)')}
+ catch(e){m.textContent=String(e&&e.message||e)}
+ finally{['zr','pmx','pmy'].forEach(k=>$(k).value=o0[k]);Object.keys(ZR).forEach(k=>delete ZR[k]);Object.assign(ZR,sv.ZR);Object.keys(RES).forEach(k=>delete RES[k]);Object.assign(RES,sv.RES);drawDesign();$('zn').value=o0.zn;CURZ=+o0.zn-1;drawDesign();b.disabled=false}};
+$o('optT').onclick=e=>{const bt=e.target.closest('button[data-i]');if(!bt)return;const c=CAND[+bt.dataset.i];if(!c)return;const C=+$('c').value||140,vm=+$('vm').value||1.5;evalC(c.g,c.types,C,vm);if(c.types.length===1)$('pt').value=c.types[0];$('zn').value='1';drawDesign();$o('optMsg').textContent=tx('Applied: ','ใช้แล้ว: ')+c.r.nz+' '+tx('zones, TDH ','โซน, TDH ')+pn(c.r.H)+' m'}})();
 // ===== save / load / report =====
 const SAVE_IN=['prj','bcur','pmx','pmy','pxk','pyk','wm','lsrc','ax','ay','nr','nt','rd','td','lo','ns','fq','dfu','sp','pm','pp','zr','fd','bca','fit','lt','zg','hg','dzk','ez0','ez1','ez2','cp','cl','c','vl','vm'];
 const esc=x=>String(x==null?'':x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
