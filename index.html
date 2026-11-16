@@ -76,6 +76,25 @@ input[readonly]{opacity:.7}
 .useb{width:100%;margin-top:12px;padding:9px;border:0;border-radius:8px;background:var(--ac);color:#fff;font:inherit;font-weight:600;cursor:pointer}
 .grp{border:1px solid var(--bd);border-radius:8px;padding:10px 10px 2px;margin-bottom:10px}.grp:last-child{margin-bottom:0}.grp>h3{margin:0 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ac)}
 #pzT{min-width:420px}#pzT td.mx{background:rgba(245,158,11,.28);font-weight:700}
+
+/* checkbox + label spacing (input{width:100%} made checkboxes stretch) */
+input[type=checkbox]{width:auto;flex:none;margin:0 6px 0 0;padding:0;vertical-align:middle}
+#optV.row{display:flex;flex-wrap:wrap;gap:0 18px}
+#optV label,#pgScale label{display:inline-flex;align-items:center;gap:6px;margin:0 12px 6px 0}
+#scImC:not(.hide){display:inline-flex;flex-wrap:wrap;align-items:center;gap:2px 10px}
+#scImC label{margin:0 0 4px}
+/* Find the best layout: in-progress highlight */
+#bOpt.busy{background:#f59e0b!important;cursor:wait;animation:optpulse 1s ease-in-out infinite}
+#bOpt.busy::before{content:"";display:inline-block;width:12px;height:12px;margin-right:8px;vertical-align:-2px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:optspin .7s linear infinite}
+#optMsg.busy{color:#92400e;background:#fef3c7;border-left:4px solid #f59e0b;padding:5px 8px;border-radius:4px;font-weight:700}
+#optPg{height:6px;background:var(--bd);border-radius:4px;overflow:hidden;margin:6px 0}
+#optPg i{display:block;height:100%;width:0;background:#f59e0b;transition:width .15s}
+@keyframes optpulse{50%{opacity:.65}}@keyframes optspin{to{transform:rotate(360deg)}}
+/* How-to help box */
+#optHelp{margin:0 0 10px;font-size:12px;color:var(--mut)}
+#optHelp summary{cursor:pointer;font-weight:700;color:var(--ac)}
+#optHelp h4{margin:10px 0 3px;font-size:12px;color:var(--tx)}
+#optHelp ol,#optHelp ul{margin:0;padding-left:20px}#optHelp li{margin:2px 0}
 </style>
 </head>
 <body>
@@ -105,7 +124,7 @@ input[readonly]{opacity:.7}
 </dialog>
 <div id="rptP" class="rp"></div>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.55</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.55.1</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="tabs"><button id="tD" type="button" class="on" data-t="tabD"></button><button id="tC" type="button" data-t="tabC"></button><button id="tS" type="button" data-t="tabS"></button><span style="margin-left:auto;display:inline-flex;gap:6px;align-items:center"><span id="hSt" style="font-size:11px;color:var(--mut)"></span><button id="hU" type="button" title="Undo (Ctrl+Z)" style="padding:4px 10px">↶</button><button id="hR" type="button" title="Redo (Ctrl+Y)" style="padding:4px 10px">↷</button></span></div>
@@ -209,11 +228,12 @@ input[readonly]{opacity:.7}
     <button class="useb" id="bAuto" type="button" style="width:auto;padding:9px 18px" data-t="autoBtn"></button>
     <div class="note" id="autoMsg"></div>
     <div class="grp" id="optBox"><h3 id="optH"></h3>
+      <details id="optHelp"></details>
       <div class="row"><label><span id="optML"></span><select id="optM"></select></label><label><span id="optZL"></span><input id="optZ" type="number" min="1" step="1" value="6"></label></div>
       <div class="row" id="optV"></div>
       <label id="optCW"><span id="optCL"></span><textarea id="optC" rows="4" style="width:100%" placeholder="Q (m3/h), H (m), Eff (%)&#10;10, 42, 55&#10;20, 38, 68&#10;30, 31, 71"></textarea><input id="optF" type="file" accept=".csv,.txt,text/plain"></label>
       <button class="useb" id="bOpt" type="button" style="width:auto;padding:9px 18px"></button>
-      <div class="note" id="optMsg"></div><div class="sc mh"><table id="optT"></table></div></div>
+      <div id="optPg" class="hide"><i></i></div><div class="note" id="optMsg"></div><div class="sc mh"><table id="optT"></table></div></div>
     <div class="note" data-t="lsNote"></div>
   </div>
   <div class="card wide">
@@ -1159,14 +1179,31 @@ const sync=()=>{$o('optCW').style.display=$o('optM').value==='2'?'':'none'};$o('
 $o('optF').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{$o('optC').value=String(r.result)};r.readAsText(f)};
 $o('pndL').textContent=tx('Pond side (pump X left/right)','ตำแหน่งบ่อน้ำ (ปั๊ม X ซ้าย/ขวา)');$o('pnd').innerHTML=`<option value='a'>${tx('Beside pump','ข้างปั๊ม')}</option><option value='u'>${tx('Above pump','เหนือปั๊ม')}</option><option value='d'>${tx('Below pump','ใต้ปั๊ม')}</option>`;$o('pnd').onchange=()=>drawDesign();
 $o('afitL').textContent=tx('Auto fittings: tees at lateral junctions, elbows at corners, reducers at size changes, end caps (counted in the BOM)','ข้อต่ออัตโนมัติ: สามทางที่จุดแยกท่อย่อย ข้องอที่มุม ข้อลดที่ขนาดท่อเปลี่ยน ปลายปิด (นับใน BOM)');$o('afit').onchange=()=>drawDesign();
+
+const optHelp=()=>{const H=(a,b)=>'<h4>'+tx(a,b)+'</h4>',L=(t,a)=>'<'+t+'>'+a.map(x=>'<li>'+tx(x[0],x[1])+'</li>').join('')+'</'+t+'>';
+ $o('optHelp').innerHTML='<summary>'+tx('How to','วิธีใช้')+'</summary>'
+ +H('How to','วิธีใช้')+'<div>'+tx('Tries many pump positions, zone counts and pipe types on your current design, flow and C value, and ranks them by lowest pump power (or best pump efficiency).','ลองหลายตำแหน่งปั๊ม จำนวนโซน และชนิดท่อ กับแบบ อัตราไหล และค่า C ปัจจุบันของคุณ แล้วจัดอันดับตามกำลังปั๊มต่ำสุด (หรือประสิทธิภาพปั๊มสูงสุด)')+'</div>'
+ +H('How to run it','วิธีใช้งาน')+L('ol',[
+  ['Choose a Goal. Option 2 needs a pump curve: one Q, H, efficiency point per line (at least 2) or load a CSV.','เลือกเป้าหมาย ตัวเลือก 2 ต้องมีกราฟปั๊ม: Q, H, ประสิทธิภาพ หนึ่งจุดต่อบรรทัด (อย่างน้อย 2 จุด) หรือโหลดไฟล์ CSV'],
+  ['Set Max zones to try.','ตั้งจำนวนโซนสูงสุดที่ลอง'],
+  ['Tick what may change: zones, pump X, pump Y, pipe type. Tick the last box to keep only layouts with all pipe status OK.','ติ๊กสิ่งที่ให้เปลี่ยนได้: โซน ปั๊ม X ปั๊ม Y ชนิดท่อ และติ๊กช่องสุดท้ายเพื่อเอาเฉพาะแบบที่สถานะท่อ OK ทั้งหมด'],
+  ['Click Find the best layout and wait until the button stops flashing.','กด ค้นหาแบบที่ดีที่สุด แล้วรอจนปุ่มหยุดกะพริบ'],
+  ['Read the table below (up to 10 layouts, best first). Your own settings are restored after the search.','ดูตารางด้านล่าง (สูงสุด 10 แบบ ดีที่สุดอยู่บน) ระบบคืนค่าเดิมของคุณหลังค้นหา'],
+  ['Click Apply on the row you want. Only then does your design change.','กด ใช้แบบนี้ ที่แถวที่ต้องการ แบบของคุณจะเปลี่ยนเมื่อกดปุ่มนี้เท่านั้น']])
+ +H('If you see no table','ถ้าไม่เห็นตาราง')+L('ul',[
+  ['"No valid layout found": untick "Only layouts with all pipe status OK", or raise Max zones.','"ไม่พบแบบที่ใช้ได้": เอาติ๊ก "เฉพาะแบบที่สถานะท่อ OK ทั้งหมด" ออก หรือเพิ่มจำนวนโซนสูงสุด'],
+  ['Option 2: make sure the pump curve has at least 2 points and covers your flow and head.','ตัวเลือก 2: ตรวจว่ากราฟปั๊มมีอย่างน้อย 2 จุด และครอบคลุมอัตราไหลและแรงดันของคุณ'],
+  ['Custom rows: splitting into zones needs rows in the X direction and a tree spacing value.','แถวแบบกำหนดเอง: การแบ่งโซนต้องมีแถวทิศทาง X และกรอกระยะห่างต้นไม้'],
+  ['The table is under the button, not on the drawing. Scroll down in Pipe line summary.','ตารางอยู่ใต้ปุ่ม ไม่ได้อยู่บนแบบ ให้เลื่อนลงในส่วนสรุปท่อแต่ละเส้น']])};
+optHelp();[$('bEn'),$('bTh')].forEach(x=>x.addEventListener('click',()=>setTimeout(optHelp,0)));
 const wait=()=>new Promise(r=>setTimeout(r,0));
 $o('bOpt').onclick=async()=>{const m=$o('optMsg'),b=$o('bOpt'),C=+$('c').value||140,vm=+$('vm').value||1.5;VMIN=$('vl').value===''?1:Math.max(0,+$('vl').value||0);VMAX=vm;
  const cv=$o('optM').value==='2'?parseC($o('optC').value):null;if($o('optM').value==='2'&&(!cv||cv.length<2)){m.textContent=tx('Enter at least 2 pump curve points (Q, H, efficiency).','กรอกจุดกราฟปั๊มอย่างน้อย 2 จุด (Q, H, ประสิทธิภาพ)');return}
  const crSv=CR.map(r=>({...r})),cruSv=CRU,o0={zr:$('zr').value,pmx:$('pmx').value,pmy:$('pmy').value,zn:$('zn').value,pt:$('pt').value},sv=JSON.parse(JSON.stringify({RES,ZR})),nr=Math.max(1,Math.floor(+$('nr').value||1)),zmax=Math.min(nr,Math.max(1,Math.floor(+$o('optZ').value||1))),
  zs=$o('vz').checked?Array.from({length:zmax},(_,i)=>i+1):[+o0.zr||1],xs=$o('vx').checked?['s','r','m']:[o0.pmx],ys=$o('vy').checked?['s','t','m']:[o0.pmy],cu=$('lsrc').value==='c',
- base=[o0.pt].concat(['0','1','2','3','4'].filter(v=>v!==o0.pt)),all=['0','1','2','3','4'];b.disabled=true;CAND=[];
+ base=[o0.pt].concat(['0','1','2','3','4'].filter(v=>v!==o0.pt)),all=['0','1','2','3','4'];b.disabled=true;b.classList.add('busy');b.textContent=tx('Searching…','กำลังค้นหา…');m.classList.add('busy');$o('optPg').classList.remove('hide');$o('optPg').firstChild.style.width='0';CAND=[];
  try{let n=0;const spl=cu&&$o('vz').checked?(()=>{const a=[];for(let N=1;N<=zmax;N++)for(let M=1;N*M<=zmax;M++)a.push({N,M});return a})():[null],zs2=cu?[o0.zr]:zs,tot=spl.length*zs2.length*xs.length*ys.length;if(cu)CRB=(CRU||CR).map(r=>({...r}));
-  for(const sp of spl)for(const zr of zs2)for(const pmx of xs)for(const pmy of ys){m.textContent=tx('Searching ','กำลังค้นหา ')+(++n)+'/'+tot;await wait();const g={zr,pmx,pmy,sp};
+  for(const sp of spl)for(const zr of zs2)for(const pmx of xs)for(const pmy of ys){m.textContent=tx('Searching ','กำลังค้นหา ')+(++n)+'/'+tot;$o('optPg').firstChild.style.width=Math.round(100*n/tot)+'%';await wait();const g={zr,pmx,pmy,sp};
    const r=evalC(g,base,C,vm);if(!r||($o('vk').checked&&!r.ok))continue;const s=score(r,cv);if(s)CAND.push({g,types:base,r,s})}
   CAND.sort((a,b)=>a.s.P-b.s.P);
   if($o('vt').checked){const top=CAND.slice(0,3),ex=[];for(const c of top)for(const p of all){m.textContent=tx('Pipe types for top layouts…','ลองชนิดท่อกับแบบที่ดีที่สุด…');await wait();const r=evalC(c.g,[p],C,vm);if(!r||($o('vk').checked&&!r.ok))continue;const s=score(r,cv);if(s)ex.push({g:c.g,types:[p],r,s})}CAND=CAND.concat(ex).sort((a,b)=>a.s.P-b.s.P)}
@@ -1174,7 +1211,7 @@ $o('bOpt').onclick=async()=>{const m=$o('optMsg'),b=$o('bOpt'),C=+$('c').value||
   $o('optT').innerHTML=CAND.length?`<thead><tr><th>#</th><th>${tx('Zones','โซน')}</th><th>X</th><th>Y</th><th>${tx('Pipe type','ชนิดท่อ')}</th><th>Q m3/h</th><th>TDH m</th><th>${cv?tx('Shaft kW','kW เพลา'):tx('Hydraulic kW','kW ไฮดรอลิก')}</th>${cv?'<th>Eff %</th>':''}<th></th></tr></thead><tbody>`+CAND.map((c,i)=>`<tr><td>${i+1}</td><td>${c.r.nz}${c.g.sp&&c.g.sp.N*c.g.sp.M>1?` (X${c.g.sp.N} × Y${c.g.sp.M})`:''}</td><td>${t({s:'pmxA',r:'pmxR',m:'pmxB'}[c.g.pmx])}</td><td>${t({s:'pmyA',t:'pmyT',m:'pmyB'}[c.g.pmy])}</td><td>${nm(c.types[0])}</td><td>${pn(c.r.Q)}</td><td>${pn(c.r.H)}</td><td>${c.s.P.toFixed(2)}</td>${cv?`<td>${pn(c.s.e)}</td>`:''}<td><button class='lk' type='button' data-i='${i}'>${tx('Apply','ใช้แบบนี้')}</button></td></tr>`).join('')+'</tbody>':'';
   m.textContent=CAND.length?tx('Done. Your original sizing and settings were restored. Click Apply to use a layout.','เสร็จแล้ว ระบบคืนค่าและขนาดท่อเดิมของคุณแล้ว กด ใช้แบบนี้ เพื่อใช้แบบที่เลือก'):tx('No valid layout found (check the pump curve range, or whether all pipe lines can be sized).','ไม่พบแบบที่ใช้ได้ (ตรวจช่วงกราฟปั๊ม หรือขนาดท่อ)')}
  catch(e){m.textContent=String(e&&e.message||e)}
- finally{if(cu){CR.splice(0,CR.length,...crSv);CRU=cruSv;cTable();cRender()}['zr','pmx','pmy'].forEach(k=>$(k).value=o0[k]);Object.keys(ZR).forEach(k=>delete ZR[k]);Object.assign(ZR,sv.ZR);Object.keys(RES).forEach(k=>delete RES[k]);Object.assign(RES,sv.RES);drawDesign();$('zn').value=o0.zn;CURZ=+o0.zn-1;drawDesign();b.disabled=false}};
+ finally{if(cu){CR.splice(0,CR.length,...crSv);CRU=cruSv;cTable();cRender()}['zr','pmx','pmy'].forEach(k=>$(k).value=o0[k]);Object.keys(ZR).forEach(k=>delete ZR[k]);Object.assign(ZR,sv.ZR);Object.keys(RES).forEach(k=>delete RES[k]);Object.assign(RES,sv.RES);drawDesign();$('zn').value=o0.zn;CURZ=+o0.zn-1;drawDesign();b.disabled=false;b.classList.remove('busy');b.textContent=tx('Find the best layout','ค้นหาแบบที่ดีที่สุด');m.classList.remove('busy');$o('optPg').classList.add('hide')}};
 $o('optT').onclick=e=>{const bt=e.target.closest('button[data-i]');if(!bt)return;const c=CAND[+bt.dataset.i];if(!c)return;const C=+$('c').value||140,vm=+$('vm').value||1.5;if(c.g.sp&&c.g.sp.N*c.g.sp.M>1){CRU=CRB.map(r=>({...r}));$('cUndo').style.display=''}evalC(c.g,c.types,C,vm);if(c.g.sp)cTable();if(c.types.length===1)$('pt').value=c.types[0];$('zn').value='1';drawDesign();$o('optMsg').textContent=tx('Applied: ','ใช้แล้ว: ')+c.r.nz+' '+tx('zones, TDH ','โซน, TDH ')+pn(c.r.H)+' m'}})();
 // ===== save / load / report =====
 const SAVE_IN=['prj','bcur','pmx','pmy','pxk','pyk','wm','lsrc','ax','ay','nr','nt','rd','td','lo','ns','fq','dfu','sp','pm','pp','zr','fd','bca','fit','lt','zg','hg','dzk','ez0','ez1','ez2','cp','cl','c','vl','vm'];
