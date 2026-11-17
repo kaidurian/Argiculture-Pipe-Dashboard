@@ -124,7 +124,7 @@ input[type=checkbox]{width:auto;flex:none;margin:0 6px 0 0;padding:0;vertical-al
 </dialog>
 <div id="rptP" class="rp"></div>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.57</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.58</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="tabs"><button id="tD" type="button" class="on" data-t="tabD"></button><button id="tC" type="button" data-t="tabC"></button><button id="tS" type="button" data-t="tabS"></button><span style="margin-left:auto;display:inline-flex;gap:6px;align-items:center"><span id="hSt" style="font-size:11px;color:var(--mut)"></span><button id="hU" type="button" title="Undo (Ctrl+Z)" style="padding:4px 10px">↶</button><button id="hR" type="button" title="Redo (Ctrl+Y)" style="padding:4px 10px">↷</button></span></div>
@@ -227,6 +227,10 @@ input[type=checkbox]{width:auto;flex:none;margin:0 6px 0 0;padding:0;vertical-al
     <div class="sc mh"><table id="lsT"></table></div>
     <button class="useb" id="bAuto" type="button" style="width:auto;padding:9px 18px" data-t="autoBtn"></button>
     <div class="note" id="autoMsg"></div>
+    <div class="grp" id="cuBox"><h3 id="cuH"></h3>
+      <label style="display:flex;gap:6px;align-items:center;font-weight:600;color:var(--tx)"><input type="checkbox" id="cuOn"><span id="cuOnL"></span></label>
+      <div class="note" id="cuNote"></div>
+      <div id="cuPanel" class="hide"></div></div>
     <div class="grp" id="optBox"><h3 id="optH"></h3>
       <details id="optHelp"></details>
       <div class="row"><label><span id="optML"></span><select id="optM"></select></label><label><span id="optZL"></span><input id="optZ" type="number" min="1" step="1" value="6"></label></div>
@@ -441,6 +445,13 @@ let ITM={},SCIMG=null;let QT=(()=>{try{const a=JSON.parse(localStorage.getItem('
 let ZNONE=false,VF={x:false,y:false,W:800,H:0};const toD=p=>({x:VF.x?VF.W-p.x:p.x,y:VF.y?VF.H-p.y:p.y});
 let ZVO={},ZVL=[],ZVP={},SCD=null,FOV={},FLP={},ACC=[],MPL=[],FLG=[],DCX=null,SNP=null,DRG=false;
 const isLat=k=>/^lat\d*$/.test(k);
+// custom line mode: one pipe for the main line (all zones), one for the sub main (all rows), one per row for the lateral
+let CUS={on:false,main:{pt:'',ds:''},sub:{pt:'',ds:''},all:{pt:'',ds:''},lat:{}},ROWZ=[];
+const rowLab=j=>{let s='',n=j;do{s=String.fromCharCode(65+n%26)+s;n=Math.floor(n/26)-1}while(n>=0);return s};
+const loadCus=c=>{const ok=x=>x&&typeof x==='object',pt=v=>['n','0','1','2','3','4'].includes(String(v))?String(v):'',ds=v=>S.includes(+v)?String(+v):'',one=x=>ok(x)?{pt:pt(x.pt),ds:ds(x.ds)}:{pt:'',ds:''};
+ CUS.on=!!(ok(c)&&c.on);CUS.main=one(c&&c.main);CUS.sub=one(c&&c.sub);CUS.all=one(c&&c.all);CUS.lat={};
+ if(ok(c)&&ok(c.lat))Object.keys(c.lat).slice(0,300).forEach(k=>{if(/^\d{1,3}$/.test(k)){const o=one(c.lat[k]);if(o.pt||o.ds)CUS.lat[+k]=o}});
+ if(window.CUSR)window.CUSR()};
 function drawDesign(){
  const CM=$('lsrc').value==='c'&&CR.length>0,CRs=CM?CR.map(r=>r.dir==='y'?Object.assign({},r,{pos:Math.abs(+r.pos||0),rp:+r.pos||0}):r).sort((a,b)=>(a.zone-b.zone)||((a.dir==='y')-(b.dir==='y'))||a.pos-b.pos):[];
  const en=L=='en',g1=id=>+$(id).value||0,
@@ -484,7 +495,7 @@ function drawDesign(){
   return sym?up.map(s_=>Object.assign({},s_,{c:2})):up.concat(dn)};
  const segs=z=>segs0(z).map((s_,n)=>(s_.k='sec'+(myz(z)?n+1:s_.p2),s_));
  const onPath=(s_,j,e)=>s_.dir===-1?s_.p2>=j:(s_.c===2&&j<e?s_.p2<=2*e-j:s_.p2<=j);
- const latE=z=>{const m=new Map(),E=[];for(let j=zst(z);j<zst(z+1);j++){const s_=SIDE[j],k=RN[j]+'|'+U1(j)+'|'+ROFF[j]+'|'+s_.ln+'|'+s_.ll+'|'+s_.rn+'|'+s_.rl+'|'+mlLat(j);if(!m.has(k))m.set(k,{n:RN[j],off:ROFF[j],s:s_,ml:mlLat(j),rows:[]});m.get(k).rows.push(j)}
+ const latE=z=>{const m=new Map(),E=[];for(let j=zst(z);j<zst(z+1);j++){const s_=SIDE[j],k=RN[j]+'|'+U1(j)+'|'+ROFF[j]+'|'+s_.ln+'|'+s_.ll+'|'+s_.rn+'|'+s_.rl+'|'+mlLat(j)+(CUS.on?'|'+j:'');if(!m.has(k))m.set(k,{n:RN[j],off:ROFF[j],s:s_,ml:mlLat(j),rows:[]});m.get(k).rows.push(j)}
   m.forEach(g_=>{const s_=g_.s;if((!MX||isY[g_.rows[0]])&&ROFF[g_.rows[0]]>=0)E.push({c:g_.rows.length,q:g_.n*U1(g_.rows[0]),l:Math.max(0,g_.off+(g_.n-1)*td+LT-(isY[g_.rows[0]]?FFz(z):0))+g_.ml,rows:g_.rows,d:g_.n+' '+t('coN')+(g_.off?' ('+(g_.off>0?'+':'')+pn(g_.off)+' m)':'')+(g_.ml?' + PVC '+pn(g_.ml)+' m':'')});
    else if(s_.ln>0&&s_.rn>0&&Math.abs(s_.ln-s_.rn)<1e-9&&Math.abs(s_.ll-s_.rl)<1e-9)E.push({c:g_.rows.length*2,q:s_.ln*U1(g_.rows[0]),l:s_.ll+LT+g_.ml,rows:g_.rows,d:pn(s_.ln)+' '+t('coN')+(g_.ml?' + PVC '+pn(g_.ml)+' m':'')});
    else{if(s_.ln>0)E.push({c:g_.rows.length,q:s_.ln*U1(g_.rows[0]),l:s_.ll+LT+g_.ml,rows:g_.rows,d:t('sideL')+' '+pn(s_.ln)+' '+t('coN')+(g_.ml?' + PVC '+pn(g_.ml)+' m':'')});if(s_.rn>0)E.push({c:g_.rows.length,q:s_.rn*U1(g_.rows[0]),l:s_.rl+LT+g_.ml,rows:g_.rows,d:t('sideR')+' '+pn(s_.rn)+' '+t('coN')+(g_.ml?' + PVC '+pn(g_.ml)+' m':'')})}});return E};
@@ -493,7 +504,7 @@ function drawDesign(){
   if(pp>0)ad('pond',t('lnPond'),1,WM==='a'?SQ(0,nr):SQ(rs_,re_),pp);
   ad('pump',(isY[rs_]?t('coPass'):t('lnPump'))+(mlP0+mlHdr(z)>0?' + PVC '+pn(mlP0+mlHdr(z))+' m':''),1,WM==='a'?SQ(0,nr):SQ(rs_,re_),pm+(myz(z)?Len(Em,eZ(z)):0)+bz(z)+ldY(z)+mlHdr(z));
   segs(z).forEach((g_,n)=>ad(g_.k,t('lnSec')+' '+(n+1)+' ('+t('rowL')+' '+(g_.p1+1)+'→'+(g_.p2+1)+')'+(g_.c>1?' ×2':'')+(mlSec(z,g_.p1,g_.p2)>0?' + PVC '+pn(mlSec(z,g_.p1,g_.p2))+' m':''),g_.c,g_.q,Len(g_.p1,g_.p2)+mlSec(z,g_.p1,g_.p2),g_.p1,g_.p2));
-  latE(z).forEach((e_,i,A)=>{const x=ad(A.length===1?'lat':'lat'+(i+1),t('lnLat')+(A.length>1?' – '+e_.d:''),e_.c,e_.q,e_.l);x.rows=e_.rows});
+  latE(z).forEach((e_,i,A)=>{const x=ad(A.length===1?'lat':'lat'+(i+1),(CUS.on&&e_.rows.length===1?(L==='th'?'ท่อแขนง แถว ':'Lateral row ')+rowLab(e_.rows[0]):t('lnLat'))+(A.length>1?' – '+e_.d:''),e_.c,e_.q,e_.l);x.rows=e_.rows});
   if(fd>0){let nn=0;for(let j=rs_;j<re_;j++)nn+=RN[j]*NSj[j];ad('feed',t('lnFeed'),nn,SQ(rs_,re_)/Math.max(1,nn),fd)}return o};
  const zhf=(z,Ls_,R)=>{const xp=Ls_.find(x=>x.k==='pump'),xf=Ls_.find(x=>x.k==='feed'),lats=Ls_.filter(x=>isLat(x.k)),ss=segs(z),e=eZ(z),pu=R.pump,fe=R.feed,xo=Ls_.find(x=>x.k==='pond'),po=R.pond,
   ok=!!(lats.length&&lats.every(x=>R[x.k])&&(!xp||xp.l<=0||pu)&&(!xo||po)&&(!xf||fe)&&ss.every(s_=>R[s_.k])),
@@ -543,7 +554,7 @@ function drawDesign(){
  const dx=td*sc,dy=rd*sc,gh=hm*sc,H0=mt+gh+mb,H=H0+(FY?40:0),X0=ml,YB=mt+gh;
  const dmin=Math.min(nt>1?dx:99,nr>1?dy:99),tr=Math.max(2.5,Math.min(9,dmin*0.3)),sr=Math.max(1.3,tr*0.3);
  const tx=(i,j)=>X0+((j==null?0:ROFF[j])+i*td-ox)*sc,ty=p=>YB-Yp(p)*sc,xr=j=>tx(RN[j]-1,j),mx=MX?X0+(xm-ox)*sc:ml-40-ox*sc,xl=X0+wm*sc,yt=ty(nr-1),py=MY?ty(Em):YB+(pp>0?66:(Z>1?62:36)),hy=MY?ty(Em):(Z>1?YB+30:ty(0)),px=MY?ml-110-extra:mx;
- const zmx=z=>(MX&&!prim(z)?ml-40:mx)-z*gap,xa=zmx(zi),zOf=[];for(let z=0;z<Z;z++)for(let j=zst(z);j<zst(z+1);j++)zOf[j]=z;
+ const zmx=z=>(MX&&!prim(z)?ml-40:mx)-z*gap,xa=zmx(zi),zOf=[];for(let z=0;z<Z;z++)for(let j=zst(z);j<zst(z+1);j++)zOf[j]=z;ROWZ=zOf.slice();
  const ts='fill:var(--tx);font-size:11px;font-weight:700',PDX=PONV?px:(MY?px-60:px+95);
  let g=`<defs><marker id='ad' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='6' markerHeight='6' orient='auto-start-reverse'><path d='M0,0L10,5L0,10z' fill='var(--tx)'/></marker></defs><g id='planG'${FX||FY?` transform='translate(${FX?W:0},${FY?H0:0}) scale(${FX?-1:1},${FY?-1:1})'`:''}><!--HIT-->`;
 
@@ -1257,7 +1268,49 @@ $o('bOpt').onclick=async()=>{const m=$o('optMsg'),b=$o('bOpt'),C=+$('c').value||
   m.textContent=CAND.length?tx('Done. Your original sizing and settings were restored. Click Apply to use a layout.','เสร็จแล้ว ระบบคืนค่าและขนาดท่อเดิมของคุณแล้ว กด ใช้แบบนี้ เพื่อใช้แบบที่เลือก'):tx('No valid layout found (check the pump curve range, or whether all pipe lines can be sized).','ไม่พบแบบที่ใช้ได้ (ตรวจช่วงกราฟปั๊ม หรือขนาดท่อ)')}
  catch(e){m.textContent=String(e&&e.message||e)}
  finally{if(cu){CR.splice(0,CR.length,...crSv);CRU=cruSv;cTable();cRender()}['zr','pmx','pmy'].forEach(k=>$(k).value=o0[k]);Object.keys(ZR).forEach(k=>delete ZR[k]);Object.assign(ZR,sv.ZR);Object.keys(RES).forEach(k=>delete RES[k]);Object.assign(RES,sv.RES);drawDesign();$('zn').value=o0.zn;CURZ=+o0.zn-1;drawDesign();b.disabled=false;b.classList.remove('busy');b.textContent=tx('Find the best layout','ค้นหาแบบที่ดีที่สุด');m.classList.remove('busy');$o('optPg').classList.add('hide')}};
-$o('optT').onclick=e=>{const bt=e.target.closest('button[data-i]');if(!bt)return;const c=CAND[+bt.dataset.i];if(!c)return;const C=+$('c').value||140,vm=+$('vm').value||1.5;if(c.g.sp&&c.g.sp.N*c.g.sp.M>1){CRU=CRB.map(r=>({...r}));$('cUndo').style.display=''}evalC(c.g,c.types,C,vm);if(c.g.sp)cTable();if(c.types.length===1)$('pt').value=c.types[0];$('zn').value='1';drawDesign();$o('optMsg').textContent=tx('Applied: ','ใช้แล้ว: ')+c.r.nz+' '+tx('zones, TDH ','โซน, TDH ')+pn(c.r.H)+' m'}})();
+$o('optT').onclick=e=>{const bt=e.target.closest('button[data-i]');if(!bt)return;const c=CAND[+bt.dataset.i];if(!c)return;const C=+$('c').value||140,vm=+$('vm').value||1.5;if(c.g.sp&&c.g.sp.N*c.g.sp.M>1){CRU=CRB.map(r=>({...r}));$('cUndo').style.display=''}evalC(c.g,c.types,C,vm);if(c.g.sp)cTable();if(c.types.length===1)$('pt').value=c.types[0];$('zn').value='1';drawDesign();$o('optMsg').textContent=tx('Applied: ','ใช้แล้ว: ')+c.r.nz+' '+tx('zones, TDH ','โซน, TDH ')+pn(c.r.H)+' m'};window.HW={orows,K}})();
+// ===== Custom line mode: main line (all zones) / sub main (all rows) / lateral (each row) =====
+(()=>{const tx=(e,th)=>L==='th'?th:e,TY=['n','0','1','2','3','4'];let busy=false,sig='',tm;
+const tOp=(v,f)=>`<option value=''${v===''?' selected':''}>${f}</option>`+TY.map(k=>`<option value='${k}'${v===k?' selected':''}>${ptName(k)}</option>`).join('');
+const sOp=(v,f)=>`<option value=''${v===''?' selected':''}>${f}</option>`+S.map(s_=>`<option value='${s_}'${String(v)===String(s_)?' selected':''}>${s_}${t('inch')}</option>`).join('');
+const pair=(c,o,fp,fs)=>`<div class='row'><label>${tx('Pipe type','ชนิดท่อ')}<select data-c='${c}' data-f='pt'>${tOp(o.pt||'',fp)}</select></label><label>${tx('Size','ขนาด')}<select data-c='${c}' data-f='ds'>${sOp(o.ds||'',fs)}</select></label></div>`;
+const legend=()=>{let g=`<text x='6' y='12' style='font-weight:700;fill:var(--tx)'>${tx('Reference layout','ผังอ้างอิง')}</text><circle cx='28' cy='36' r='10' fill='var(--card)' stroke='var(--ac)' stroke-width='2'/><text x='24.5' y='40' style='fill:var(--ac);font-weight:700'>P</text><line x1='38' x2='360' y1='36' y2='36' stroke='var(--ac)' stroke-width='3'/>`;
+ [['K',69],['J',150],['I',250]].forEach(a=>g+=`<text x='${a[1]}' y='29' style='fill:var(--tx);font-weight:700;font-size:12px'>${a[0]}</text>`);
+ [100,200,300].forEach(x=>g+=`<line x1='${x}' x2='${x}' y1='36' y2='122' stroke='#a855f7' stroke-width='2.5'/><text x='${x-3.5}' y='40' style='fill:var(--hi);font-weight:700'>×</text>`);
+ ['E','D','C','B','A'].forEach((r,i)=>{const y=54+i*16;g+=`<line x1='100' x2='360' y1='${y}' y2='${y}' stroke='var(--lo)' stroke-width='1.6' stroke-dasharray='5 3'/><text x='88' y='${y+3.5}' style='fill:var(--tx);font-weight:700'>${r}</text>`});
+ [[145,1],[245,2],[325,3]].forEach(a=>g+=`<text x='${a[0]}' y='131'>${tx('Zone','โซน')} ${a[1]}</text>`);
+ return `<svg viewBox='0 0 400 136' width='100%' style='max-width:440px;min-width:0'>${g}</svg>`};
+const render=()=>{$('cuH').textContent=tx('Custom pipe lines: main line, sub main line, lateral','กำหนดท่อเอง: ท่อเมน ท่อเมนย่อย ท่อแขนง');
+ $('cuOnL').textContent=tx('Custom mode (choose pipe type and size yourself)','โหมดกำหนดเอง (เลือกชนิดและขนาดท่อเอง)');
+ $('cuNote').textContent=tx('Main line (blue, K J I) runs from the pump past every zone valve. Each zone has one sub main line (purple) feeding all its rows, and each row (A, B, C ...) has its own lateral (dashed). Head loss uses the same Hazen-Williams tables as Auto-size, with C and velocity limits from Settings, and feeds the Pipe line summary, drawing, pump selection and BOM. Size = Auto picks the smallest size with status OK. Pump-to-pond line follows the main line (one size bigger) and lateral-to-sprinkler lines stay automatic. Auto-size is off in Custom mode; turning Custom mode on or off clears the lateral results.','ท่อเมน (สีน้ำเงิน K J I) วิ่งจากปั๊มผ่านวาล์วทุกโซน แต่ละโซนมีท่อเมนย่อย 1 เส้น (สีม่วง) จ่ายให้ทุกแถว และแต่ละแถว (A, B, C ...) มีท่อแขนงของตัวเอง (เส้นประ) คำนวณแรงดันตกด้วยตาราง Hazen-Williams เดียวกับ Auto-size โดยใช้ค่า C และความเร็วจากตั้งค่า และส่งผลไปที่สรุปท่อแต่ละเส้น แบบผัง การเลือกปั๊ม และ BOM ขนาด = อัตโนมัติ จะเลือกขนาดเล็กสุดที่สถานะ OK ท่อปั๊มไปบ่อน้ำใช้ตามท่อเมน (ใหญ่ขึ้น 1 ขนาด) และท่อจากแขนงไปสปริงเกอร์ยังเป็นอัตโนมัติ ในโหมดกำหนดเองปุ่ม Auto-size ถูกปิด การเปิด/ปิดโหมดจะล้างผลท่อแขนง');
+ $('cuOn').checked=CUS.on;$('cuPanel').classList.toggle('hide',!CUS.on);$('bAuto').disabled=CUS.on;if(!CUS.on)return;
+ const fp=tx('Calculation tab type','ชนิดตามแท็บคำนวณ'),fs=tx('Auto (smallest OK)','อัตโนมัติ (เล็กสุดที่ OK)'),fa=tx('= All rows','= ทุกแถว');
+ const rows=ROWZ.map((z,j)=>{const o=CUS.lat[j]||{};return `<tr><td style='text-align:left'>${rowLab(j)}</td><td>${z+1}</td><td><select data-c='lat' data-f='pt' data-j='${j}' style='margin:0'>${tOp(o.pt||'',fa)}</select></td><td><select data-c='lat' data-f='ds' data-j='${j}' style='margin:0'>${sOp(o.ds||'',fa)}</select></td></tr>`}).join('');
+ $('cuPanel').innerHTML=legend()+
+  `<div class='grp'><h3>① ${tx('Main line: one pipe for all zones (K, J, I)','ท่อเมน: 1 เส้นสำหรับทุกโซน (K, J, I)')}</h3>${pair('main',CUS.main,fp,fs)}</div>`+
+  `<div class='grp'><h3>② ${tx('Sub main line: all rows of each zone (purple)','ท่อเมนย่อย: ทุกแถวของแต่ละโซน (สีม่วง)')}</h3>${pair('sub',CUS.sub,fp,fs)}</div>`+
+  `<div class='grp'><h3>③ ${tx('Lateral: each row (A, B, C ...)','ท่อแขนง: แต่ละแถว (A, B, C ...)')}</h3><div class='note' style='margin:0 0 6px'>${tx('All rows','ทุกแถว')}</div>${pair('all',CUS.all,fp,fs)}`+
+  `<div class='sc' style='max-height:280px;overflow:auto;margin-bottom:8px'><table style='min-width:360px'><thead><tr><th>${tx('Row','แถว')}</th><th>${tx('Zone','โซน')}</th><th>${tx('Pipe type','ชนิดท่อ')}</th><th>${tx('Size','ขนาด')}</th></tr></thead><tbody>${rows}</tbody></table></div></div>`};
+const selFor=x=>{if(x.k==='pump')return CUS.main;if(/^sec\d+$/.test(x.k))return CUS.sub;if(isLat(x.k)){const o=CUS.lat[x.rows[0]]||{};return{pt:o.pt||CUS.all.pt,ds:o.ds||CUS.all.ds}}return null};
+const sizeZone=(C,vm)=>{const HW=window.HW;for(const x of LINES.slice().sort((a,b)=>(a.k==='pond')-(b.k==='pond'))){if(!(x.q>0))continue;let p,r;
+  if(x.k==='pond'&&RES.pump){p=RES.pump.pt;const rw=HW.orows(x.q,C,HW.K(p)),ix=rw.findIndex(q=>q[0]==RES.pump.ds);r=rw[ix>=0?Math.min(ix+1,rw.length-1):rw.length-1]}
+  else{const s_=selFor(x)||{pt:'',ds:''};p=s_.pt||$('pt').value||'2';const rw=HW.orows(x.q,C,HW.K(p));r=s_.ds?rw.find(q=>q[0]==s_.ds):null;if(!r)r=rw.find(q=>st(q[2])[0]==='ok')||rw.find(q=>q[2]<=vm)||rw[rw.length-1]}
+  RES[x.k]={pt:p,ds:r[0],v:r[2],hf:r[3],tot:r[3]*x.l/100,cls:st(r[2])[0],qh:x.q,Ln:x.l}}};
+const apply=()=>{if(!CUS.on||busy||!window.HW)return;busy=true;
+ try{const C=+$('c').value||140,vm=+$('vm').value||1.5;VMIN=$('vl').value===''?1:Math.max(0,+$('vl').value||0);VMAX=vm;
+  const z0=$('zn').value,nz=$('zn').options.length;
+  for(let z=1;z<=nz;z++){$('zn').value=String(z);drawDesign();sizeZone(C,vm)}
+  $('zn').value=z0;drawDesign();$('autoMsg').textContent=tx('Custom sizes applied to all zones.','ใช้ขนาดท่อที่กำหนดเองกับทุกโซนแล้ว')}
+ finally{busy=false}};
+const sched=()=>{clearTimeout(tm);tm=setTimeout(()=>{if(!CUS.on||busy||$('bOpt').classList.contains('busy'))return;
+  const s_=ROWZ.length+'|'+ROWZ.join(',');if(s_!==sig){sig=s_;render()}
+  if(LINES.some(x=>x.q>0&&(!RES[x.k]||isBad(RES[x.k],x))))apply()},80)};
+const dd=drawDesign;drawDesign=function(){const r=dd.apply(this,arguments);if(CUS.on)sched();return r};
+$('cuOn').onchange=()=>{CUS.on=$('cuOn').checked;[RES].concat(Object.values(ZR)).forEach(R=>Object.keys(R).forEach(k=>{if(isLat(k))delete R[k]}));sig='';drawDesign();render();$('autoMsg').textContent='';if(CUS.on)apply()};
+$('cuPanel').addEventListener('change',e=>{const s_=e.target.closest('select[data-c]');if(!s_)return;const c=s_.dataset.c,f=s_.dataset.f,v=s_.value;
+  if(c==='lat'){const j=+s_.dataset.j,o=CUS.lat[j]||(CUS.lat[j]={pt:'',ds:''});o[f]=v;if(o.pt===''&&o.ds==='')delete CUS.lat[j]}else CUS[c][f]=v;apply()});
+[$('bEn'),$('bTh')].forEach(x=>x.addEventListener('click',()=>setTimeout(()=>{sig='';render()},0)));
+window.CUSR=()=>{sig='';render()};render()})();
 // ===== save / load / report =====
 const SAVE_IN=['prj','bcur','pmx','pmy','pxk','pyk','wm','lsrc','ax','ay','nr','nt','rd','td','lo','ns','fq','dfu','sp','pm','pp','zr','fd','bca','fit','lt','zg','hg','dzk','ez0','ez1','ez2','cp','cl','c','vl','vm'];
 const esc=x=>String(x==null?'':x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -1267,13 +1320,13 @@ const RES_KEY=/^(pump|pond|lat\d*|feed|sec\d+)$/;
 const packRes=R=>{const o={};Object.keys(R).forEach(k=>{if(RES_KEY.test(k)){const e=R[k];o[k]={pt:e.pt,ds:e.ds,v:e.v,hf:e.hf,tot:e.tot,cls:e.cls,qh:e.qh,Ln:e.Ln}}});return o};
 function stateJSON(img){const inputs={zn:$('zn').value};SAVE_IN.forEach(i=>inputs[i]=$(i).value);const results=packRes(RES),zres={};
   Object.keys(ZR).forEach(z=>{if(+z!==CURZ)zres[z]=packRes(ZR[z])});
-  return JSON.stringify({app:'pipe-sizing',rev:20,cr:CR,quotes:QT,bom:{p:BP,x:BX,fo:FOV,fl:FLP,ac:ACC,pl:MPL,zv:ZVO,it:ITM},saved:new Date().toISOString(),...(img&&SCIMG?{scimg:SCIMG}:{}),inputs,results,zres},null,1)}
+  return JSON.stringify({app:'pipe-sizing',rev:20,cus:CUS,cr:CR,quotes:QT,bom:{p:BP,x:BX,fo:FOV,fl:FLP,ac:ACC,pl:MPL,zv:ZVO,it:ITM},saved:new Date().toISOString(),...(img&&SCIMG?{scimg:SCIMG}:{}),inputs,results,zres},null,1)}
 $('bSave').onclick=()=>dlFile(fname('.json'),'application/json',stateJSON(true));
 $('bLoad').onclick=()=>$('fLoad').click();
 function applyJSON(txt,fn){const msg=$('prjMsg');try{const o=JSON.parse(txt);if(!o||o.app!=='pipe-sizing'||!o.inputs||typeof o.inputs!=='object')throw 0;
   SAVE_IN.forEach(i=>{const v=o.inputs[i];if(typeof v!=='string'&&typeof v!=='number')return;const el=$(i),sv=String(v);
    if(el.tagName==='SELECT'){if([...el.options].some(x=>x.value===sv))el.value=sv}else el.value=sv.slice(0,120)});
-  Object.keys(RES).forEach(k=>delete RES[k]);Object.keys(ZR).forEach(k=>delete ZR[k]);CURZ=-1;
+  loadCus(o.cus);Object.keys(RES).forEach(k=>delete RES[k]);Object.keys(ZR).forEach(k=>delete ZR[k]);CURZ=-1;
   const num=x=>typeof x==='number'&&isFinite(x)?x:null;
   const parseRes=src=>{const out={};if(src&&typeof src==='object')Object.keys(src).forEach(k=>{if(!RES_KEY.test(k))return;const e=src[k];if(!e||typeof e!=='object')return;
    const r={ds:num(e.ds),v:num(e.v),hf:num(e.hf),tot:num(e.tot),qh:num(e.qh),Ln:num(e.Ln),pt:String(e.pt),cls:['lo','ok','hi'].includes(e.cls)?e.cls:'ok'};
