@@ -152,7 +152,7 @@ input.sw:checked{background:var(--ok)}input.sw:checked::after{transform:translat
 </dialog>
 <div id="rptP" class="rp"></div>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.81.1</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.81.2</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="tabs"><button id="tD" type="button" class="on" data-t="tabD"></button><button id="tC" type="button" data-t="tabC"></button><button id="tS" type="button" data-t="tabS"></button><span style="margin-left:auto;display:inline-flex;gap:6px;align-items:center"><span id="hSt" style="font-size:11px;color:var(--mut)"></span><button id="hU" type="button" title="Undo (Ctrl+Z)" style="padding:4px 10px">↶</button><button id="hR" type="button" title="Redo (Ctrl+Y)" style="padding:4px 10px">↷</button></span></div>
@@ -1722,7 +1722,7 @@ let CURFN='';const noExt=n=>String(n||'').replace(/\.(json|html?)$/i,'');
 $('bSave').onclick=()=>{const n=fname('.json');CURFN=noExt(n);dlFile(n,'application/json',stateJSON(true))};
 $('bLoad').onclick=()=>$('fLoad').click();
 function applyJSON(txt,fn){const msg=$('prjMsg');try{const o=JSON.parse(txt);if(!o||o.app!=='pipe-sizing'||!o.inputs||typeof o.inputs!=='object')throw 0;
-  SAVE_IN.forEach(i=>{const v=o.inputs[i];if(typeof v!=='string'&&typeof v!=='number')return;const el=$(i),sv=String(v);
+  $('scZW').value='';/* report zoom windows belong to the loaded file only: clear first so a file saved without them does not inherit the previous file's windows */SAVE_IN.forEach(i=>{const v=o.inputs[i];if(typeof v!=='string'&&typeof v!=='number')return;const el=$(i),sv=String(v);
    if(el.tagName==='SELECT'){if([...el.options].some(x=>x.value===sv))el.value=sv}else el.value=i==='scZW'?sv.slice(0,20000):sv.slice(0,120)});
   Object.keys(RES).forEach(k=>delete RES[k]);Object.keys(ZR).forEach(k=>delete ZR[k]);CURZ=-1;
   const num=x=>typeof x==='number'&&isFinite(x)?x:null;
