@@ -151,7 +151,7 @@ input.sw:checked{background:var(--ok)}input.sw:checked::after{transform:translat
 </dialog>
 <div id="rptP" class="rp"></div>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.79</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.80</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="tabs"><button id="tD" type="button" class="on" data-t="tabD"></button><button id="tC" type="button" data-t="tabC"></button><button id="tS" type="button" data-t="tabS"></button><span style="margin-left:auto;display:inline-flex;gap:6px;align-items:center"><span id="hSt" style="font-size:11px;color:var(--mut)"></span><button id="hU" type="button" title="Undo (Ctrl+Z)" style="padding:4px 10px">↶</button><button id="hR" type="button" title="Redo (Ctrl+Y)" style="padding:4px 10px">↷</button></span></div>
@@ -1085,11 +1085,27 @@ $('scMs').onclick=()=>{const on=!(MW.sel&&MW.mode==='view');MW.mode='view';MW.se
 // ---- report zoom windows: drawn by hand (metres), used by the report instead of the automatic windows
 function zwGet(){try{const a=JSON.parse($('scZW').value||'[]');return Array.isArray(a)?a.filter(w=>w&&[w.xa,w.xb,w.ya,w.yb].every(isFinite)):[]}catch(e){return[]}}
 function zwSet(a){$('scZW').value=a.length?JSON.stringify(a):'';zwUI()}
+function zwGeom(){const D=SCD;if(!D||!D.bnd||!D.S||!D.G3)return null;const [x0,y0,x1,y1]=D.bnd,S=D.S,fx=D.G3.fx,fy=D.G3.fy;return{X:x=>((fx?x1+x0-x:x)-x0)*S,Y:y=>(fy?y-y0:y1-y)*S,dx:p=>fx?x1-p/S:x0+p/S,dy:p=>fy?y0+p/S:y1-p/S}}
 function zwUI(){const a=zwGet();$('scZa').textContent=T2('＋ Report zoom window','＋ กรอบภาพขยายรายงาน');$('scZc').textContent=T2('Clear','ล้าง');$('scZc').classList.toggle('hide',!a.length);
  $('scZl').innerHTML=a.map((w,i)=>`<span style="display:inline-block;border:1px solid #dc2626;color:#dc2626;border-radius:6px;padding:1px 6px;margin-left:4px;font-weight:700">${i+1} <b data-zd="${i}" style="cursor:pointer" title="${T2('Remove','ลบ')}">✕</b></span>`).join('');
- const sv=$('scg'),old=$('scZov');if(old)old.remove();const D=SCD;if(SCZNO||!sv||!D||!D.bnd||!D.S||!D.G3||!a.length)return;
- const [x0,y0,x1,y1]=D.bnd,S=D.S,fx=D.G3.fx,fy=D.G3.fy,X=x=>((fx?x1+x0-x:x)-x0)*S,Y=y=>(fy?y-y0:y1-y)*S,fs=Math.max(10,12*Math.max(.5,+$('scz').value||1)),g=document.createElementNS('http://www.w3.org/2000/svg','g');g.id='scZov';g.setAttribute('pointer-events','none');
- g.innerHTML=a.map((w,i)=>{const xa=X(w.xa),xb=X(w.xb),ya=Y(w.ya),yb=Y(w.yb),rx=Math.min(xa,xb),ry=Math.min(ya,yb);return `<rect x="${rx.toFixed(1)}" y="${ry.toFixed(1)}" width="${Math.abs(xb-xa).toFixed(1)}" height="${Math.abs(yb-ya).toFixed(1)}" fill="none" stroke="#dc2626" stroke-width="1.6" stroke-dasharray="6 3"/><text x="${(rx+3).toFixed(1)}" y="${(ry+fs).toFixed(1)}" style="fill:#dc2626;font-size:${fs}px;font-weight:700;stroke:none">${i+1}</text>`}).join('');sv.appendChild(g)}
+ const sv=$('scg'),old=$('scZov');if(old)old.remove();const G=zwGeom();if(SCZNO||!sv||!G||!a.length)return;
+ const fs=Math.max(10,12*Math.max(.5,+$('scz').value||1)),hs=7,CUR={nw:'nwse-resize',se:'nwse-resize',ne:'nesw-resize',sw:'nesw-resize',n:'ns-resize',s:'ns-resize',e:'ew-resize',w:'ew-resize'},g=document.createElementNS('http://www.w3.org/2000/svg','g');g.id='scZov';
+ g.innerHTML=a.map((w,i)=>{const xa=G.X(w.xa),xb=G.X(w.xb),ya=G.Y(w.ya),yb=G.Y(w.yb),rx=Math.min(xa,xb),ry=Math.min(ya,yb),rw=Math.abs(xb-xa),rh=Math.abs(yb-ya),f=v=>v.toFixed(1),
+  H={nw:[rx,ry],n:[rx+rw/2,ry],ne:[rx+rw,ry],e:[rx+rw,ry+rh/2],se:[rx+rw,ry+rh],s:[rx+rw/2,ry+rh],sw:[rx,ry+rh],w:[rx,ry+rh/2]};
+  return `<g data-zg="${i}"><rect x="${f(rx)}" y="${f(ry)}" width="${f(rw)}" height="${f(rh)}" fill="none" stroke="#dc2626" stroke-width="1.6" stroke-dasharray="6 3" style="pointer-events:none"/>`
+  +`<rect x="${f(rx)}" y="${f(ry)}" width="${f(rw)}" height="${f(rh)}" fill="none" stroke="transparent" stroke-width="14" data-zi="${i}" data-zh="move" style="cursor:move;pointer-events:stroke"/>`
+  +`<text x="${f(rx+3)}" y="${f(ry+fs)}" style="fill:#dc2626;font-size:${fs}px;font-weight:700;stroke:none;pointer-events:none">${i+1}</text>`
+  +Object.keys(H).map(k=>`<rect x="${f(H[k][0]-hs/2)}" y="${f(H[k][1]-hs/2)}" width="${hs}" height="${hs}" fill="#fff" stroke="#dc2626" stroke-width="1.5" data-zi="${i}" data-zh="${k}" style="cursor:${CUR[k]};pointer-events:all"/>`).join('')+'</g>'}).join('');sv.appendChild(g)}
+// drag a window border to move it, drag a handle to resize it (done in screen space, so left/right/up/down flips of the plan do not matter)
+{const sv=$('scg'),P=ev=>{const r=sv.getBoundingClientRect(),vb=sv.viewBox.baseVal;return{x:(ev.clientX-r.left)*vb.width/r.width,y:(ev.clientY-r.top)*vb.height/r.height}};let dr=null;
+ sv.addEventListener('pointerdown',ev=>{if(MW.sel)return;const t=ev.target.closest&&ev.target.closest('[data-zh]');if(!t)return;const G=zwGeom(),a=zwGet(),i=+t.dataset.zi,w=a[i];if(!G||!w)return;ev.preventDefault();ev.stopPropagation();
+  const xs=[G.X(w.xa),G.X(w.xb)],ys=[G.Y(w.ya),G.Y(w.yb)];dr={i,h:t.dataset.zh,p0:P(ev),o:{l:Math.min(...xs),r:Math.max(...xs),t:Math.min(...ys),b:Math.max(...ys)},G,moved:false};try{sv.setPointerCapture(ev.pointerId)}catch(e){}},true);
+ sv.addEventListener('pointermove',ev=>{if(!dr)return;const p=P(ev),mx=p.x-dr.p0.x,my=p.y-dr.p0.y,h=dr.h;let {l,r,t,b}=dr.o;if(Math.abs(mx)+Math.abs(my)>1)dr.moved=true;
+  if(h==='move'){l+=mx;r+=mx;t+=my;b+=my}else{if(/w/.test(h))l+=mx;if(/e/.test(h))r+=mx;if(/n/.test(h))t+=my;if(/s/.test(h))b+=my;
+   if(r-l<12){if(/w/.test(h))l=r-12;else r=l+12}if(b-t<12){if(/n/.test(h))t=b-12;else b=t+12}}
+  const G=dr.G,r1=v=>Math.round(v*10)/10,xa=G.dx(l),xb=G.dx(r),ya=G.dy(t),yb=G.dy(b),a=zwGet();if(!a[dr.i])return;
+  a[dr.i]={xa:r1(Math.min(xa,xb)),xb:r1(Math.max(xa,xb)),ya:r1(Math.min(ya,yb)),yb:r1(Math.max(ya,yb))};$('scZW').value=JSON.stringify(a);zwUI()});
+ const end=ev=>{if(!dr)return;if(dr.moved){MW.just=true;setTimeout(()=>{MW.just=false},60)}dr=null;try{sv.releasePointerCapture(ev.pointerId)}catch(e){}};sv.addEventListener('pointerup',end);sv.addEventListener('pointercancel',end)}
 $('scZa').onclick=()=>{const on=!(MW.sel&&MW.mode==='rep');MW.mode='rep';MW.sel=on;$('scg').style.cursor=on?'crosshair':'';$('scg').style.touchAction=on?'none':'';mwUI()};
 $('scZc').onclick=()=>zwSet([]);
 $('scZl').addEventListener('click',ev=>{const b=ev.target.closest&&ev.target.closest('[data-zd]');if(!b)return;const a=zwGet();a.splice(+b.dataset.zd,1);zwSet(a)});
@@ -1745,7 +1761,7 @@ function zoomParts(raw){const D=DCX;if(!D||!SNP||!(VF.W>0)||!(VF.H>0))return nul
 
 // ---- Report: zoom windows cut from the Scale plan (not from the Design drawing). Greedy cover: every fitting lies inside at least one window.
 function scZoom(){
- const z0=$('scz').value,n0=$('scn').checked,d0=$('scd').checked,im0=SCIMG,ZK=2.5,mw0=$('scMw').checked;let res=null;
+ const z0=$('scz').value,n0=$('scn').checked,d0=$('scd').checked,im0=SCIMG,ZK=2.5,mw0=$('scMw').checked,sz0=SCZNO;let res=null;SCZNO=true;
  try{SCIMG=null;$('scMw').checked=false;$('scz').value=String(ZK);$('scn').checked=true;$('scd').checked=false;drawScale();
   const sv=$('scg'),D=SCD;const MZ=zwGet();if(!sv||!D||!D.S||!D.bnd||(!MZ.length&&!(D.MK&&D.MK.length)))return null;
   const raw=sv.outerHTML,tag=/^<svg[^>]*>/.exec(raw)[0],VW=+sv.getAttribute('width'),VH=+sv.getAttribute('height'),ww=Math.min(VW,760),wh=Math.min(VH,460),
@@ -1756,11 +1772,11 @@ function scZoom(){
    // window corners in metres (so the same window can be marked on the overview plan)
    const mx=px=>fx?x1-px/S:x0+px/S,my=py=>fy?y0+py/S:y1-py/S;
    R.push({x,y,n:inn.length,lb:inn,m:{xa:mx(x),xb:mx(x+ww),ya:my(y),yb:my(y+wh)}})});
-  MZ.forEach(w=>{const X_=x=>((fx?x1+x0-x:x)-x0)*S,Y_=y=>(fy?y-y0:y1-y)*S,xa=X_(w.xa),xb=X_(w.xb),ya=Y_(w.ya),yb=Y_(w.yb),rx=Math.min(xa,xb),ry=Math.min(ya,yb),rw=Math.abs(xb-xa),rh=Math.abs(yb-ya);if(rw<4||rh<4)return;const inn=P.filter(q=>q.cx>=rx&&q.cx<=rx+rw&&q.cy>=ry&&q.cy<=ry+rh).map(q=>q.lb);R.push({x:rx,y:ry,w:rw,h:rh,n:inn.length,lb:inn,m:{xa:w.xa,xb:w.xb,ya:w.ya,yb:w.yb}})});
-   const crop=r=>tag.replace(/ viewBox="[^"]*"/,` viewBox="${r.x.toFixed(1)} ${r.y.toFixed(1)} ${(r.w||ww).toFixed(1)} ${(r.h||wh).toFixed(1)}"`).replace(/ (width|height|style)="[^"]*"/g,'').replace('<svg','<svg style="width:100%;height:auto"')+raw.slice(tag.length),
+  MZ.forEach(w=>{const X_=x=>((fx?x1+x0-x:x)-x0)*S,Y_=y=>(fy?y-y0:y1-y)*S,xa=X_(w.xa),xb=X_(w.xb),ya=Y_(w.ya),yb=Y_(w.yb),rx=Math.min(xa,xb),ry=Math.min(ya,yb),rw=Math.abs(xb-xa),rh=Math.abs(yb-ya);if(!(rw>0&&rh>0))return;const inn=P.filter(q=>q.cx>=rx&&q.cx<=rx+rw&&q.cy>=ry&&q.cy<=ry+rh).map(q=>q.lb);R.push({x:rx,y:ry,w:rw,h:rh,n:inn.length,lb:inn,m:{xa:w.xa,xb:w.xb,ya:w.ya,yb:w.yb}})});
+   const crop=r=>tag.replace(/ viewBox="[^"]*"/,` viewBox="${r.x.toFixed(1)} ${r.y.toFixed(1)} ${(r.w||ww).toFixed(1)} ${(r.h||wh).toFixed(1)}"`).replace(/ (width|height|style)="[^"]*"/g,'').replace(/ id="scg"/,'').replace('<svg',`<svg preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;overflow:hidden;aspect-ratio:${(r.w||ww).toFixed(1)} / ${(r.h||wh).toFixed(1)}"`)+raw.slice(tag.length),
    cnt=a=>{const o={};a.forEach(l=>o[l]=(o[l]||0)+1);return Object.keys(o).map(k=>k+(o[k]>1?' ×'+o[k]:'')).join(', ')};
-  res={R,panels:R.map((r,i)=>`<div><h4>${i+1}. ${r.w?(en?'Zoom window':'กรอบภาพขยาย'):(en?'Fittings':'ข้อต่อ')}${r.lb.length?': '+cnt(r.lb):''}</h4>${crop(r)}</div>`).join('')}
- }catch(e){res=null}finally{SCIMG=im0;$('scMw').checked=mw0;$('scz').value=z0;$('scn').checked=n0;$('scd').checked=d0;try{drawScale()}catch(e){}}
+  res={R,panels:R.map((r,i)=>`<div><h4>${i+1}. ${r.w?(en?'Zoom window':'กรอบภาพขยาย')+' ('+(+Math.abs(r.m.xb-r.m.xa).toFixed(1))+' × '+(+Math.abs(r.m.yb-r.m.ya).toFixed(1))+' m)':(en?'Fittings':'ข้อต่อ')}${r.lb.length?': '+cnt(r.lb):''}</h4>${crop(r)}</div>`).join('')}
+ }catch(e){res=null}finally{SCIMG=im0;SCZNO=sz0;$('scMw').checked=mw0;$('scz').value=z0;$('scn').checked=n0;$('scd').checked=d0;try{drawScale()}catch(e){}}
  return res}
 // ---- app settings (kept in this browser). Add a new key to SETDEF + a <input data-set="key"> row in #sdlg to add a setting.
 const SETDEF={rptZoom:true,rpt3d:true,rptPic:true,rptGE:true};
@@ -1818,7 +1834,7 @@ ${GEIMG&&APPSET.rptGE?GEIMG.map((g,i)=>`<div class="pg"><h3>${T2('Google Earth m
 ${scz_&&scz_.panels?`<div class="pg"><h3>${T2('Scale plan with zoom windows','แปลนตามมาตราส่วนพร้อมกรอบภาพขยาย')}</h3>${scp3}<h3 style="margin-top:10px">${T2('Scale plan – zoomed windows (all fittings, see how the pipes connect)','แปลนตามมาตราส่วน – ภาพขยายแยกแต่ละส่วน (ครอบคลุมข้อต่อทั้งหมด ดูการเชื่อมต่อท่อ)')}</h3><div class="zm">${scz_.panels}</div><div class="note">${T2('Red numbered boxes on the Scale plan above show where each window is.','กรอบสีแดงที่มีหมายเลขบนแปลนด้านบนแสดงตำแหน่งของแต่ละภาพขยาย')}</div></div>`:''}
 ${scp2?`<div class="pg"><h3>${T2('Scale plan with picture','แปลนตามมาตราส่วนพร้อมรูปภาพ')}</h3>${scp2}<div class="note">${T2('Picture placed under the plan at true scale.','รูปภาพวางใต้แปลนตามมาตราส่วนจริง')}</div></div>`:''}
 <div class="note">${t('rpNote')} C = ${esc(g('c'))}</div><div class="disc">${t('rpDisc')}</div>`}
-$('bRpt').onclick=()=>{$('rptB').innerHTML=rptHTML();$('rpt').showModal()};
+$('bRpt').onclick=()=>{$('rptB').innerHTML='';$('rptB').innerHTML=rptHTML();$('rpt').showModal()};
 $('rpX').onclick=$('rpC').onclick=()=>$('rpt').close();
 $('rpt').addEventListener('click',e=>{if(e.target===$('rpt'))$('rpt').close()});
 $('rpPrn').onclick=()=>{$('rptP').innerHTML=$('rptB').innerHTML;$('rpt').close();document.body.classList.add('prn');
