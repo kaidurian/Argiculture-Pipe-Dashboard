@@ -146,6 +146,7 @@ input.sw:checked{background:var(--ok)}input.sw:checked::after{transform:translat
   <div id="rpsL" style="max-height:32vh;overflow:auto;border:1px solid var(--bd);border-radius:8px;padding:2px 8px"></div>
   <div class="note" id="rpsC" style="margin:6px 0 0"></div>
   <label style="display:block;margin-top:8px"><span id="rpsMdL"></span><select id="rpsMd" style="width:100%"><option value="1"></option><option value="n"></option></select></label>
+  <label style="display:block;margin-top:8px"><span id="rpsPgL"></span><select id="rpsPg" style="width:100%"><option value="fit"></option><option value="p"></option><option value="l"></option></select></label>
   <label id="rpsLyW" style="display:block;margin-top:8px"><span id="rpsLyL"></span><select id="rpsLy" style="width:100%"><option value="1"></option><option value="2"></option><option value="3"></option></select></label>
   <label style="display:block;margin-top:8px"><span id="rpsFmL"></span><select id="rpsFm" style="width:100%"><option value="png"></option><option value="jpg"></option></select></label>
   <label class="rpsr" style="margin-top:6px"><input type="checkbox" id="rpsDs"><span id="rpsDsL"></span></label>
@@ -172,7 +173,7 @@ input.sw:checked{background:var(--ok)}input.sw:checked::after{transform:translat
 </dialog>
 <div id="rptP" class="rp"></div>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.92</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.92.1</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="tabs"><button id="tD" type="button" class="on" data-t="tabD"></button><button id="tC" type="button" data-t="tabC"></button><button id="tS" type="button" data-t="tabS"></button><span style="margin-left:auto;display:inline-flex;gap:6px;align-items:center"><span id="hSt" style="font-size:11px;color:var(--mut)"></span><button id="hU" type="button" title="Undo (Ctrl+Z)" style="padding:4px 10px">↶</button><button id="hR" type="button" title="Redo (Ctrl+Y)" style="padding:4px 10px">↷</button></span></div>
@@ -894,6 +895,7 @@ let FITP_=null;
 function fitPairs(){if(FITP_)return FITP_;try{const a=[];FCAT.forEach(c=>a.push([c[0],c[1]]));['bomSpr','bomVal','bomPump','bomUns','nom'].forEach(k=>a.push([TX.en[k],TX.th[k]]));['fTee','fCross','fElb','fCap','fRed','fTap'].forEach(k=>a.push([TX.en[k],TX.th[k]]));a.push(['Tee (PVC line junction)','ข้อต่อสามทาง (จุดแยกท่อ PVC)'],['PVC line','ท่อ PVC']);return FITP_=a.filter(p=>p[0]&&p[1]&&p[0]!==p[1])}catch(e){return[]}}
 function fitLab(lb,lg){lb=String(lb==null?'':lb);let bn=-1,bp=null;for(const p of fitPairs())for(let k=0;k<2;k++){const n=p[k];if(n.length>bn&&(lb===n||lb.startsWith(n+' '))){bn=n.length;bp=p}}return bp?bp[lg]+lb.slice(bn):lb}
 const fitKey=x=>fitLab(x,0).trim().toLowerCase().replace(/\s+/g,' ');
+const itemLab=(n,lg)=>{let v=fitLab(n,lg);if(lg===0)v=v.replace(/\s*นิ้ว$/,'"');else if(/^PVC .*\)\s[\d.]+"$/.test(v))v=v.replace(/"$/,' นิ้ว');return v};
 let NKP_=null;const NKP=()=>NKP_||(NKP_=(()=>{const a=[];['bomSpr','bomVal','bomPump','bomUns','nom'].forEach(k=>{try{a.push([TX.th[k],TX.en[k]])}catch(e){}});try{FCAT.forEach(f=>a.push([f[1],f[0]]))}catch(e){}a.push(['ข้อต่อสามทาง (จุดแยกท่อ PVC)','Tee (PVC line junction)']);return a.filter(p=>p[0]&&p[1]).sort((x,y)=>y[0].length-x[0].length)})());
 /* item names are compared in one language (English): a price saved or auto-filled under the Thai name still matches after switching to English, and the other way round */
 const nk=x=>{let v=String(x||'').trim();for(const p of NKP()){if(v.startsWith(p[0])){v=p[1]+v.slice(p[0].length);break}}return v.toLowerCase().replace(/\s*นิ้ว$/,'"')},qName=()=>(($('bqN')&&$('bqN').value)||'').trim().slice(0,40)||T2('My prices','ราคาของฉัน');
@@ -907,17 +909,17 @@ function qtAuto(){BR.forEach(r=>{if(r.xi!=null||!r.pk||r.np)return;if(BP[r.pk]!=
 function qtUI(){const qs=[...new Set(QT.map(e=>e.q))].sort();if(QA&&!qs.includes(QA))QA='';const b=$('bqS');if(!b)return;b.innerHTML=`<option value="">${T2('— none —','— ไม่เลือก —')}</option>`+qs.map(q=>`<option value="${esc(q)}"${q===QA?' selected':''}>${esc(q)}</option>`).join('');
  $('qtL1').textContent=T2('Quotation','ใบเสนอราคา');$('qtL2').textContent=T2('Save new prices under','บันทึกราคาใหม่ในชื่อ');if(!$('bqN').value)$('bqN').value=T2('My prices','ราคาของฉัน');
  $('bqA').textContent=T2('Apply to BOM','ใช้กับ BOM');$('bqD').textContent=T2('⬇ Price list CSV','⬇ CSV รายการราคา');$('bqU').textContent=T2('⬆ Price list CSV','⬆ CSV รายการราคา');$('bqX').textContent=T2('Delete quotation','ลบใบเสนอราคา');
- $('qtN').textContent=T2('Prices you type in the BOM or the Add fitting window are saved in this browser under the quotation name above, then offered in each row\'s Quotation list. Use ⬇ / ⬆ Price list CSV to back up or share the list (columns: item, quotation, price); it is also stored in the project file.','ราคาที่กรอกใน BOM หรือหน้าต่างเพิ่มอุปกรณ์จะถูกบันทึกในเบราว์เซอร์ตามชื่อใบเสนอราคาด้านบน และแสดงให้เลือกในแต่ละแถว ใช้ ⬇ / ⬆ CSV รายการราคา เพื่อสำรองหรือแชร์รายการ (คอลัมน์: item, quotation, price) และเก็บในไฟล์โปรเจกต์ด้วย');
+ $('qtN').textContent=T2('Prices you type in the BOM or the Add fitting window are saved in this browser under the quotation name above, then offered in each row\'s Quotation list. Use ⬇ / ⬆ Price list CSV to back up or share the list (columns: item_en, item_th, quotation, price; old 3-column files still import); it is also stored in the project file.','ราคาที่กรอกใน BOM หรือหน้าต่างเพิ่มอุปกรณ์จะถูกบันทึกในเบราว์เซอร์ตามชื่อใบเสนอราคาด้านบน และแสดงให้เลือกในแต่ละแถว ใช้ ⬇ / ⬆ CSV รายการราคา เพื่อสำรองหรือแชร์รายการ (คอลัมน์: item_en, item_th, quotation, price; ไฟล์เก่า 3 คอลัมน์ยังนำเข้าได้) และเก็บในไฟล์โปรเจกต์ด้วย');
  document.querySelectorAll('#bomT select[data-bq]').forEach(sl=>{const r=BR[+sl.dataset.bq];if(!r)return;const n=r.xi!=null?BX[r.xi].n:(r.qk||r.lab),p=r.xi!=null?BX[r.xi].p:BP[r.pk];sl.innerHTML=qtOpt(qtFor(n),p)})}
 $('bomT').addEventListener('change',e=>{const d=e.target.dataset;if(d.bq!=null){const r=BR[+d.bq],en=QT[+e.target.value];if(!r||!en)return;if(r.xi!=null)BX[r.xi].p=en.p;else BP[r.pk]=en.p;renderBom();return}
  let n=null;if(d.bk!=null){const r=BR.find(x=>x.pk===d.bk);n=r&&(r.qk||r.lab)}else if(d.bx!=null&&d.f==='p')n=BX[+d.bx].n;if(n&&+e.target.value>0){qtUpsert(n,qName(),+e.target.value);qtUI()}});
 $('bqS').onchange=e=>{QA=e.target.value};
 $('bqA').onclick=()=>{if(!QA)return;BR.forEach(r=>{if(r.np)return;const n=r.xi!=null?BX[r.xi].n:(r.qk||r.lab),en=QT.find(x=>x.q===QA&&nk(x.n)===nk(n));if(!en)return;if(r.xi!=null)BX[r.xi].p=en.p;else if(r.pk)BP[r.pk]=en.p});renderBom()};
 $('bqX').onclick=()=>{if(!QA||!confirm(T2('Delete quotation "'+QA+'" and all its prices from the list?','ลบใบเสนอราคา "'+QA+'" และราคาทั้งหมดออกจากรายการ?')))return;QT=QT.filter(e=>e.q!==QA);QA='';qtSave();renderBom()};
-$('bqD').onclick=()=>{const q=x=>'"'+String(x).replace(/"/g,'""')+'"';dlFile('quotations.csv','text/csv;charset=utf-8','\ufeffitem,quotation,price\r\n'+QT.map(e=>[q(e.n),q(e.q),e.p].join(',')).join('\r\n'))};
+$('bqD').onclick=()=>{const q=x=>'"'+String(x).replace(/"/g,'""')+'"',M=new Map();QT.forEach(e=>{const k=nk(e.n)+'|'+e.q;M.delete(k);M.set(k,e)});dlFile('quotations.csv','text/csv;charset=utf-8','\ufeffitem_en,item_th,quotation,price\r\n'+[...M.values()].map(e=>[q(itemLab(e.n,0)),q(itemLab(e.n,1)),q(e.q),e.p].join(',')).join('\r\n'))};
 $('bqU').onclick=()=>$('bqF').click();
 $('bqF').onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f||f.size>2e6)return;const rd=new FileReader();rd.onload=()=>{const rows=[];let r=[],c='',qt=false,tx=String(rd.result).replace(/^\ufeff/,'');for(let i=0;i<tx.length;i++){const ch=tx[i];if(qt){if(ch==='"'){if(tx[i+1]==='"'){c+='"';i++}else qt=false}else c+=ch}else if(ch==='"')qt=true;else if(ch===','||ch===';'){r.push(c);c=''}else if(ch==='\n'||ch==='\r'){if(ch==='\r'&&tx[i+1]==='\n')i++;r.push(c);c='';if(r.some(x=>x.trim()))rows.push(r);r=[]}else c+=ch}r.push(c);if(r.some(x=>x.trim()))rows.push(r);
-  const n=qtMerge(rows.filter(x=>+x[2]>0).map(x=>({n:x[0],q:x[1],p:x[2]})));$('qtN').textContent=T2('Imported '+n+' price(s).','นำเข้า '+n+' รายการ');renderBom();setTimeout(qtUI,0)};rd.readAsText(f)};
+  const n=qtMerge(rows.map(x=>x.length>=4&&+x[3]>0?{n:(x[0]||x[1]||'').trim(),q:x[2],p:x[3]}:(+x[2]>0?{n:x[0],q:x[1],p:x[2]}:null)).filter(Boolean));$('qtN').textContent=T2('Imported '+n+' price(s).','นำเข้า '+n+' รายการ');renderBom();setTimeout(qtUI,0)};rd.readAsText(f)};
 const FCAT=[['Elbow 90°','ข้องอ 90°'],['Elbow 45°','ข้องอ 45°'],['Elbow 22.5°','ข้องอ 22.5°'],['Tee','ข้อต่อสามทาง'],['Reducing tee','ข้อต่อสามทางลด'],['Cross (4-way)','ข้อต่อสี่ทาง'],['Reducer','ข้อลด'],['Coupling','ข้อต่อตรง'],['End cap / plug','ฝาครอบ / จุกอุดปลายท่อ'],['Male end cap / plug (threaded)','ปลั๊กอุดเกลียวนอก (ตัวผู้)'],['Female end cap / plug (threaded)','ฝาครอบเกลียวใน (ตัวเมีย)'],['Union','ยูเนี่ยน'],['Male adapter (threaded)','ข้อต่อเกลียวนอก'],['Female adapter (threaded)','ข้อต่อเกลียวใน'],['Saddle clamp','แคลมป์ก้ามปู'],['Flange','หน้าแปลน'],['Ball valve','บอลวาล์ว'],['Gate valve','ประตูน้ำ'],['Check valve','เช็ควาล์ว'],['Foot valve','ฟุตวาล์ว'],['Air release valve','วาล์วระบายอากาศ'],['Flush / drain valve','วาล์วระบายท้ายท่อ'],['Strainer / filter','ตัวกรอง'],['Pressure gauge','เกจวัดแรงดัน'],['PE hose / riser pipe','ท่อ PE / ท่อยกสปริงเกลอร์']];
 const FBV=FCAT.findIndex(c=>c[0]==='Ball valve');function fillFS(){const e=$('bomFS'),v=e.value;e.innerHTML=FCAT.map((f,i)=>`<option value="${i}">${esc(f[L=='th'?1:0])}</option>`).join('');e.value=v||'0'}
 $('bomFA').onclick=()=>{const f=FCAT[+$('bomFS').value]||FCAT[0],X=DCX,z=X?X.zi:0;ACC.push({lb:f[L=='th'?1:0],q:1,z,j:X?X.zs[z]:0,w:'j',m:0,ov:null});drawDesign()};
@@ -1946,6 +1948,8 @@ $('rpSel').onclick=()=>{const P=pgsAll();if(!P.length)return;
  $('rpsL').innerHTML=P.map((p,i)=>'<label class="rpsr"><input type="checkbox" value="'+i+'" checked><span>'+esc(lbl(p,i))+'</span></label>').join('');
  $('rpsMdL').textContent=T2('Output','ผลลัพธ์');
  [T2('One long picture (all selected pages joined)','รูปภาพยาวเดียว (ต่อหน้าที่เลือกทั้งหมด)'),T2('Separate picture per page','แยกรูปภาพทีละหน้า')].forEach((x,i)=>$('rpsMd').options[i].textContent=x);
+ $('rpsPgL').textContent=T2('Page size','ขนาดหน้า');
+ [T2('Current fit (as the page is, height follows the content)','พอดีตามเนื้อหา (ความสูงตามเนื้อหาของหน้า)'),T2('A4 style – portrait (every page the same A4 sheet)','แบบ A4 – แนวตั้ง (ทุกหน้าเป็นแผ่น A4 ขนาดเท่ากัน)'),T2('A4 style – landscape (every page the same A4 sheet)','แบบ A4 – แนวนอน (ทุกหน้าเป็นแผ่น A4 ขนาดเท่ากัน)')].forEach((x,i)=>$('rpsPg').options[i].textContent=x);
  $('rpsLyL').textContent=T2('Layout','รูปแบบการจัดวาง');
  [T2('Single long image – pages stacked vertically (scrolling / social media)','รูปยาวเดียว – เรียงหน้าต่อกันแนวตั้ง (เลื่อนดู / โซเชียล)'),T2('Grid – 2 columns','ตาราง – 2 คอลัมน์'),T2('Grid – 3 columns','ตาราง – 3 คอลัมน์')].forEach((x,i)=>$('rpsLy').options[i].textContent=x);
  $('rpsFmL').textContent=T2('File format','รูปแบบไฟล์');
@@ -1958,14 +1962,22 @@ $('rpsAll').onclick=()=>{$('rpsL').querySelectorAll('input').forEach(i=>i.checke
 $('rpsNone').onclick=()=>{$('rpsL').querySelectorAll('input').forEach(i=>i.checked=false);upd()};
 $('rpsX').onclick=()=>$('rpsd').close();
 $('rpsd').addEventListener('click',e=>{if(e.target===$('rpsd'))$('rpsd').close()});
-const render=async(P,list,cols,jpg)=>{const COL=1000,GAP=16,PAD=16,W=PAD*2+cols*COL+(cols-1)*GAP;
- const mk=(foot)=>{const d=document.createElement('div');d.className='rp';d.style.cssText='width:'+W+'px;padding:'+PAD+'px;box-sizing:border-box;background:#e5e7eb;display:grid;grid-template-columns:repeat('+cols+','+COL+'px);gap:'+GAP+'px;align-items:start';
-  list.forEach(i=>{const c=P[i].cloneNode(true);c.className=c.className.replace(/\b(np|zp)\b/g,'').replace(/\s+/g,' ').trim();c.style.cssText+=';box-sizing:border-box;width:'+COL+'px;padding:14px;border:1px solid #d1d5db;border-radius:8px;background:#fff;overflow:hidden;margin:0';d.appendChild(c)});
+const render=async(P,list,cols,jpg,pg,foot,flat)=>{const COL=1000,GAP=flat?0:16,PAD=flat?0:16,W=PAD*2+cols*COL+(cols-1)*GAP,IW=COL-28,SH=pg==='p'?Math.round(COL*297/210):pg==='l'?Math.round(COL*210/297):0;
+ const clean=c=>{c.className=c.className.replace(/\b(np|zp)\b/g,'').replace(/\s+/g,' ').trim();return c};
+ let ks=[];
+ if(SH){ // A4 style: measure each page at the sheet's inner width, then shrink it (never enlarge) so the whole page fits on one sheet
+  const th=document.createElement('div');th.className='rp';th.style.cssText='position:fixed;left:-99999px;top:0;width:'+IW+'px';
+  list.forEach(i=>{const c=clean(P[i].cloneNode(true));c.style.cssText+=';width:'+IW+'px;margin:0;box-sizing:border-box';th.appendChild(c)});
+  document.body.appendChild(th);await new Promise(r=>setTimeout(r,150));ks=[...th.children].map(c=>Math.min(1,(SH-28)/Math.max(1,c.scrollHeight)));th.remove()}
+ const mk=()=>{const d=document.createElement('div');d.className='rp';d.style.cssText='width:'+W+'px;padding:'+PAD+'px;box-sizing:border-box;background:'+(flat?'#fff':'#e5e7eb')+';display:grid;grid-template-columns:repeat('+cols+','+COL+'px);gap:'+GAP+'px;align-items:start';
+  list.forEach((i,n)=>{const c=clean(P[i].cloneNode(true));
+   if(SH){c.style.cssText+=';width:'+IW+'px;margin:0;box-sizing:border-box;flex:none;transform-origin:top center;transform:scale('+ks[n]+')';const w=document.createElement('div');w.style.cssText='box-sizing:border-box;width:'+COL+'px;height:'+SH+'px;padding:14px;'+(flat?'':'border:1px solid #d1d5db;border-radius:8px;')+'background:#fff;overflow:hidden;display:flex;justify-content:center;align-items:flex-start';w.appendChild(c);d.appendChild(w)}
+   else{c.style.cssText+=';box-sizing:border-box;width:'+COL+'px;padding:14px;border:1px solid #d1d5db;border-radius:8px;background:#fff;overflow:hidden;margin:0';d.appendChild(c)}});
   if(foot&&$('rpsDs').checked){const ds=$('rptB').querySelector('.disc');if(ds){const c=ds.cloneNode(true);c.style.cssText+=';grid-column:1/-1;padding:4px 8px';d.appendChild(c)}}
   return d};
- const foot=true,host=mk(foot);host.style.cssText+=';position:fixed;left:-99999px;top:0';document.body.appendChild(host);await new Promise(r=>setTimeout(r,120));
- const H=Math.ceil(host.scrollHeight)+4;host.remove();
- const d=mk(foot);d.style.height=H+'px';const st=document.createElement('style');st.textContent=RPCSS+'.fl,.sp{animation:none!important}';d.insertBefore(st,d.firstChild);
+ const host=mk();host.style.cssText+=';position:fixed;left:-99999px;top:0';document.body.appendChild(host);await new Promise(r=>setTimeout(r,120));
+ const H=Math.ceil(host.scrollHeight)+(flat?0:4);host.remove();
+ const d=mk();d.style.height=H+'px';const st=document.createElement('style');st.textContent=RPCSS+'.fl,.sp{animation:none!important}';d.insertBefore(st,d.firstChild);
  const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'"><foreignObject x="0" y="0" width="100%" height="100%">'+new XMLSerializer().serializeToString(d)+'</foreignObject></svg>';
  const im=new Image();await new Promise((ok,no)=>{im.onload=ok;im.onerror=no;im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)});
  let blob=null,dim='',sc=1;
@@ -1975,12 +1987,12 @@ const render=async(P,list,cols,jpg)=>{const COL=1000,GAP=16,PAD=16,W=PAD*2+cols*
  if(!blob)throw 0;return{blob,dim,sc}};
 const save=(blob,name)=>{const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)};
 $('rpsGo').onclick=async()=>{const btn=$('rpsGo'),lab=btn.textContent,P=pgsAll(),ids=picked().filter(i=>P[i]);if(!ids.length)return;
- const sep=$('rpsMd').value==='n',cols=sep?1:Math.max(1,Math.min(3,+$('rpsLy').value||1)),jpg=$('rpsFm').value==='jpg',ext=jpg?'jpg':'png';
+ const sep=$('rpsMd').value==='n',pg=['p','l'].includes($('rpsPg').value)?$('rpsPg').value:'fit',cols=sep?1:Math.max(1,Math.min(3,+$('rpsLy').value||1)),jpg=$('rpsFm').value==='jpg',ext=jpg?'jpg':'png';
  btn.disabled=true;$('rpsI').textContent='';
  try{
-  if(!sep){btn.textContent=T2('Creating…','กำลังสร้าง…');const r=await render(P,ids,cols,jpg);save(r.blob,fname('_pages.'+ext));
+  if(!sep){btn.textContent=T2('Creating…','กำลังสร้าง…');const r=await render(P,ids,cols,jpg,pg,true,false);save(r.blob,fname('_pages.'+ext));
    $('rpsI').textContent=T2('Saved: ','บันทึกแล้ว: ')+ids.length+T2(' page(s), ',' หน้า, ')+r.dim+(r.sc<.7?T2('. The picture was shrunk to fit the browser limit: choose separate pictures per page, select fewer pages or use a grid layout for sharper text.','. รูปถูกย่อให้พอดีกับข้อจำกัดของเบราว์เซอร์ ควรเลือกแยกรูปทีละหน้า เลือกจำนวนหน้าให้น้อยลง หรือใช้แบบตารางเพื่อให้ตัวอักษรคมขึ้น'):'')}
-  else{let n=0;for(const i of ids){btn.textContent=T2('Creating ','กำลังสร้าง ')+(n+1)+' / '+ids.length+'…';const r=await render(P,[i],1,jpg);save(r.blob,fname('_page'+String(i+1).padStart(2,'0')+'.'+ext));n++;await new Promise(z=>setTimeout(z,350))}
+  else{let n=0;for(const i of ids){btn.textContent=T2('Creating ','กำลังสร้าง ')+(n+1)+' / '+ids.length+'…';const r=await render(P,[i],1,jpg,pg,n===ids.length-1,pg!=='fit');save(r.blob,fname('_page'+String(i+1).padStart(2,'0')+'.'+ext));n++;await new Promise(z=>setTimeout(z,350))}
    $('rpsI').textContent=T2('Saved ','บันทึกแล้ว ')+n+T2(' pictures (one per page). If your browser asks, allow multiple downloads.',' รูป (หน้าละ 1 รูป) หากเบราว์เซอร์ถาม ให้อนุญาตการดาวน์โหลดหลายไฟล์')}
  }catch(e){alert(T2('Cannot save the picture in this browser. Try Chrome or Edge on a computer, or select fewer pages.','ไม่สามารถบันทึกรูปภาพในเบราว์เซอร์นี้ได้ ลองใช้ Chrome หรือ Edge บนคอมพิวเตอร์ หรือเลือกจำนวนหน้าให้น้อยลง'))}
  finally{btn.textContent=lab;upd()}};
