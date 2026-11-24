@@ -172,7 +172,7 @@ input.sw:checked{background:var(--ok)}input.sw:checked::after{transform:translat
 </dialog>
 <div id="rptP" class="rp"></div>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.91</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.92</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="tabs"><button id="tD" type="button" class="on" data-t="tabD"></button><button id="tC" type="button" data-t="tabC"></button><button id="tS" type="button" data-t="tabS"></button><span style="margin-left:auto;display:inline-flex;gap:6px;align-items:center"><span id="hSt" style="font-size:11px;color:var(--mut)"></span><button id="hU" type="button" title="Undo (Ctrl+Z)" style="padding:4px 10px">↶</button><button id="hR" type="button" title="Redo (Ctrl+Y)" style="padding:4px 10px">↷</button></span></div>
@@ -681,7 +681,7 @@ function drawDesign(){
  SNP=SNAPS;ZVP={};SCD={PP:pp,MD,MDY,MO,FXz:Array.from({length:Z},(_,z)=>MD?Fx(z)-MO:0),nr,RN,ROFF,RP,td,Z,zs:Array.from({length:Z+1},(_,z)=>zst(z)),MX,FX,FY,MY,xm,pm,Yp,Em,LT,n1,zOf,isY,CM,PS:CM?CRs.map(r=>r.dir==='y'?r.rp:r.pos):RP,prim:Array.from({length:Z},(_,z)=>prim(z)),EZ:Array.from({length:Z},(_,z)=>eZ(z)),SEC:Array.from({length:Z},(_,z)=>segs(z).map(g_=>({k:g_.k,p1:g_.p1,p2:g_.p2,c:g_.c}))),LAT:Array.from({length:Z},(_,z)=>latE(z).map((e_,i,A)=>({k:A.length===1?'lat':'lat'+(i+1),rows:e_.rows})))};
   ZVL.splice(0).forEach(v=>{const o=ZVO[v.z]||{};let x=v.xz,y=v.vyz;if(o.t){const q=snapPos(o);if(q){x=q[0];y=q[1]}}ZVP[v.z]=[x,y];const at_=`data-z='${v.z}' data-zv='1' style='cursor:grab;touch-action:none'`;g+=`<circle cx='${x}' cy='${y}' r='${v.vr}' fill='${v.op?'var(--ac)':'var(--card)'}' stroke='${v.op?'var(--tx)':'var(--hi)'}' stroke-width='1.4' ${at_}/><circle cx='${x}' cy='${y}' r='${v.vr+4}' fill='transparent' ${at_}><title>${en?'Zone ':'โซน '}${v.z+1}${o.nm?' – '+esc(o.nm):''} (${en?'drag to move; click the active zone valve to set size / name':'ลากเพื่อย้าย คลิกวาล์วของโซนที่เลือกเพื่อตั้งขนาด/ชื่อ'})</title></circle>`;if(o.nm||MDY)g+=`<text x='${x+v.vr+5}' y='${y+3}' style='fill:var(--mut);font-size:8px;font-weight:700'>${MDY?'Z'+(v.z+1)+(o.nm?' ':''):''}${esc(o.nm||'')}</text>`});
  const FL=[],NSZ=en?'size not set':'ยังไม่ระบุขนาด',sz=(x,y)=>x==null?NSZ:(y==null||x===y?x+'"':x+'"×'+y+'"');
- {const mk=(id,f,s,q,x,y,z,lx,ly,an,ex)=>{if(!$('afit').checked)return;const o=FOV[id]||{};if(o.pos){const sp=snapPos(o.pos);if(sp){lx+=sp[0]-x;ly+=sp[1]-y;x=sp[0];y=sp[1]}};FL.push(Object.assign({id,f,s,q:o.q!=null?+o.q:q,x,y,z,lx,ly,an,del:!!o.del,lb:o.lb||t('f'+f)+' '+s,ov:!!(o.lb||o.q!=null)},ex,o.pos?{pa:null}:{}))};
+ {const mk=(id,f,s,q,x,y,z,lx,ly,an,ex)=>{if(!$('afit').checked)return;const o=FOV[id]||{};if(o.pos){const sp=snapPos(o.pos);if(sp){lx+=sp[0]-x;ly+=sp[1]-y;x=sp[0];y=sp[1]}};FL.push(Object.assign({id,f,s,q:o.q!=null?+o.q:q,x,y,z,lx,ly,an,del:!!o.del,lb:fitLab(o.lb||t('f'+f)+' '+s,L=='th'?1:0),ov:!!(o.lb||o.q!=null)},ex,o.pos?{pa:null}:{}))};
   for(let z=0;z<Z;z++){const R_=z===zi?RES:(ZR[z]||{}),Sg=segs(z),e=eZ(z),a_=zst(z),b_=zst(z+1),xz=zmx(z),ds=k=>R_[k]?R_[k].ds:null,lt=zLines(z).filter(x=>isLat(x.k)),dp=ds('pump');
    for(let j=a_;j<b_;j++){const s_=SIDE[j],nb=(s_.ln>0?1:0)+(s_.rn>0?1:0);if(!nb)continue;const P=Sg.filter(x=>onPath(x,j,e)),m=P.length?P[P.length-1]:null,lx=lt.find(x=>x.rows&&x.rows.includes(j)),end=j===b_-1||(myz(z)&&e>a_+1e-9&&j===a_),dm=m?ds(m.k):null;
     mk('T|'+z+'|'+j,end?(nb===2?'Tee':'Elb'):(nb===2?'Cross':'Tee'),sz(dm!=null?dm:dp,lx?ds(lx.k):null),1,xz,ty(j),z,xz+7,ty(j)+11,'start',{j})}
@@ -701,7 +701,7 @@ function drawDesign(){
    if((+$('ez0').value||0)>0){const q=tt(pA,pB,.9);mk('P|0|b','Elb',sz(dpo),1,q[0],q[1],-1,q[0]+(PONV?7:0),q[1]+(PONV?4:-9),PONV?'start':'middle',{pn:1})}}
   ACC.forEach((a,i)=>{(a.z<0?Array.from({length:Z},(_,k)=>k):a.z<Z?[a.z]:[]).forEach(z=>{const xz=zmx(z);for(let j=zst(z);j<zst(z+1);j++){if(a.j>=0&&a.j!==j)continue;let x=a.w==='l'?(xz+xr(j))/2:a.w==='s'?tx(0,j):xz+14,y=a.w==='s'?ty(j)-tr-sr*2-4:ty(j)+(a.w==='l'?0:-9);
    {const sp=a.ov&&a.ov[j]?snapPos(a.ov[j]):null;if(sp){x=sp[0];y=sp[1]}}
-   FL.push({id:'A|'+i+'|'+j,acc:i,f:'X',s:'',q:a.q*(a.m===1?RN[j]:a.m===2?RN[j]*ns:1),x,y,z,j,lx:x+7,ly:y-4,an:'start',del:false,lb:a.lb,ov:false})}})})}
+   FL.push({id:'A|'+i+'|'+j,acc:i,f:'X',s:'',q:a.q*(a.m===1?RN[j]:a.m===2?RN[j]*ns:1),x,y,z,j,lx:x+7,ly:y-4,an:'start',del:false,lb:fitLab(a.lb,L=='th'?1:0),ov:false})}})})}
  FLG=FL;DCX=Object.assign(DCX||{},{Z,zi,zs:Array.from({length:Z+1},(_,z)=>zst(z)),RN,ns,SD:SIDE});$('accAdd').textContent='➕ '+(en?'Add accessory':'เพิ่มอุปกรณ์');$('dzL').textContent=en?'Drawing size':'ขนาดแบบ';$('tzL').textContent=en?'Text size':'ขนาดตัวอักษร';$('stzL').textContent=en?'Text size':'ขนาดตัวอักษร';$('dzk').options[0].textContent=en?'Auto':'อัตโนมัติ';$('fitAllT').textContent=en?'Show all fitting & accessory names (all zones)':'แสดงชื่อข้อต่อและอุปกรณ์ทั้งหมด (ทุกโซน)';
  // results from Calculation + selected line caption
  const obsOf=s=>{const o=[];(s.match(/<text [^>]*>[^<]*<\/text>/g)||[]).forEach(q=>{const at=n=>{const m=new RegExp('\\s'+n+"='([^']*)'").exec(q);return m?m[1]:null},st=at('style')||'',f_=+((/font-size:([\d.]+)px/.exec(st)||[])[1]||11),w_=q.replace(/<[^>]*>/g,'').length*f_*.6+2,tf=at('transform')||'',mm=/translate\(\s*(-?[\d.]+)[ ,]+(-?[\d.]+)\s*\)/.exec(tf),an=at('text-anchor')||'start';let x=+(at('x')||0),y=+(at('y')||0);if(mm){x+=+mm[1];y+=+mm[2]}
@@ -794,9 +794,9 @@ function drawDesign(){
  lab(0,t('pond'))+lab(1,t('pump'))+lab(2,t('eAreaL'))+spl}
  $('dpf').innerHTML=p;try{$('dpf').classList.toggle('poff',!ctlSt().run)}catch(e){}
  {const bm={};let un=0;for(let z=0;z<Z;z++){const R_=z===zi?RES:(ZR[z]||{});zLines(z).forEach(x=>{if(x.k==='pond'&&z>0)return;const e=R_[x.k],L_=x.c*x.l;if(!(L_>0))return;if(!e){un+=L_;return}const k=e.pt+'|'+e.ds;(bm[k]=bm[k]||{k,label:ptName(e.pt)+' '+e.ds+t('inch'),len:0,pt:e.pt,ds:e.ds}).len+=L_})}
-  const fm={},fa=(k,f,lb,q,id)=>{if(q>0){const o=fm[k]=fm[k]||{k,f,lb,q:0,ids:[]};o.q+=q;if(id)o.ids.push(id)}};
-   FL.forEach(f=>{if(!f.del)fa(f.acc!=null?'a|'+f.lb:f.ov?'x|'+f.lb:f.f+'|'+f.s,f.f,f.lb,f.q,f.id)});
-   MPL.forEach(m=>{if(m.z>=0&&m.z<Z&&m.len>0)fa('pt|Tee','Tee',T2('Tee (PVC line junction)','ข้อต่อสามทาง (จุดแยกท่อ PVC)'),1,null)});
+  const fm={},fa=(k,f,lb,q,id,oks)=>{if(q>0){const o=fm[k]=fm[k]||{k,f,lb:fitLab(lb,L=='th'?1:0),q:0,ids:[],oks:[]};o.q+=q;if(id)o.ids.push(id);(oks||[]).forEach(x=>{if(!o.oks.includes(x))o.oks.push(x)})}};
+   FL.forEach(f=>{if(!f.del){const pre=f.acc!=null?'a|':f.ov?'x|':null;fa('n|'+fitKey(f.lb),f.f,f.lb,f.q,f.id,pre?[pre+fitLab(f.lb,0),pre+fitLab(f.lb,1),pre+f.lb]:[f.f+'|'+f.s])}});
+   MPL.forEach(m=>{if(m.z>=0&&m.z<Z&&m.len>0)fa('n|tee (pvc line junction)','Tee',T2('Tee (PVC line junction)','ข้อต่อสามทาง (จุดแยกท่อ PVC)'),1,null,['pt|Tee'])});
   BOMD={pipes:Object.values(bm).sort((a,b)=>(a.pt>b.pt?1:a.pt<b.pt?-1:0)||a.ds-b.ds),fits:Object.values(fm).sort((a,b)=>(a.f>b.f?1:a.f<b.f?-1:0)||(a.lb>b.lb?1:-1)),un,spr,Z};renderBom()}}
 function pc(v){let s=String(v==null?'':v).trim();if(!s)return null;
  s=s.replace(/ฟิลิปดา/g,'″').replace(/ลิปดา/g,'′').replace(/องศา/g,'°').replace(/ทิศเหนือ|เหนือ/g,' N ').replace(/ทิศใต้|ใต้/g,' S ').replace(/ทิศตะวันออก|ตะวันออก/g,' E ').replace(/ทิศตะวันตก|ตะวันตก/g,' W ').replace(/[º˚]/g,'°').replace(/[’‘`´']/g,'′').replace(/[”“"]/g,'″').replace(/′′/g,'″');
@@ -874,7 +874,7 @@ function bomQ(r){return r.xi!=null?(+BX[r.xi].q||0):r.q}
 const bmo=x=>(+x).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
 function renderBom(){const el=$('bomT');if(!el)return;if(!BOMD){el.innerHTML='';BR=[];return}
  BR=[];BOMD.pipes.forEach(p=>BR.push({lab:p.label,u:'m',q:p.len,pk:'p|'+p.k,qk:ptName(p.pt)+' '+p.ds+'"'}));
- if(BOMD.un>0)BR.push({lab:t('bomUns'),u:'m',q:BOMD.un,np:1});(BOMD.fits||[]).forEach(f=>BR.push({lab:f.lb,u:t('pcs'),q:f.q,pk:'f|'+f.k,fi:f.ids}));
+ if(BOMD.un>0)BR.push({lab:t('bomUns'),u:'m',q:BOMD.un,np:1});(BOMD.fits||[]).forEach(f=>{const pk='f|'+f.k;if(BP[pk]===undefined||BP[pk]===''){for(const o of f.oks||[]){const v=BP['f|'+o];if(v!==undefined&&v!==''){BP[pk]=v;break}}}BR.push({lab:f.lb,u:t('pcs'),q:f.q,pk,fi:f.ids,qk:fitLab(f.lb,0)})});
  BR.push({lab:(ITM.spr&&ITM.spr.n)||t('bomSpr'),u:t('pcs'),q:Math.max(0,BOMD.spr+((ITM.spr||{}).d||0)),pk:'spr',it:'spr',qk:(ITM.spr&&ITM.spr.n)||t('bomSpr')});if(BOMD.Z>1)BR.push({lab:(()=>{const n=[...new Set(Object.keys(ZVO).filter(k=>+k<BOMD.Z&&ZVO[k].nm).sort((a,b)=>a-b).map(k=>ZVO[k].nm))];return n.length?n.join(', '):t('bomVal')})(),u:t('pcs'),q:Math.max(0,BOMD.Z+((ITM.val||{}).d||0)),pk:'val',it:'val',qk:(ITM.val&&ITM.val.n)||t('bomVal')});BR.push({lab:(ITM.pump&&ITM.pump.n)||t('bomPump'),u:t('pcs'),q:Math.max(0,1+((ITM.pump||{}).d||0)),pk:'pump',it:'pump',qk:(ITM.pump&&ITM.pump.n)||t('bomPump')});
  BX.forEach((x,i)=>BR.push({xi:i}));qtAuto();const cur=esc($('bcur').value||'');
  el.innerHTML=`<thead><tr><th style="text-align:left">${t('bomItem')}</th><th>${t('bomUnit')}</th><th>${t('bomQty')}</th><th>${t('bomPrice')} (${cur})</th><th>${t('bomCost')} (${cur})</th><th></th></tr></thead><tbody>`+BR.map((r,i)=>r.xi!=null?
@@ -889,6 +889,11 @@ $('bomT').addEventListener('input',e=>{const d=e.target.dataset;if(d.bk!=null){B
 $('bomT').addEventListener('click',e=>{const b=e.target.closest('button'),bd=b&&b.dataset;if(bd&&bd.fe!=null){openEd(BR[+bd.fe].fi);return}if(bd&&bd.fd!=null){delIds(BR[+bd.fd].fi);accDone();return}const d=e.target.dataset.bdel;if(d==null)return;BX.splice(+d,1);renderBom()});
 
 // ---- quotation list: item name + quotation name + price. Kept in this browser (auto), in CSV files (download / upload) and inside the saved project file.
+/* fitting + BOM item names: one list of EN/TH pairs. A name is translated by its prefix, so "Elbow 90° 0.5"" <-> "ข้องอ 90° 0.5"" and the same fitting always gets the same row, name and price in both languages */
+let FITP_=null;
+function fitPairs(){if(FITP_)return FITP_;try{const a=[];FCAT.forEach(c=>a.push([c[0],c[1]]));['bomSpr','bomVal','bomPump','bomUns','nom'].forEach(k=>a.push([TX.en[k],TX.th[k]]));['fTee','fCross','fElb','fCap','fRed','fTap'].forEach(k=>a.push([TX.en[k],TX.th[k]]));a.push(['Tee (PVC line junction)','ข้อต่อสามทาง (จุดแยกท่อ PVC)'],['PVC line','ท่อ PVC']);return FITP_=a.filter(p=>p[0]&&p[1]&&p[0]!==p[1])}catch(e){return[]}}
+function fitLab(lb,lg){lb=String(lb==null?'':lb);let bn=-1,bp=null;for(const p of fitPairs())for(let k=0;k<2;k++){const n=p[k];if(n.length>bn&&(lb===n||lb.startsWith(n+' '))){bn=n.length;bp=p}}return bp?bp[lg]+lb.slice(bn):lb}
+const fitKey=x=>fitLab(x,0).trim().toLowerCase().replace(/\s+/g,' ');
 let NKP_=null;const NKP=()=>NKP_||(NKP_=(()=>{const a=[];['bomSpr','bomVal','bomPump','bomUns','nom'].forEach(k=>{try{a.push([TX.th[k],TX.en[k]])}catch(e){}});try{FCAT.forEach(f=>a.push([f[1],f[0]]))}catch(e){}a.push(['ข้อต่อสามทาง (จุดแยกท่อ PVC)','Tee (PVC line junction)']);return a.filter(p=>p[0]&&p[1]).sort((x,y)=>y[0].length-x[0].length)})());
 /* item names are compared in one language (English): a price saved or auto-filled under the Thai name still matches after switching to English, and the other way round */
 const nk=x=>{let v=String(x||'').trim();for(const p of NKP()){if(v.startsWith(p[0])){v=p[1]+v.slice(p[0].length);break}}return v.toLowerCase().replace(/\s*นิ้ว$/,'"')},qName=()=>(($('bqN')&&$('bqN').value)||'').trim().slice(0,40)||T2('My prices','ราคาของฉัน');
@@ -918,8 +923,12 @@ const FBV=FCAT.findIndex(c=>c[0]==='Ball valve');function fillFS(){const e=$('bo
 $('bomFA').onclick=()=>{const f=FCAT[+$('bomFS').value]||FCAT[0],X=DCX,z=X?X.zi:0;ACC.push({lb:f[L=='th'?1:0],q:1,z,j:X?X.zs[z]:0,w:'j',m:0,ov:null});drawDesign()};
 $('bomAdd').onclick=()=>{BX.push({n:'',u:t('pcs'),q:1,p:0});renderBom()};
 $('bcur').addEventListener('input',renderBom);$('bca').addEventListener('input',()=>{bomCalc();drawDesignSafe&&0});
-$('bomCsv').onclick=()=>{bomHTML();const q=x=>'"'+String(x).replace(/"/g,'""')+'"';let tot=0;const L=[[t('bomItem'),t('bomUnit'),t('bomQty'),t('bomPrice'),t('bomCost')].map(q).join(',')];
- BR.forEach(r=>{const a=bomQ(r),p=bomPr(r),c=r.np?0:a*p;tot+=c;L.push([r.xi!=null?BX[r.xi].n:r.lab,r.xi!=null?BX[r.xi].u:r.u,+a.toPrecision(6),r.np?'':p,r.np?'':+c.toFixed(2)].map(q).join(','))});L.push(['','','','',t('bomSub')+' '+($('bcur').value||''),+tot.toFixed(2)].map(q).join(','));L.push(['','','','',t('bomCaL')+' '+pn(bomCap())+'%',+(tot*bomCap()/100).toFixed(2)].map(q).join(','));L.push(['','','','',t('bomTot')+' '+($('bcur').value||''),+(tot*(1+bomCap()/100)).toFixed(2)].map(q).join(','));
+$('bomCsv').onclick=()=>{bomHTML();const q=x=>'"'+String(x).replace(/"/g,'""')+'"',cur=$('bcur').value||'',B=k=>TX.en[k]+' / '+TX.th[k];let tot=0;
+ const nm=r=>{if(r.xi!=null){const n=BX[r.xi].n;return[n,n]}if(r.pk&&r.pk.startsWith('p|')&&BOMD){const p=BOMD.pipes.find(x=>'p|'+x.k===r.pk);if(p){const n=PTN[p.pt];return[(n||TX.en.nom)+' '+p.ds+'"',(n||TX.th.nom)+' '+p.ds+' นิ้ว']}}return[fitLab(r.lab,0),fitLab(r.lab,1)]};
+ const un=u=>(u==='pcs'||u==='ชิ้น')?'pcs / ชิ้น':u;
+ const L=[['Item (English)','รายการ (ไทย)',B('bomUnit'),B('bomQty'),B('bomPrice'),B('bomCost')].map(q).join(',')];
+ BR.forEach(r=>{const a=bomQ(r),p=bomPr(r),c=r.np?0:a*p;tot+=c;const n=nm(r);L.push([n[0],n[1],un(r.xi!=null?BX[r.xi].u:r.u),+a.toPrecision(6),r.np?'':p,r.np?'':+c.toFixed(2)].map(q).join(','))});
+ L.push(['','','','',B('bomSub')+' '+cur,+tot.toFixed(2)].map(q).join(','));L.push(['','','','',B('bomCaL')+' '+pn(bomCap())+'%',+(tot*bomCap()/100).toFixed(2)].map(q).join(','));L.push(['','','','',B('bomTot')+' '+cur,+(tot*(1+bomCap()/100)).toFixed(2)].map(q).join(','));
  dlFile(fname('-bom.csv'),'text/csv','\ufeff'+L.join('\r\n'))};
 $('cRows').addEventListener('input',e=>{const r=e.target.dataset.r;if(r==null)return;const k_=e.target.dataset.k;CR[+r][k_]=k_==='dir'?(e.target.value==='y'?'y':'x'):(k_==='off'||k_==='pos'?(+e.target.value||0):Math.max(0,+e.target.value||0));cRender()});
 $('cRows').addEventListener('click',e=>{const d=e.target.dataset.del;if(d==null)return;CR.splice(+d,1);cTable();cRender()});
