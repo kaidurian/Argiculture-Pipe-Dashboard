@@ -172,7 +172,7 @@ input.sw:checked{background:var(--ok)}input.sw:checked::after{transform:translat
 </dialog>
 <div id="rptP" class="rp"></div>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.90</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.91</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="tabs"><button id="tD" type="button" class="on" data-t="tabD"></button><button id="tC" type="button" data-t="tabC"></button><button id="tS" type="button" data-t="tabS"></button><span style="margin-left:auto;display:inline-flex;gap:6px;align-items:center"><span id="hSt" style="font-size:11px;color:var(--mut)"></span><button id="hU" type="button" title="Undo (Ctrl+Z)" style="padding:4px 10px">↶</button><button id="hR" type="button" title="Redo (Ctrl+Y)" style="padding:4px 10px">↷</button></span></div>
@@ -889,7 +889,9 @@ $('bomT').addEventListener('input',e=>{const d=e.target.dataset;if(d.bk!=null){B
 $('bomT').addEventListener('click',e=>{const b=e.target.closest('button'),bd=b&&b.dataset;if(bd&&bd.fe!=null){openEd(BR[+bd.fe].fi);return}if(bd&&bd.fd!=null){delIds(BR[+bd.fd].fi);accDone();return}const d=e.target.dataset.bdel;if(d==null)return;BX.splice(+d,1);renderBom()});
 
 // ---- quotation list: item name + quotation name + price. Kept in this browser (auto), in CSV files (download / upload) and inside the saved project file.
-const nk=x=>String(x||'').trim().toLowerCase().replace(/\s*นิ้ว$/,'"'),qName=()=>(($('bqN')&&$('bqN').value)||'').trim().slice(0,40)||T2('My prices','ราคาของฉัน');
+let NKP_=null;const NKP=()=>NKP_||(NKP_=(()=>{const a=[];['bomSpr','bomVal','bomPump','bomUns','nom'].forEach(k=>{try{a.push([TX.th[k],TX.en[k]])}catch(e){}});try{FCAT.forEach(f=>a.push([f[1],f[0]]))}catch(e){}a.push(['ข้อต่อสามทาง (จุดแยกท่อ PVC)','Tee (PVC line junction)']);return a.filter(p=>p[0]&&p[1]).sort((x,y)=>y[0].length-x[0].length)})());
+/* item names are compared in one language (English): a price saved or auto-filled under the Thai name still matches after switching to English, and the other way round */
+const nk=x=>{let v=String(x||'').trim();for(const p of NKP()){if(v.startsWith(p[0])){v=p[1]+v.slice(p[0].length);break}}return v.toLowerCase().replace(/\s*นิ้ว$/,'"')},qName=()=>(($('bqN')&&$('bqN').value)||'').trim().slice(0,40)||T2('My prices','ราคาของฉัน');
 function qtSave(){try{localStorage.setItem('pipeQT',JSON.stringify(QT))}catch(e){}}
 function qtUpsert(n,q,p){n=String(n||'').trim();p=+p;if(!n||!(p>0))return;const e=QT.find(x=>nk(x.n)===nk(n)&&x.q===q);if(e){e.p=p;QT.splice(QT.indexOf(e),1);QT.push(e)}else QT.push({n:n.slice(0,80),q:q.slice(0,40),p});qtSave()}
 function qtMerge(a){let c=0;(Array.isArray(a)?a:[]).slice(0,5000).forEach(x=>{if(x&&String(x.n||'').trim()&&+x.p>0){qtUpsert(x.n,String(x.q||T2('My prices','ราคาของฉัน')),+x.p);c++}});return c}
@@ -1979,7 +1981,7 @@ $('rpDl').onclick=()=>dlFile(fname('.html'),'text/html','<!DOCTYPE html><html la
 function setLang(l){L=l;try{localStorage.setItem('lang',l)}catch(e){}
  document.documentElement.lang=l;document.title=t('title');
  document.querySelectorAll('[data-t]').forEach(e=>e.innerHTML=t(e.dataset.t));
- $('bEn').classList.toggle('on',l=='en');$('bTh').classList.toggle('on',l=='th');fillFS();fillPal();build();drawDesign();updateLoc();run()}
+ $('bEn').classList.toggle('on',l=='en');$('bTh').classList.toggle('on',l=='th');fillFS();fillPal();build();drawDesign();updateLoc();try{renderBom();qtUI()}catch(e){}run()}
 ['q','u','d','c','l','vl','vm','pt'].forEach(i=>$(i).addEventListener('input',run));
 const dlg=$('dlg');$('bSet').onclick=()=>dlg.showModal();$('bX').onclick=$('bOk').onclick=()=>dlg.close();
 dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});
