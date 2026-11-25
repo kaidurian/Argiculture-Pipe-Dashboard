@@ -173,7 +173,7 @@ input.sw:checked{background:var(--ok)}input.sw:checked::after{transform:translat
 </dialog>
 <div id="rptP" class="rp"></div>
 <div class="top">
-  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.94.1</small></h1><p class="sub" data-t="sub"></p></div>
+  <div><h1><span data-t="title"></span> <small style="font-size:12px;font-weight:600;color:var(--mut)">ST</small> <small style="font-size:12px;font-weight:600;color:var(--mut)">Rev.94.2</small></h1><p class="sub" data-t="sub"></p></div>
   <div class="top-r"><button class="admin" id="bLogin" type="button">🔒 <span data-t="loginBtn"></span></button><button class="admin hide" id="bLogout" type="button">🔓 <span data-t="logoutBtn"></span></button><button class="admin hide" id="bAdmin" type="button">👤 <span data-t="adminBtn"></span></button><button class="gear" id="bSet" type="button">⚙ <span data-t="set"></span></button><div class="lang"><button id="bEn">EN</button><button id="bTh">ไทย</button></div></div>
 </div>
 <div class="tabs"><button id="tD" type="button" class="on" data-t="tabD"></button><button id="tC" type="button" data-t="tabC"></button><button id="tS" type="button" data-t="tabS"></button><span style="margin-left:auto;display:inline-flex;gap:6px;align-items:center"><span id="hSt" style="font-size:11px;color:var(--mut)"></span><button id="hU" type="button" title="Undo (Ctrl+Z)" style="padding:4px 10px">↶</button><button id="hR" type="button" title="Redo (Ctrl+Y)" style="padding:4px 10px">↷</button></span></div>
@@ -1028,24 +1028,40 @@ $('dsg').addEventListener('pointerdown',e=>{const gl=e.target.closest&&e.target.
 
 // ---- edit zones on the Design drawing: switch "Edit zones" on, click any tree and choose the zone its whole row belongs to
 const zedCol=z=>['#16a34a','#2563eb','#f59e0b','#db2777','#7c3aed','#0891b2','#ea580c','#65a30d','#dc2626','#0d9488'][z%10];
-function zedLab(){const b=$('zedB'),n=$('zedN');if(!b)return;b.textContent=(ZED?'✔ ':'✎ ')+T2('Edit zones','แก้ไขโซน');b.style.fontWeight=ZED?'800':'';b.style.outline=ZED?'2px solid #f59e0b':'';n.textContent=ZED?T2('Click a tree, then choose which trees move (whole row, up to this tree, or from this tree on) and the zone. Click again to split into 3, 4 … zones. Trees are coloured by zone.','คลิกต้นไม้ แล้วเลือกว่าจะย้ายต้นไหน (ทั้งแถว / ถึงต้นนี้ / ตั้งแต่ต้นนี้) และเลือกโซน คลิกซ้ำเพื่อแบ่งเป็น 3, 4 … โซน ต้นไม้ถูกลงสีตามโซน'):'';$('dsg').style.cursor=ZED?'cell':''}
+function zedLab(){const b=$('zedB'),n=$('zedN');if(!b)return;b.textContent=(ZED?'✔ ':'✎ ')+T2('Edit zones','แก้ไขโซน');b.style.fontWeight=ZED?'800':'';b.style.outline=ZED?'2px solid #f59e0b':'';n.textContent=ZED?T2('Click a tree: move the whole row / up to this tree / from this tree on to a zone (click again to split into 3, 4 … zones), or edit that row piece (Trees, Start offset, Position, Direction, Spr./tree, Flow/spr.) and press Apply. Trees are coloured by zone.','คลิกต้นไม้: ย้ายทั้งแถว / ถึงต้นนี้ / ตั้งแต่ต้นนี้ ไปโซนที่เลือก (คลิกซ้ำเพื่อแบ่งเป็น 3, 4 … โซน) หรือแก้ไขแถวนั้น (จำนวนต้น ระยะเริ่มต้น ตำแหน่ง ทิศทาง หัว/ต้น ไหล/หัว) แล้วกดใช้ ต้นไม้ถูกลงสีตามโซน'):'';$('dsg').style.cursor=ZED?'cell':''}
 function zedClose(){const m=$('zedM');if(m)m.remove()}
-let ZEDS='all';
-function zedMenu(j,ev,ti){zedClose();
+let ZEDS='all',ZEDP=null;
+function zedMenu(j,ev,ti){
  if($('lsrc').value!=='c'){cImp();$('lsrc').value='c';applySrc();drawDesign()} /* standard grid -> custom orchard table, same rows and zones, so each row can get its own zone */
- const ci=CRCI[j];if(ci==null||!CR[ci])return;const R0=CR[ci],N=Math.max(1,Math.floor(+R0.n||1)),i0=Math.max(0,Math.min(N-1,Math.floor(ti)||0)),ZV=[...new Set(CR.map(r=>+r.zone))].sort((a,b)=>a-b),cur=ZV.indexOf(+R0.zone);
+ const ci=CRCI[j];if(ci==null||!CR[ci])return;ZEDP={ci,ti,x:ev.clientX+8,y:ev.clientY+8};zedOpen()}
+function zedRefresh(nv){cTable();cRender();let k=-1;if(nv!=null)k=[...new Set(CR.map(r=>+r.zone))].sort((a,b)=>a-b).indexOf(nv);ZNONE=false;drawDesign();if(k>=0&&[...$('zn').options].some(o=>o.value===String(k+1))){$('zn').value=String(k+1);drawDesign()}}
+function zedOpen(){zedClose();if(!ZEDP)return;const ci=ZEDP.ci,R0=CR[ci];if(!R0)return;
+ const N=Math.max(1,Math.floor(+R0.n||1)),i0=Math.max(0,Math.min(N-1,Math.floor(ZEDP.ti)||0)),ZV=[...new Set(CR.map(r=>+r.zone))].sort((a,b)=>a-b),cur=ZV.indexOf(+R0.zone);
  const sc=[['all',T2('Whole row','ทั้งแถว')+' ('+N+' '+T2('trees','ต้น')+')']];if(i0<N-1)sc.push(['head',T2('Trees','ต้นที่')+' 1–'+(i0+1)+' '+T2('(start → this tree)','(จากต้นแรก → ต้นนี้)')]);if(i0>0)sc.push(['tail',T2('Trees','ต้นที่')+' '+(i0+1)+'–'+N+' '+T2('(this tree → end)','(จากต้นนี้ → ท้ายแถว)')]);
  if(!sc.some(x=>x[0]===ZEDS))ZEDS='all';
- const m=document.createElement('div');m.id='zedM';m.style.cssText='position:fixed;z-index:9999;background:var(--card,#fff);color:var(--tx,#111);border:1px solid var(--mut,#888);border-radius:8px;padding:8px;box-shadow:0 4px 16px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:5px;max-width:260px';
- m.innerHTML=`<b style="font-size:12px">${T2('Row','แถว')} ${ci+1} · ${T2('move to zone','ย้ายไปโซน')}</b>`+(sc.length>1?sc.map(x=>`<label style="display:flex;gap:5px;align-items:center;font-size:12px;margin:0"><input type="radio" name="zedS" value="${x[0]}"${x[0]===ZEDS?' checked':''}>${x[1]}</label>`).join(''):'')+`<div style="display:flex;flex-wrap:wrap;gap:4px">`+ZV.map((v,k)=>`<button type="button" data-zv="${v}" style="border-left:6px solid ${zedCol(k)};${k===cur?'font-weight:800;outline:2px solid #f59e0b':''}">Z${k+1}</button>`).join('')+`</div><button type="button" data-zv="new">+ ${T2('New zone','โซนใหม่')}</button><button type="button" data-zv="x" style="opacity:.7">${T2('Cancel','ยกเลิก')}</button>`;
- document.body.appendChild(m);const r=m.getBoundingClientRect();m.style.left=Math.max(4,Math.min(innerWidth-r.width-4,ev.clientX+8))+'px';m.style.top=Math.max(4,Math.min(innerHeight-r.height-4,ev.clientY+8))+'px';
+ const fld=(k,lab,v,ex)=>`<label style="display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12px;margin:0">${lab}<input type="number" step="any" data-f="${k}" value="${v==null?'':v}" ${ex||''} style="width:90px;margin:0"></label>`;
+ const m=document.createElement('div');m.id='zedM';m.style.cssText='position:fixed;z-index:9999;background:var(--card,#fff);color:var(--tx,#111);border:1px solid var(--mut,#888);border-radius:8px;padding:8px;box-shadow:0 4px 16px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:5px;width:270px;max-height:92vh;overflow:auto';
+ m.innerHTML=`<b style="font-size:12px">${T2('Row','แถว')} ${ci+1} · ${T2('move to zone','ย้ายไปโซน')}</b>`+(sc.length>1?sc.map(x=>`<label style="display:flex;gap:5px;align-items:center;font-size:12px;margin:0"><input type="radio" name="zedS" value="${x[0]}"${x[0]===ZEDS?' checked':''}>${x[1]}</label>`).join(''):'')
+ +`<div style="display:flex;flex-wrap:wrap;gap:4px">`+ZV.map((v,k)=>`<button type="button" data-zv="${v}" style="border-left:6px solid ${zedCol(k)};${k===cur?'font-weight:800;outline:2px solid #f59e0b':''}">Z${k+1}</button>`).join('')+`<button type="button" data-zv="new">+ ${T2('New zone','โซนใหม่')}</button></div>`
+ +`<hr style="width:100%;margin:2px 0;border:0;border-top:1px solid var(--mut,#888);opacity:.5"><b style="font-size:12px">${T2('Edit this row piece','แก้ไขแถวนี้')} (Z${cur+1})</b>`
+ +fld('n',t('coN'),R0.n,'min="1" step="1"')+fld('off',t('coOff'),R0.off)+fld('pos',t('coPos'),R0.pos)
+ +`<label style="display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12px;margin:0">${t('coDirC')}<select data-f="dir" style="width:90px;margin:0"><option value="x"${R0.dir!=='y'?' selected':''}>X</option><option value="y"${R0.dir==='y'?' selected':''}>Y</option></select></label>`
+ +fld('ns',T2('Spr./tree','หัว/ต้น'),R0.ns||'','min="0" placeholder="= '+esc($('ns').value)+'"')+fld('fq',T2('Flow/spr.','ไหล/หัว'),R0.fq||'','min="0" placeholder="= '+esc($('fq').value)+'"')
+ +`<div style="display:flex;gap:4px;flex-wrap:wrap"><button type="button" data-zv="apply">✔ ${T2('Apply','ใช้')}</button><button type="button" data-zv="del"${CR.length<2?' disabled':''}>✕ ${T2('Delete piece','ลบแถวนี้')}</button><button type="button" data-zv="x" style="opacity:.7">${T2('Close','ปิด')}</button></div>`;
+ document.body.appendChild(m);const r=m.getBoundingClientRect();m.style.left=Math.max(4,Math.min(innerWidth-r.width-4,ZEDP.x))+'px';m.style.top=Math.max(4,Math.min(innerHeight-r.height-4,ZEDP.y))+'px';
  m.addEventListener('change',e=>{if(e.target.name==='zedS')ZEDS=e.target.value});
- m.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const v=b.dataset.zv;zedClose();if(v==='x')return;const nv=v==='new'?Math.max(...ZV)+1:+v,td_=+$('td').value||0,R=CR[ci];
+ m.addEventListener('keydown',e=>{if(e.key==='Escape'){zedClose();return}if(e.key==='Enter'&&e.target.dataset&&e.target.dataset.f){e.preventDefault();m.querySelector('button[data-zv="apply"]').click()}});
+ m.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;const v=b.dataset.zv,R=CR[ci];if(!R){zedClose();return}
+  if(v==='x'){zedClose();return}
+  if(v==='del'){zedClose();CR.splice(ci,1);zedRefresh();return}
+  if(v==='apply'){const g=k=>m.querySelector('[data-f="'+k+'"]').value;R.n=Math.max(1,Math.floor(+g('n'))||1);R.off=+g('off')||0;R.pos=+g('pos')||0;R.dir=g('dir')==='y'?'y':'x';R.ns=Math.max(0,+g('ns')||0);R.fq=Math.max(0,+g('fq')||0);zedClose();zedRefresh();return}
+  const td_=+$('td').value||0,nv=v==='new'?Math.max(...ZV)+1:+v;zedClose();
   if(ZEDS==='all'||sc.length<2){if(+R.zone===nv)return;R.zone=nv}
   else{ /* split the row: the chosen trees become their own row entry in the chosen zone */
-   if(ZEDS==='head'){if(+R.zone===nv)return;const p=Object.assign({},R,{n:i0+1,zone:nv});R.off=(+R.off||0)+(i0+1)*td_;R.n=N-i0-1;CR.splice(ci,0,p)}
-   else{if(+R.zone===nv)return;const p=Object.assign({},R,{off:(+R.off||0)+i0*td_,n:N-i0,zone:nv});R.n=i0;CR.splice(ci+1,0,p)}}
-  cTable();cRender();const k=[...new Set(CR.map(r=>+r.zone))].sort((a,b)=>a-b).indexOf(nv);ZNONE=false;drawDesign();if(k>=0&&[...$('zn').options].some(o=>o.value===String(k+1))){$('zn').value=String(k+1);drawDesign()}})}
+   if(+R.zone===nv)return;
+   if(ZEDS==='head'){const p=Object.assign({},R,{n:i0+1,zone:nv});R.off=(+R.off||0)+(i0+1)*td_;R.n=N-i0-1;CR.splice(ci,0,p)}
+   else{const p=Object.assign({},R,{off:(+R.off||0)+i0*td_,n:N-i0,zone:nv});R.n=i0;CR.splice(ci+1,0,p)}}
+  zedRefresh(nv)})}
 document.addEventListener('pointerdown',e=>{const m=$('zedM');if(m&&!m.contains(e.target))zedClose()},true);
 $('zedB').addEventListener('click',()=>{ZED=!ZED;zedClose();drawDesign()});
 // ---- scale plan: every tree, row, pipe line, valve and fitting at true scale (same metres on both axes)
